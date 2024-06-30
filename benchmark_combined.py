@@ -36,6 +36,7 @@ import numpy as np
 from filter_coefficients import ds_100_filter
 from time import time
 from system_parallelisation import working_array_constants, update_indices_constant, fs, duration, step_size, cliplevel, noise_sigmas
+xoro_type = from_dtype(xoroshiro128p_dtype)
 
 
 BLOCKSIZE_X = 8         #Threads per solver/operations per param set
@@ -56,21 +57,19 @@ filtercoefficients = np.asarray(ds_100_filter, dtype=np.float64)
 
 # cuda.profile_start()
 
-xoro_type = from_dtype(xoroshiro128p_dtype)
-
 @cuda.jit(
-                void(float64[:,:,:],
-                float64[:,:],
-                float64[:,:,:],
-                int16[:,:,:],
+                void(float64[:,:,::1],
+                float64[:,::1],
+                float64[:,:,::1],
+                int16[:,:,::1],
                 float64,
                 float64,
                 int64,
-                float64[:],
+                float64[::1],
                 float64,
-                xoro_type[:],
-                float64[:],
-                float64[:]
+                xoro_type[::1],
+                float64[::1],
+                float64[::1]
                 ),
                 opt=True)
 def cantilever_euler_kernel(output,
@@ -100,8 +99,8 @@ def cantilever_euler_kernel(output,
 
     # Initialise working arrays
     s_updateindices = cuda.shared.array(
-            shape=(WORKINGARRAY_LENGTH,
-                   WORKINGARRAY_WIDTH,
+            shape=(WORKINGARRAY_WIDTH,
+                   WORKINGARRAY_LENGTH,
                    2),
         dtype=int16)
 
@@ -116,9 +115,9 @@ def cantilever_euler_kernel(output,
 
     for k in range(2):
         for i in range(WORKINGARRAY_WIDTH - 1):  # Ignore the padding row
-            s_updateindices[tx, i, k] = update_indices[tx, i, k]
-        s_updateindices[tx, 12, 0] = 0
-        s_updateindices[tx, 12, 1] = 0
+            s_updateindices[i, tx, k] = update_indices[tx, i, k]
+        s_updateindices[12, tx, 0] = 0
+        s_updateindices[12, tx, 1] = 0
 
     cuda.syncwarp()
     # s_updateindices = update_indices
@@ -139,22 +138,22 @@ def cantilever_euler_kernel(output,
 
 
             # Update operands using index lookup table
-            (sx, sy) = s_updateindices[tx, 0]
+            (sx, sy) = s_updateindices[0, tx]
             s_working[ty, 0, tx] = cuda.selp(sy == 0, s_working[ty, 0, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 1]
+            (sx, sy) = s_updateindices[1, tx]
             s_working[ty, 1, tx] = cuda.selp(sy == 0, s_working[ty, 1, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 2]
+            (sx, sy) = s_updateindices[2, tx]
             s_working[ty, 2, tx] = cuda.selp(sy == 0, s_working[ty, 2, tx], s_working[ty, sy, sx])
             cuda.syncwarp()
 
             s_working[ty, 3, tx] = cuda.fma(s_working[ty, 0, tx], s_working[ty, 1, tx], s_working[ty, 2, tx])
             cuda.syncwarp()
 
-            (sx, sy) = s_updateindices[tx, 4]
+            (sx, sy) = s_updateindices[4, tx]
             s_working[ty, 4, tx] = cuda.selp(sy == 0, s_working[ty, 4, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 5]
+            (sx, sy) = s_updateindices[5, tx]
             s_working[ty, 5, tx] = cuda.selp(sy == 0, s_working[ty, 5, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 6]
+            (sx, sy) = s_updateindices[6, tx]
             s_working[ty, 6, tx] = cuda.selp(sy == 0, s_working[ty, 6, tx], s_working[ty, sy, sx])
             cuda.syncwarp()
 
@@ -171,11 +170,11 @@ def cantilever_euler_kernel(output,
             s_working[ty, 7, tx] = cuda.selp(tx in [0, 2, 3, 4], s_working[ty, 7, tx] + thread_noise, s_working[ty, 7, tx])
             cuda.syncwarp()
 
-            (sx, sy) = s_updateindices[tx, 8]
+            (sx, sy) = s_updateindices[8, tx]
             s_working[ty, 8, tx] = cuda.selp(sy == 0, s_working[ty, 8, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 9]
+            (sx, sy) = s_updateindices[9, tx]
             s_working[ty, 9, tx] = cuda.selp(sy == 0, s_working[ty, 9, tx], s_working[ty, sy, sx])
-            (sx, sy) = s_updateindices[tx, 10]
+            (sx, sy) = s_updateindices[10, tx]
             s_working[ty, 10, tx] = cuda.selp(sy == 0, s_working[ty, 10, tx], s_working[ty, sy, sx])
             cuda.syncwarp()
 
@@ -204,9 +203,8 @@ def cantilever_euler_kernel(output,
         cuda.syncwarp()
 
 
-
 durations = np.asarray([1, 10, 100, 1000, 5000])
-num_parallel = np.asarray([32, 64, 259, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536])
+num_parallel = np.asarray([32, 64, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536])
 opt_timings = np.zeros((len(durations), len(num_parallel)))
 for j, duration in enumerate(durations):
     for k, parallels in enumerate(num_parallel):
@@ -284,16 +282,96 @@ for j, duration in enumerate(durations):
 
 from system_parallelisation import constants, inits
 
-
-BLOCKSIZE_X = 512        #Threads per solver/operations per param set
-                            # should be equal to (64kb - reference_chun/ SM allocation per thread maxish
+BLOCKSIZE_X = 8 * 32        #Number of param sets per block
 NUM_STATES = 5
-NUM_CONSTANTS = 14
 
+#Setting up grid of params to simulate with
+a_gains = np.asarray([i * 0.2 for i in range(-128, 128)], dtype=np.float64)
+b_params = np.asarray([i * 0.1 for i in range(-128, 128)], dtype=np.float64)
+grid_params = np.asarray([(a, b) for a in a_gains for b in b_params])
+
+
+#Bring in filter coefficients for polyphase decimator - FIR filter that downsamples
+#TODO: Consider scaling.
+filtercoefficients = np.asarray(ds_100_filter, dtype=np.float64)
+
+# This was brought in in an array to save clutter, fetch step size for size calcs
 step_size = constants[-1]
 
-@cuda.jit(
-                void(float64[:,:,::1],
+NUMTHREADS = len(grid_params)
+BLOCKSPERGRID = max(1, len(grid_params) // BLOCKSIZE_X)
+
+
+
+@cuda.jit(float64(float64,
+                  float64),
+          device=True,
+          inline=True)
+def clip(value,
+         clip_value):
+    if value <= clip_value and value >= -clip_value:
+        return value
+    elif value > clip_value:
+        return clip_value
+    else:
+        return -clip_value
+
+@cuda.jit((float64[:],
+           float64[:],
+           float64[:],
+           float64,
+           float64),
+          device=True,
+          inline=True,)
+def dxdt(outarray,
+         state,
+         constants,
+         control,
+         ref):
+    outarray[0] = state[0] + state[ 1]
+    outarray[1] = (-state[0] + constants[3]*state[1] + constants[0] * state[2] + constants[7] * ref)
+    outarray[2] = (-constants[1] * state[ 2] + constants[2] * state[3]**2)
+    outarray[3] = (-constants[6] * state[3] + constants[6] * control)
+    outarray[4] = (-constants[5] * state[4] + constants[8] * state[1])
+
+
+@cuda.jit((float64[:],
+            float64[:],
+            xoro_type[:]
+            ),
+          device=True,
+          inline=True)
+def get_noise(noise_array,
+              sigmas,
+              RNG):
+
+    for i in range(len(noise_array)):
+        if sigmas[i] != 0.0:
+            noise_array[i] = xoroshiro128p_normal_float64(RNG, i) * sigmas[i]
+        else:
+            noise_array[i] = float64(0.0)
+
+
+@cuda.jit(float64[:](float64[:],
+                     float64[:],
+                     float64[:],
+                     xoro_type[:],
+                     int32,
+                     float64,
+                     float64),
+          device=True,
+          inline=True)
+def eulermaruyama(state,
+                  dxdt,
+                  stochastic_sigmas,
+                  stochastic_gen,
+                  threadidx,
+                  ref,
+                  control):
+    return state
+
+
+@cuda.jit(void(float64[:,:,::1],
                 float64[:,::1],
                 float64[::1],
                 float64[::1],
@@ -306,31 +384,32 @@ step_size = constants[-1]
                 ),
                 opt=True)
 def naiive_euler_kernel(output,
-                            grid_params,
-                            constants,
-                            inits,
-                            duration,
-                            output_fs,
-                            filtercoeffs,
-                            RNG,
-                            noise_sigmas,
-                            ref):
+                        grid_params,
+                        constants,
+                        inits,
+                        duration,
+                        output_fs,
+                        filtercoeffs,
+                        RNG,
+                        noise_sigmas,
+                        ref):
 
     #Figure out where we are on the chip
     tx = cuda.threadIdx.x
-
-    if tx > len(grid_params):
-        return
-
     block_index = cuda.blockIdx.x
     l_param_set = BLOCKSIZE_X * block_index + tx
+
+    # Don't try and do a run that hasn't been requested.
+    if l_param_set >= len(grid_params):
+        return
+
     # store local params in a register - probably done by the compiler regardless
     # but would like to keep memory locations front-of-mind
-    l_alpha, l_beta, l_gamma, l_delta, l_omega, l_omH, l_omL, l_pz_sign, l_hpf_sign, l_rhat, l_cliplevel, l_a, l_b, l_step_size = constants
-
+    l_step_size = constants[-1]
     l_ds_rate = int32(1 / (output_fs * l_step_size))
     l_n_outer = int32((duration / l_step_size) / l_ds_rate)
 
+    # Declare arrays to be kept in shared memory - very quick access.
     s_sums = cuda.shared.array(
         shape=(BLOCKSIZE_X,
                NUM_STATES),
@@ -341,78 +420,86 @@ def naiive_euler_kernel(output,
                NUM_STATES),
         dtype=float64)
 
-    for i in range(NUM_STATES):
-        s_state[tx, i] = inits[i]
+    # vectorize local variables used in integration for convenience
+    l_dxdt = cuda.local.array(
+        shape=(NUM_STATES),
+        dtype=float64)
 
-    s_sums[:] = 0
+    l_noise = cuda.local.array(
+        shape=(NUM_STATES),
+        dtype=float64)
 
-    cuda.syncwarp()
-    l_a = grid_params[l_param_set, 0]
-    l_b = grid_params[l_param_set, 1]
+    l_sigmas = cuda.local.array(
+        shape=(NUM_STATES),
+        dtype=float64)
+
+    l_RNG = cuda.local.array(
+        shape=(NUM_STATES),
+        dtype=xoro_type)
 
     c_filtercoefficients = cuda.const.array_like(filtercoeffs)
     c_filtercoefficients = filtercoeffs
+    c_constants = cuda.const.array_like(constants[:9])
+    l_a = grid_params[l_param_set, 0]
+    l_b = grid_params[l_param_set, 1]
+    l_cliplevel = constants[10]
+    l_rhat = constants[9]
+    l_sigmas = noise_sigmas
 
+    #Initialise w starting states
+    for i in range(NUM_STATES):
+        s_state[tx, i] = inits[i]
+        l_RNG[i] = RNG[l_param_set * NUM_STATES + i]
+
+
+    s_sums[:] = 0.0
+    l_dxdt[:] = 0.0
+
+    #Loop through output samples, one iteration per output
     for i in range(l_n_outer):
 
+        #Loop through euler solver steps - smaller step than output for numerical accuracy reasons
         for j in range(l_ds_rate):
+
+            # Get absolute index of current sample
             abs_sample = i*l_ds_rate + j
 
-            thread_noise0 = xoroshiro128p_normal_float64(RNG, tx + 0) * noise_sigmas[0]
-            thread_noise1 = xoroshiro128p_normal_float64(RNG, tx + 1) * noise_sigmas[1]
-            thread_noise2 = xoroshiro128p_normal_float64(RNG, tx + 2) * noise_sigmas[2]
-            thread_noise3 = xoroshiro128p_normal_float64(RNG, tx + 3) * noise_sigmas[3]
-            thread_noise4 = xoroshiro128p_normal_float64(RNG, tx + 4) * noise_sigmas[4]
+            # Generate noise value for each state
+            get_noise(l_noise,
+                    l_sigmas,
+                    l_RNG)
+
+
+            #Get current filter coefficient for the downsampling filter
             filtercoeff = c_filtercoefficients[j]
 
-            ref_i = ref[abs_sample] * l_rhat
-            if ref_i < l_cliplevel and ref_i > -l_cliplevel:
-                clipped_ref = ref_i
-            if ref_i > l_cliplevel:
-                clipped_ref = l_cliplevel
-            elif ref_i < -l_cliplevel:
-                clipped_ref = -l_cliplevel
+            #Clip reference signal (to simulate a hardware limitation)
+            ref_i = clip(ref[abs_sample] * l_rhat, l_cliplevel)
 
-            control = l_a * s_state[tx, 4] + l_b
-            if control < l_cliplevel and control > -l_cliplevel:
-                clipped_control = control
-            if control > l_cliplevel:
-                clipped_control = l_cliplevel
-            elif control < -l_cliplevel:
-                clipped_control = -l_cliplevel
+            #Clip control signal (to simulate a hardware limitation)
+            control = clip(l_a * s_state[tx, 4] + l_b, l_cliplevel)
 
-            dxdt0 = s_state[tx,0] + s_state[tx, 1]
-            dxdt1 = (-s_state[tx,0] + l_delta*s_state[tx, 1] + l_alpha * s_state[tx, 2] + l_pz_sign * clipped_ref)
-            dxdt2 = (-l_beta * s_state[tx, 2] + l_gamma * s_state[tx, 3]**2)
-            dxdt3 = (-l_omL*s_state[tx, 3] + l_omL*clipped_control)
-            dxdt4 = (-l_omH * s_state[tx,4] + l_hpf_sign * s_state[tx, 1])
+            # Calculate derivative at sample
+            dxdt(l_dxdt,
+                s_state[tx],
+                c_constants,
+                control,
+                ref_i)
 
-            s_state[tx,0] += dxdt0*l_step_size + thread_noise0
-            s_state[tx,1] += dxdt1*l_step_size + thread_noise1
-            s_state[tx,2] += dxdt2*l_step_size + thread_noise2
-            s_state[tx,3] += dxdt3*l_step_size + thread_noise3
-            s_state[tx,4] += dxdt4*l_step_size + thread_noise4
+            for k in range(NUM_STATES):
+                s_state[tx, k] += l_dxdt[k] * l_step_size + l_noise[k]
+                s_sums[tx, k] += s_state[tx,k] * filtercoeff
 
-
-            s_sums[tx, 0] += s_state[tx,0] * filtercoeff
-            s_sums[tx, 1] += s_state[tx,1] * filtercoeff
-            s_sums[tx, 2] += s_state[tx,2] * filtercoeff
-            s_sums[tx, 3] += s_state[tx,3] * filtercoeff
-            s_sums[tx, 4] += s_state[tx,4] * filtercoeff
-
-
+        #Grab completed output sample
         output[i, l_param_set, 0] = s_sums[tx,0]
         output[i, l_param_set, 1] = s_sums[tx,1]
         output[i, l_param_set, 2] = s_sums[tx,2]
         output[i, l_param_set, 3] = s_sums[tx,3]
         output[i, l_param_set, 4] = s_sums[tx,4]
 
+        #Reset filters to zero for another run
+        s_sums[tx, :] = 0
 
-        s_sums[tx, 0] = 0
-        s_sums[tx, 1] = 0
-        s_sums[tx, 2] = 0
-        s_sums[tx, 3] = 0
-        s_sums[tx, 4] = 0
 
 durations = np.asarray([1, 10, 100, 1000, 5000])
 num_parallel = np.asarray([32, 64, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536])
@@ -422,11 +509,11 @@ for j, duration in enumerate(durations):
         sampled_combinations = np.random.choice(len(grid_params), size=parallels, replace=(parallels > len(grid_params)))
         sampled_combinations = grid_params[sampled_combinations]
 
-        if (int64(fs) * int64(duration) * (int64(parallels) * int64(NUM_STATES) + int64(1))) > (7168 * 1024**2):
+        if (int64(fs) * int64(duration) * (int64(parallels) * int64(NUM_STATES) + int64(1))*8) > (7168 * 1024**2):
             naiive_timings[j, k] = 0
         else:
             NUMTHREADS = len(sampled_combinations)
-            BLOCKSPERGRID = max(1, len(sampled_combinations) // BLOCKSIZE_X)
+            BLOCKSPERGRID = int(max(1, np.ceil(len(sampled_combinations) / BLOCKSIZE_X)))
 
             outputstates = cuda.pinned_array((int(fs * duration), parallels, NUM_STATES), dtype=np.float64)
             outputstates[:, :, :] = 0
@@ -440,7 +527,7 @@ for j, duration in enumerate(durations):
             d_inits = cuda.to_device(inits)
 
             random_seed = 1
-            d_noise = create_xoroshiro128p_states(NUMTHREADS, random_seed)
+            d_noise = create_xoroshiro128p_states(NUMTHREADS*NUM_STATES, random_seed)
             d_noisesigmas = cuda.to_device(noise_sigmas)
 
             # Test timing loop
@@ -492,3 +579,7 @@ opt_sms = np.ceil(opt_blocks/2)
 naiive_sms = naiive_blocks
 opt_serials = np.ceil(opt_sms / 36)
 naiive_serials = np.ceil(naiive_sms / 36)
+
+np.savetxt(f"opt_timings_office_pc_{time.time()}.txt", opt_timings)
+np.savetxt(f"naiive_timings_office_pc_{time.time()}.txt", naiive_timings)
+np.savetxt(f"delta_timings_office_pc_{time.time()}.txt", deltas)

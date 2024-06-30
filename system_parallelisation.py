@@ -14,7 +14,7 @@ in a way that was easily modified, without breaking CUDA. It's my fault, not CUD
 #Simulation parameters
 step_size = 0.001
 fs = 10
-duration = np.float64(50)
+duration = np.float64(1)
 
 
 # System Params

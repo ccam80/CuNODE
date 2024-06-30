@@ -18,7 +18,7 @@
 
 import os
 
-os.environ["NUMBA_ENABLE_CUDASIM"] = "0"
+os.environ["NUMBA_ENABLE_CUDASIM"] = "1"
 os.environ["NUMBA_CUDA_DEBUGINFO"] = "0"
 
 from numba import cuda, float32, int64, void, int32, int16, uint64, from_dtype, literally

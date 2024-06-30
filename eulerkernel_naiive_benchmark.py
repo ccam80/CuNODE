@@ -182,11 +182,11 @@ for j, duration in enumerate(durations):
         sampled_combinations = np.random.choice(len(grid_params), size=parallels, replace=(parallels > len(grid_params)))
         sampled_combinations = grid_params[sampled_combinations]
 
-        if (fs * duration * (parallels * NUM_STATES + 1)) > (7168 * 1024**2):
+        if (fs * duration * (parallels * NUM_STATES + 1)*8) > (7168 * 1024**2):
             naiive_timings[j, k] = 0
         else:
             NUMTHREADS = len(sampled_combinations)
-            BLOCKSPERGRID = max(1, len(sampled_combinations) // BLOCKSIZE_X)
+            BLOCKSPERGRID = max(1, np.ceil(len(sampled_combinations) / BLOCKSIZE_X))
 
             outputstates = cuda.pinned_array((int(fs * duration), parallels, NUM_STATES), dtype=np.float64)
             outputstates[:, :, :] = 0

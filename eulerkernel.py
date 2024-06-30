@@ -38,8 +38,8 @@ WORKINGARRAY_LENGTH = BLOCKSIZE_X
 WORKINGARRAY_WIDTH = 12 + 1 # 4 per math stage -op1, op2, op3, op4, then one extra to lessen bank conflicts (these will still occur between y-coord thread groups - one every two groups I think)
 OUTPUTBUFFER_DEPTH = 4
 
-a_gains = np.asarray([i * 0.2 for i in range(-128, 128)], dtype=np.float64)
-b_params = np.asarray([i * 0.1 for i in range(-128, 128)], dtype=np.float64)
+a_gains = np.asarray([i * 0.2 for i in range(-16, 16)], dtype=np.float64)
+b_params = np.asarray([i * 0.1 for i in range(-16, 16)], dtype=np.float64)
 grid_params = [(a, b) for a in a_gains for b in b_params]
 
 #TODO: Consider scaling.
