@@ -38,6 +38,7 @@ from time import time
 from system_parallelisation import working_array_constants, update_indices_constant, fs, duration, step_size, cliplevel, noise_sigmas
 xoro_type = from_dtype(xoroshiro128p_dtype)
 
+device_free_memory = cuda.current_context().get_memory_info()[0]
 
 BLOCKSIZE_X = 8         #Threads per solver/operations per param set
 BLOCKSIZE_Y = 32        #"cantilevers" per shared memory block. Max SM 64kb so this
@@ -211,7 +212,7 @@ for j, duration in enumerate(durations):
         sampled_combinations = np.random.choice(len(grid_params), size=parallels, replace=(parallels > len(grid_params)))
         sampled_combinations = grid_params[sampled_combinations]
 
-        if (int64(fs)* int64(duration) * (int64(parallels) * int64(BLOCKSIZE_X) + int64(1)) * int64(8)) > (7168 * 1024**2):
+        if (int64(fs)* int64(duration) * (int64(parallels) * int64(BLOCKSIZE_X) + int64(1)) * int64(8)) > (device_free_memory):
             opt_timings[j, k] = 0
         else:
             outputstates = cuda.pinned_array((int(fs * duration), len(sampled_combinations), BLOCKSIZE_X), dtype=np.float64)
@@ -509,7 +510,7 @@ for j, duration in enumerate(durations):
         sampled_combinations = np.random.choice(len(grid_params), size=parallels, replace=(parallels > len(grid_params)))
         sampled_combinations = grid_params[sampled_combinations]
 
-        if (int64(fs) * int64(duration) * (int64(parallels) * int64(NUM_STATES) + int64(1))*8) > (7168 * 1024**2):
+        if (int64(fs) * int64(duration) * (int64(parallels) * int64(NUM_STATES) + int64(1))*8) > (device_free_memory):
             naiive_timings[j, k] = 0
         else:
             NUMTHREADS = len(sampled_combinations)
@@ -573,13 +574,6 @@ for j, duration in enumerate(durations):
 
 deltas = opt_timings - naiive_timings
 
-opt_blocks = num_parallel / 32
-naiive_blocks = num_parallel / 512
-opt_sms = np.ceil(opt_blocks/2)
-naiive_sms = naiive_blocks
-opt_serials = np.ceil(opt_sms / 36)
-naiive_serials = np.ceil(naiive_sms / 36)
-
-np.savetxt(f"opt_timings_office_pc_{time.time()}.txt", opt_timings)
-np.savetxt(f"naiive_timings_office_pc_{time.time()}.txt", naiive_timings)
-np.savetxt(f"delta_timings_office_pc_{time.time()}.txt", deltas)
+np.savetxt(f"timing/opt_timings_office_pc_{time()}.txt", opt_timings)
+np.savetxt(f"timing/naiive_timings_office_pc_{time()}.txt", naiive_timings)
+np.savetxt(f"timing/delta_timings_office_pc_{time()}.txt", deltas)

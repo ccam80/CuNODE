@@ -21,10 +21,10 @@ BLOCKSIZE_X = 8 * 32        #Number of param sets per block
 NUM_STATES = 5
 
 # #Setting up grid of params to simulate with
-# a_gains = np.asarray([i * 0.2 for i in range(-1, 1)], dtype=np.float64)
-# b_params = np.asarray([i * 0.1 for i in range(-1, 1)], dtype=np.float64)
-# grid_params = [(a, b) for a in a_gains for b in b_params]
-grid_params = [(1,0.5), (1,0)]
+a_gains = np.asarray([i * 0.01 for i in range(-1, 1)], dtype=np.float64)
+b_params = np.asarray([i * 0.02 for i in range(-1, 1)], dtype=np.float64)
+grid_params = [(a, b) for a in a_gains for b in b_params]
+# grid_params = [(1,0.5), (1,0)]
 
 #Bring in filter coefficients for polyphase decimator - FIR filter that downsamples
 #TODO: Consider scaling.
@@ -62,9 +62,9 @@ def dxdt(outarray,
          constants,
          control,
          ref):
-    outarray[0] = state[0] + state[ 1]
-    outarray[1] = (-state[0] + constants[3]*state[1] + constants[0] * state[2] + constants[7] * ref)
-    outarray[2] = (-constants[1] * state[ 2] + constants[2] * state[3]**2)
+    outarray[0] = state[1]
+    outarray[1] = (-state[0] - constants[3]*state[1] + constants[0] * state[2] + constants[7] * ref)
+    outarray[2] = (-constants[1] * state[ 2] + constants[2] * state[3] * state[3])
     outarray[3] = (-constants[6] * state[3] + constants[6] * control)
     outarray[4] = (-constants[5] * state[4] + constants[8] * state[1])
 
@@ -265,7 +265,7 @@ _s = 0
 _e = 0
 timing_nb = 0
 timing_nb_wall = 0
-for i in range(4):
+for i in range(1):
     if i > 0:
         start.record()
         _s = time()
@@ -299,3 +299,34 @@ for i in range(4):
 cuda.profile_stop()
 print('numba events:', timing_nb / 3, 'ms')
 print('numba wall  :', timing_nb_wall / 3 * 1000, 'ms')
+
+
+import matplotlib.pyplot as plt
+def plot_time_domain(t, state, ref, constants, ax=None, title='Untitled'):
+
+    if not ax:
+        fig, ax = plt.subplots(4,1,sharex=True,layout='constrained')
+        fig.suptitle(title)
+
+    axs = ax.ravel()
+    axs[0].plot(t, state[:,0], label = 'Displacement (unfiltered)')
+    axs[0].plot(t, state[:,4], label = 'Displacement (HPF)')
+    axs[0].plot(t, ref[::100]*constants[9], label="Piezo input")
+    axs[0].set_ylim([-5,5])
+    axs[0].legend(loc="upper right")
+
+    axs[1].plot(t, state[:,3], label = 'Control')
+    axs[1].plot(t, state[:,3]**2, label = 'Control squared')
+    axs[1].legend(loc="upper right")
+
+    axs[2].plot(t, state[:,2], label='Temperature')
+    axs[2].legend(loc="upper right")
+
+    heat_in = constants[2]*state[:,3]**2;
+    heat_out = state[:,2]*constants[1];
+    axs[3].plot(t, heat_in, label='Heat in')
+    axs[3].plot(t, heat_out, label='Heat out')
+    axs[3].legend(loc="upper right")
+
+t_out = np.linspace(0, duration - 1/fs, int(duration * fs))
+plot_time_domain(t_out, outputstates[:,0,:], reference, constants)
