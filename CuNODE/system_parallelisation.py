@@ -14,7 +14,7 @@ in a way that was easily modified, without breaking CUDA. It's my fault, not CUD
 #Simulation parameters
 step_size = 0.001
 fs = 10
-duration = np.float64(10)
+duration = np.float64(200)
 
 
 # System Params
@@ -26,7 +26,7 @@ omega = np.float64(1.0)
 omH = np.float64(1/114)
 omL = np.float64(2.0)
 pz_sign = np.float64(1)
-hpf_sign = np.float64(1)
+hpf_sign = np.float64(-1)
 rhat = np.float64(0.01)
 cliplevel = np.float64(1)
 a = np.float64(1)
@@ -56,7 +56,7 @@ noise_sigmas = np.asarray([0.0,
                            0.0,
                            0.0,
                            0.0,
-                           10/8191,
+                           0/8191,
                            0.0,
                            0.0,
                            0.0],

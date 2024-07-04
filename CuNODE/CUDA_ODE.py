@@ -9,16 +9,19 @@ Created on Thu Jun 27 20:31:43 2024
 import os
 
 os.environ["NUMBA_ENABLE_CUDASIM"] = "0"
-os.environ["NUMBA_CUDA_DEBUGINFO"] = "1"
+os.environ["NUMBA_CUDA_DEBUGINFO"] = "0"
 
 import numpy as np
+import cupy as cp
 from numba import cuda, from_dtype, literally
 from numba import float32, float64, int32, int64, void
 from numba.types import Literal, literal
 from dxdt import dxdt
 from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_float64, xoroshiro128p_dtype
-from scipy.signal import firwin
-BLOCKSIZE_X = 8 * 32        #Number of param sets per block
+from cupyx.scipy.signal import firwin
+from cupyx.scipy.fft import rfft, rfftfreq
+
+BLOCKSIZE_X = 2 * 32        #Number of param sets per block
 NUM_STATES = 5
 xoro_type = from_dtype(xoroshiro128p_dtype)
 global0 = 0
@@ -28,7 +31,7 @@ class CUDA_ODE(object):
     def __init__(self,
                  nstates,
                  dtype = np.float64,
-                 blocksize_x = 8 * 32
+                 blocksize_x = 2 * 32
                  ):
 
         self.nstates = nstates
@@ -85,22 +88,18 @@ class CUDA_ODE(object):
             if l_param_set >= len(grid_params):
                 return
 
-            # store local params in a register - probably done by the compiler regardless
-            # but would like to keep memory locations front-of-mind
             l_step_size = constants[-1]
             l_ds_rate = int32(1 / (output_fs * l_step_size))
             l_n_outer = int32((duration / l_step_size) / l_ds_rate)
-            # if tx == 0 
-            #     from pdb import set_trace
-            #     set_trace()
+         
+            
             litzero = literally(zero)
             litstates = literally(nstates)
-
-            dynamic_mem = cuda.shared.array(litzero, dtype=float64)
             
             # Declare arrays to be kept in shared memory - very quick access.
-            s_sums = dynamic_mem[:xblocksize*numstates - 1]
-            s_state = dynamic_mem[xblocksize*numstates: 2*xblocksize*numstates -1]
+            dynamic_mem = cuda.shared.array(litzero, dtype=float64)
+            s_sums = dynamic_mem[:xblocksize*numstates]
+            s_state = dynamic_mem[xblocksize*numstates: 2*xblocksize*numstates]
          
             # vectorize local variables used in integration for convenience
             l_dxdt = cuda.local.array(
@@ -111,30 +110,23 @@ class CUDA_ODE(object):
                 shape=(litstates),
                 dtype=float64)
 
-            l_sigmas = cuda.local.array(
-                shape=(litstates),
-                dtype=float64)
-
-            l_RNG = cuda.local.array(
-                shape=(litstates),
-                dtype=xoro_type)
-
+            c_sigmas = cuda.const.array_like(noise_sigmas)
+            c_RNG = cuda.const.array_like(RNG)
             c_filtercoefficients = cuda.const.array_like(filtercoeffs)
-            c_filtercoefficients = filtercoeffs
             c_constants = cuda.const.array_like(constants[:9])
+            
             l_a = grid_params[l_param_set, 0]
             l_b = grid_params[l_param_set, 1]
             l_cliplevel = constants[10]
             l_rhat = constants[9]
-            l_sigmas = noise_sigmas
 
             #Initialise w starting states
             for i in range(numstates):
                 s_state[tx*numstates + i] = inits[i]
-                l_RNG[i] = RNG[l_param_set * numstates + i]
+                s_sums[tx*numstates + i] = 0.0
 
 
-            s_sums[:] = 0.0
+
             l_dxdt[:] = 0.0
 
             #Loop through output samples, one iteration per output
@@ -148,8 +140,9 @@ class CUDA_ODE(object):
 
                     # Generate noise value for each state
                     getnoisefunc(l_noise,
-                                 l_sigmas,
-                                 l_RNG)
+                                 c_sigmas,
+                                 l_param_set,
+                                 c_RNG)
 
 
                     #Get current filter coefficient for the downsampling filter
@@ -160,9 +153,6 @@ class CUDA_ODE(object):
 
                     # Clip control signal (to simulate a hardware limitation)
                     control = clipfunc(l_a * s_state[tx*numstates + 4] + l_b, l_cliplevel)
-
-                    ref_i = float64(0.0)
-                    control = float64(1)
                     
                     # Calculate derivative at sample
                     dxdtfunc(l_dxdt,
@@ -170,16 +160,14 @@ class CUDA_ODE(object):
                              c_constants,
                              control,
                              ref_i)
-                    
-                    l_dxdt[:] = 1
 
                     for k in range(numstates):
                         s_state[tx*numstates + k] += l_dxdt[k] * l_step_size + l_noise[k]
                         s_sums[tx*numstates + k] += s_state[tx*numstates + k] * filtercoeff
 
                 #Grab completed output sample
-                output[i, l_param_set, 0] = s_sums[tx*xblocksize + 0]
-                output[i, l_param_set, 1] = s_sums[tx*xblocksize + 1]
+                output[i, l_param_set, 0] = s_sums[tx*numstates + 0]
+                output[i, l_param_set, 1] = s_sums[tx*numstates + 1]
                 output[i, l_param_set, 2] = s_sums[tx*numstates + 2]
                 output[i, l_param_set, 3] = s_sums[tx*numstates + 3]
                 output[i, l_param_set, 4] = s_sums[tx*numstates + 4]
@@ -235,7 +223,7 @@ class CUDA_ODE(object):
                                          self.output_fs/3,
                                          window='hann',
                                          pass_zero='lowpass',
-                                         fs = self.output_fs) # This is pretty arbitrary, trying to keep things smooth in the pass band
+                                         fs = self.output_fs).get() # This is pretty arbitrary, trying to keep things smooth in the pass band
         
         d_outputstates = cuda.to_device(self.output_array)
         d_constants = cuda.to_device(self.constants)
@@ -247,13 +235,14 @@ class CUDA_ODE(object):
         
         random_seed = 1
         #Indexing note - because we will not add noise to all states, index this like a 2d (state, tx) array
-        d_noise = create_xoroshiro128p_states(len(self.grid_params)*self.nstates, random_seed)
+        d_noise = create_xoroshiro128p_states(len(self.grid_params), random_seed)
         d_noisesigmas = cuda.to_device(noise_sigmas)
         
             
         self.output_array[:, :, :] = 0
         BLOCKSPERGRID = int(max(1, np.ceil(len(self.grid_params) / self.blocksize_x)))
-        self.eulermaruyamakernel[BLOCKSPERGRID, self.blocksize_x, 0, 49152](self.blocksize_x,
+        dynamic_sharedmem = 2 * self.blocksize_x * self.nstates * 8
+        self.eulermaruyamakernel[BLOCKSPERGRID, self.blocksize_x, 0, dynamic_sharedmem](self.blocksize_x,
                                  self.nstates,
                                  d_outputstates,
                                  d_gridparams,
@@ -267,29 +256,38 @@ class CUDA_ODE(object):
                                  d_reference)
         cuda.synchronize()
         d_outputstates.copy_to_host(self.output_array)
-        self.output_array = np.asarray(self.output_array)
+        self.output_array = cp.asarray(self.output_array)
 
         
-    
+    def get_fft(self, fs=1.0, window='hann', nperseg=256, noverlap=None):
+        # Extract the dimensions
+        contiguous_working = cp.ascontiguousarray(self.output_array.T)
+        
+        self.fft_array = rfft(contiguous_working, axis=2)
+        self.f = rfftfreq(contiguous_working.shape[2], d=1/(self.output_fs*2*np.pi))
+        
+
     
     
 #%% Test Code
-from system_parallelisation import constants, inits, noise_sigmas, fs, duration, step_size
-
-# #Setting up grid of params to simulate with
-a_gains = np.asarray([i * 0.01 for i in range(-1, 1)], dtype=np.float64)
-b_params = np.asarray([i * 0.02 for i in range(-1, 1)], dtype=np.float64)
-grid_params = [(a, b) for a in a_gains for b in b_params]
-step_size = constants[-1]
-reference = np.sin(np.linspace(0,duration - step_size, int(duration / step_size)), dtype=np.float64)
-
-ODE = CUDA_ODE(5)
-ODE.build_kernel()
-ODE.euler_maruyama(inits,
-                    constants,
-                    duration,
-                    step_size,
-                    fs,
-                    grid_params,
-                    noise_sigmas,
-                    reference)
+if __name__ == "__main__":
+    from system_parallelisation import constants, inits, noise_sigmas, fs, duration, step_size
+    
+    # #Setting up grid of params to simulate with
+    a_gains = np.asarray([i * 0.01 for i in range(-128, 128)], dtype=np.float64)
+    b_params = np.asarray([i * 0.02 for i in range(-128, 128)], dtype=np.float64)
+    grid_params = [(a, b) for a in a_gains for b in b_params]
+    step_size = constants[-1]
+    reference = np.sin(np.linspace(0,duration - step_size, int(duration / step_size)), dtype=np.float64)
+    
+    ODE = CUDA_ODE(5)
+    ODE.build_kernel()
+    ODE.euler_maruyama(inits,
+                        constants,
+                        duration,
+                        step_size,
+                        fs,
+                        grid_params,
+                        noise_sigmas,
+                        reference)
+    ODE.get_fft(fs=10.0)

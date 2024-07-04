@@ -38,6 +38,7 @@ class dxdt:
                  constants,
                  control,
                  ref):
+
             outarray[0] = state[1]
             outarray[1] = (-state[0] - constants[3]*state[1] + constants[0] * state[2] + constants[7] * ref)
             outarray[2] = (-constants[1] * state[ 2] + constants[2] * state[3] * state[3])
@@ -47,19 +48,20 @@ class dxdt:
         
         @cuda.jit((float64[:],
                     float64[:],
+                    int32,
                     xoro_type[:]
                     ),
                   device=True,
                   inline=True)
         def get_noise(noise_array,
                       sigmas,
+                      idx,
                       RNG):
         
             for i in range(len(noise_array)):
                 if sigmas[i] != 0.0:
-                    noise_array[i] = xoroshiro128p_normal_float64(RNG, i) * sigmas[i]
-                else:
-                    noise_array[i] = float64(0.0)
+                    noise_array[i] = xoroshiro128p_normal_float64(RNG, idx) * sigmas[i]
+                
                     
         self.dxdtfunc = dxdtfunc
         self.getnoisefunc = get_noise

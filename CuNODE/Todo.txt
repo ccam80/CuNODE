@@ -1,0 +1,8 @@
+CuNODE next steps for mems ruig
+
+Arbitrary parameter grids
+Solve button in GUI
+Time domain plot optimise
+transient vs steady state option (run sim for one recording period before saving data
+internally generated fixed frequency reference signal (grid-searchable)
+Grid with different control schemes

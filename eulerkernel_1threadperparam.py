@@ -17,12 +17,12 @@ xoro_type = from_dtype(xoroshiro128p_dtype)
 
 
 
-BLOCKSIZE_X = 8 * 32        #Number of param sets per block
+BLOCKSIZE_X = 2 * 32        #Number of param sets per block
 NUM_STATES = 5
 
 # #Setting up grid of params to simulate with
-a_gains = np.asarray([i * 0.01 for i in range(-1, 1)], dtype=np.float64)
-b_params = np.asarray([i * 0.02 for i in range(-1, 1)], dtype=np.float64)
+a_gains = np.asarray([i * 0.01 for i in range(-128, 128)], dtype=np.float64)
+b_params = np.asarray([i * 0.02 for i in range(-128, 128)], dtype=np.float64)
 grid_params = [(a, b) for a in a_gains for b in b_params]
 # grid_params = [(1,0.5), (1,0)]
 
@@ -71,19 +71,20 @@ def dxdt(outarray,
 
 @cuda.jit((float64[:],
             float64[:],
+            int32,
             xoro_type[:]
             ),
           device=True,
           inline=True)
 def get_noise(noise_array,
               sigmas,
+              idx,
               RNG):
 
     for i in range(len(noise_array)):
-        if sigmas[i] != 0.0:
-            noise_array[i] = xoroshiro128p_normal_float64(RNG, i) * sigmas[i]
-        else:
-            noise_array[i] = float64(0.0)
+        if sigmas[i] != 0.0:        #If sigma is zero, noise array already holds 0.0, so we can leave unmodified
+            noise_array[i] = xoroshiro128p_normal_float64(RNG, idx) * sigmas[i]
+        
 
 
 @cuda.jit(float64[:](float64[:],
@@ -116,7 +117,8 @@ def eulermaruyama(state,
                 float64[::1],
                 float64[::1]
                 ),
-                opt=True)
+                opt=True,
+                max_registers=54)
 def naiive_euler_kernel(output,
                         grid_params,
                         constants,
@@ -163,45 +165,37 @@ def naiive_euler_kernel(output,
         shape=(NUM_STATES),
         dtype=float64)
 
-    l_sigmas = cuda.local.array(
-        shape=(NUM_STATES),
-        dtype=float64)
-
-    l_RNG = cuda.local.array(
-        shape=(NUM_STATES),
-        dtype=xoro_type)
-
+    c_sigmas = cuda.const.array_like(noise_sigmas)
+    c_RNG = cuda.const.array_like(RNG)
     c_filtercoefficients = cuda.const.array_like(filtercoeffs)
-    c_filtercoefficients = filtercoeffs
     c_constants = cuda.const.array_like(constants[:9])
     l_a = grid_params[l_param_set, 0]
     l_b = grid_params[l_param_set, 1]
     l_cliplevel = constants[10]
     l_rhat = constants[9]
-    l_sigmas = noise_sigmas
 
     #Initialise w starting states
     for i in range(NUM_STATES):
         s_state[tx, i] = inits[i]
-        l_RNG[i] = RNG[l_param_set * NUM_STATES + i]
 
-
+    l_noise[:] = 0.0
     s_sums[:] = 0.0
     l_dxdt[:] = 0.0
 
     #Loop through output samples, one iteration per output
     for i in range(l_n_outer):
-
+        j = 0
         #Loop through euler solver steps - smaller step than output for numerical accuracy reasons
-        for j in range(l_ds_rate):
-
+        while j < l_ds_rate:
+            
             # Get absolute index of current sample
             abs_sample = i*l_ds_rate + j
 
             # Generate noise value for each state
             get_noise(l_noise,
-                    l_sigmas,
-                    l_RNG)
+                    c_sigmas,
+                    l_param_set,
+                    c_RNG)
 
 
             #Get current filter coefficient for the downsampling filter
@@ -223,6 +217,7 @@ def naiive_euler_kernel(output,
             for k in range(NUM_STATES):
                 s_state[tx, k] += l_dxdt[k] * l_step_size + l_noise[k]
                 s_sums[tx, k] += s_state[tx,k] * filtercoeff
+            j += 1
 
         #Grab completed output sample
         output[i, l_param_set, 0] = s_sums[tx,0]
@@ -255,7 +250,7 @@ d_inits = cuda.to_device(inits)
 #Create random noise generators (1 per thread)
 random_seed = 1
 #Indexing note - because we will not add noise to all states, index this like a 2d (state, tx) array
-d_noise = create_xoroshiro128p_states(NUMTHREADS*NUM_STATES, random_seed)
+d_noise = create_xoroshiro128p_states(NUMTHREADS, random_seed)
 d_noisesigmas = cuda.to_device(noise_sigmas)
 
 # Test timing loop
