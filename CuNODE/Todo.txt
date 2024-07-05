@@ -1,8 +1,19 @@
 CuNODE next steps for mems ruig
 
-Arbitrary parameter grids
+Overhaul plotter to 
+In a sims pane
+- select grid params and allow entry of ranges
+- modify system parameters (constants) in popup window
+- update labels depending on current grid labels
+- run solver from gui
 Solve button in GUI
-Time domain plot optimise
-transient vs steady state option (run sim for one recording period before saving data
-internally generated fixed frequency reference signal (grid-searchable)
-Grid with different control schemes
+
+In the plots pane:
+change control scheme to:
+3d, 2d
+time, freq
+x, y axes (fix other free params and offer a dropdown)
+find peak-peak and rms values of tiem for a surface option
+slice arrays if required
+
+Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one

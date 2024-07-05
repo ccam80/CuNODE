@@ -1,17 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import numpy as np
+from diffeq_system import diffeq_system #Only needed for test code
 from CUDA_ODE import CUDA_ODE
 from cupyx.scipy.signal import stft
 from scipy.signal.windows import hann
-from functools import partial
-from timing_wrapper import timing
-from numba import jit
+
+
 class Gridplotter:
-    def __init__(self, root, solved_ODE):
+    def __init__(self, root, solved_ODE, grid_values):
         self.root = root
+        self.grid_values = grid_values
         self.solved_ODE = solved_ODE
         self.selected_a = tk.DoubleVar()
         self.selected_b = tk.DoubleVar()
@@ -20,14 +21,18 @@ class Gridplotter:
         
      
 
-        self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.output_fs, int( self.solved_ODE.duration * self.solved_ODE.output_fs))
-        self.spectr_fs = np.floor(2*np.pi*self.solved_ODE.output_fs) # Correct for normalised freq (bring it to 1)
+        self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.fs, int( self.solved_ODE.duration * self.solved_ODE.fs))
+        self.spectr_fs = np.floor(2*np.pi*self.solved_ODE.fs) # Correct for normalised freq (bring it to 1)
         self.plotstate = 4
         self.current_button = "Grid Gain @w"
-        self.freq_undex=4
-        self.current_a_val=0
-        self.current_b_val=0
+        self.freq_index = 0
+        self.current_a_val = 0
+        self.current_b_val = 0
+        self.selected_index = 0
         
+        self.a_values = np.unique([param[0] for param in self.grid_values])
+        self.b_values = np.unique([param[1] for param in self.grid_values])
+        self.param_index_map = {param: idx for idx, param in enumerate(self.grid_values)}
         self.setup_ui()
         # self.update_frequency(None)
         
@@ -39,12 +44,16 @@ class Gridplotter:
         self.fig = Figure(figsize=(12, 8))
         self.ax = [self.fig.add_subplot(111, projection='3d')]
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
-        self.canvas.get_tk_widget().grid(row=0, column=0, columnspan=4, rowspan=5, sticky='nsew')
+        self.canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, rowspan=9, sticky='nsew')
         self.root.bind("<Configure>", self.resize_canvas)
+        
+        self.toolbar = NavigationToolbar2Tk(self.canvas, root, pack_toolbar=False)
+        self.toolbar.grid(row=0,column=0, columnspan=4)
+        self.toolbar.update()
         
         # Create control frame on the rightmost column
         self.control_frame = ttk.Frame(self.root)
-        self.control_frame.grid(row=0, column=4, rowspan=5, sticky='nsew')
+        self.control_frame.grid(row=0, column=4, rowspan=10, sticky='nsew')
 
         self.set_cell_weights(self.root, weight=4)
         self.root.columnconfigure(4,weight=1)
@@ -56,17 +65,17 @@ class Gridplotter:
         ttk.Radiobutton(self.control_frame, text="Grid Phase @w", variable=self.plot_type, value="Grid Phase @w", command=self.plotselect).grid(row=2, column=0, padx=10, pady=10)
 
         # Create dropdowns for parameter selection
-        ttk.Label(self.control_frame, text="Select a:").grid(row=4, column=0, padx=10, pady=10)
+        ttk.Label(self.control_frame, text="Select a:").grid(row=3, column=0, padx=10, pady=10)
         self.dropdown_a = ttk.Combobox(self.control_frame,
                                        textvariable=self.selected_a,
-                                       values=sorted(list(set([param[0] for param in self.solved_ODE.grid_params]))))
-        self.dropdown_a.grid(row=4, column=1, padx=10, pady=10)
+                                       values=sorted(list(set([param[0] for param in self.grid_values]))))
+        self.dropdown_a.grid(row=3, column=1, padx=10, pady=10)
         self.dropdown_a.bind("<<ComboboxSelected>>", self.update_a_b)
 
         ttk.Label(self.control_frame, text="Select b:").grid(row=4, column=0, padx=10, pady=10)
         self.dropdown_b = ttk.Combobox(self.control_frame
                                        , textvariable=self.selected_b,
-                                       values=sorted(list(set([param[1] for param in self.solved_ODE.grid_params]))))
+                                       values=sorted(list(set([param[1] for param in self.grid_values]))))
         self.dropdown_b.grid(row=4, column=1, padx=10, pady=10)
         self.dropdown_b.bind("<<ComboboxSelected>>", self.update_a_b)
         
@@ -117,7 +126,7 @@ class Gridplotter:
         # Get the selected item
         selected_index = self.listbox.curselection()
         if selected_index:
-            self.freq_index = np.argmin(np.abs(self.solved_ODE.f.get() - self.solved_ODE.f[selected_index].get()))  
+            self.freq_index = selected_index  
             self.update_frequency(None)
             # Close the dropdown window
             self.dropdown_window.destroy()
@@ -147,7 +156,7 @@ class Gridplotter:
     def update_a_b(self, event):
         self.current_a_val = self.selected_a.get()
         self.current_b_val = self.selected_b.get()
-        self.param_index = self.solved_ODE.grid_params.index((self.current_a_val,
+        self.param_index = self.grid_values.index((self.current_a_val,
                                                               self.current_b_val))
         self.single_state = self.solved_ODE.output_array[:, self.param_index, :].get()
         if self.current_button == "Grid Time Domain":
@@ -155,28 +164,31 @@ class Gridplotter:
         else:
             self.update_single_plot()
     
+
+    def get_param_index(self, params):
+        return self.param_index_map.get(params, None)
+    
     def load_timegrid(self):
-        a_values = np.unique([param[0] for param in self.solved_ODE.grid_params])
-        b_values = np.unique([param[1] for param in self.solved_ODE.grid_params])
-        
         if self.fixed_param == 'a':
             fixed_value = self.current_a_val
-            A, T = np.meshgrid(b_values, self.t)
+            A, T = np.meshgrid(self.b_values, self.t)
             Z = np.zeros_like(A, dtype=np.float64)
-            for i, b_val in enumerate(b_values):
-                param_index = self.solved_ODE.grid_params.index((fixed_value, b_val))
-                Z[:, i] = self.solved_ODE.output_array.get()[:, param_index, self.plotstate]
+            for i, b_val in enumerate(self.b_values):
+                param_index = self.get_param_index((fixed_value, b_val))
+                if param_index is not None:
+                    Z[:, i] = self.solved_ODE.time_friendly_array[self.plotstate, param_index, :]
         else:
             fixed_value = self.current_b_val
-            A, T = np.meshgrid(a_values, self.t)
+            A, T = np.meshgrid(self.a_values, self.t)
             Z = np.zeros_like(A, dtype=np.float64)
-            param_indices = np.zeros(A.shape[0])
-            for i, a_val in enumerate(a_values):
-                param_index = self.solved_ODE.grid_params.index((a_val, fixed_value))
-                Z[:, i] = self.solved_ODE.output_array.get()[:, param_index, self.plotstate]
+            for i, a_val in enumerate(self.a_values):
+                param_index = self.get_param_index((a_val,fixed_value))
+                if param_index is not None:
+                    Z[:, i] = self.solved_ODE.time_friendly_array[self.plotstate, param_index, :]
             
         return A, T, Z
     
+    # @timing
     def update_timegrid(self):
         self.ax[0].cla()  # Clear the previous plot
         
@@ -192,17 +204,17 @@ class Gridplotter:
         # Clear previous plot
         self.ax[0].cla() 
 
-        a_values = np.unique([param[0] for param in self.solved_ODE.grid_params])
-        b_values = np.unique([param[1] for param in self.solved_ODE.grid_params])
+        a_values = np.unique([param[0] for param in self.grid_values])
+        b_values = np.unique([param[1] for param in self.grid_values])
         
         A, B = np.meshgrid(a_values, b_values)
         
         
         # Get Z values for the specific frequency and state
-        z_values = np.abs(self.solved_ODE.fft_array[self.plotstate, :, self.freq_index].get())
+        z_values = np.abs(self.solved_ODE.fft_array[self.plotstate, :, self.freq_index]).T
         
         #Map (a, b) tuples to Z values
-        z_dict = {self.solved_ODE.grid_params[i]: z_values[i] for i in range(len(self.solved_ODE.grid_params))}
+        z_dict = {self.grid_values[i]: z_values[i] for i in range(len(self.grid_values))}
         
         # Step 6: Initialize the Z matrix with the same shape as the meshgrid
         Z = np.zeros_like(A, dtype=np.float64)
@@ -223,17 +235,17 @@ class Gridplotter:
         # Clear previous plot
         self.ax[0].cla() 
 
-        a_values = np.unique([param[0] for param in self.solved_ODE.grid_params])
-        b_values = np.unique([param[1] for param in self.solved_ODE.grid_params])
+        a_values = np.unique([param[0] for param in self.grid_values])
+        b_values = np.unique([param[1] for param in self.grid_values])
         
         A, B = np.meshgrid(a_values, b_values)
         
         
         # Get Z values for the specific frequency and state
-        z_values = np.angle(self.solved_ODE.fft_array[self.plotstate, :, self.freq_index].get())
+        z_values = np.angle(self.solved_ODE.fft_array[self.plotstate, :, self.freq_index].T)
         
         #Map (a, b) tuples to Z values
-        z_dict = {self.solved_ODE.grid_params[i]: z_values[i] for i in range(len(self.solved_ODE.grid_params))}
+        z_dict = {self.grid_values[i]: z_values[i] for i in range(len(self.grid_values))}
         
         # Step 6: Initialize the Z matrix with the same shape as the meshgrid
         Z = np.zeros_like(A, dtype=np.float64)
@@ -256,7 +268,6 @@ class Gridplotter:
         if self.current_button == "Individual Time Domain":   
             for ax in self.ax:
                 ax.cla()
-                
             self.ax[0].plot(self.t, self.single_state[:,0], label = 'Displacement (unfiltered)')
             self.ax[0].plot(self.t, self.single_state[:,4], label = 'Displacement (HPF)')
             self.ax[0].plot(self.t, self.reference * self.solved_ODE.constants[9], label="Piezo input")
@@ -280,7 +291,7 @@ class Gridplotter:
             self.ax[0].cla() 
             
             if 'windowlength' not in spectral_params:
-                windowlength = min(int(np.floor(30*2*np.pi * self.solved_ODE.output_fs)), int(len(self.t) / 8))
+                windowlength = min(int(np.floor(30*2*np.pi * self.solved_ODE.fs)), int(len(self.t) / 8))
             if 'hop' not in spectral_params:
                 hop = int(np.floor(windowlength/4))
             if 'windowlength' not in spectral_params:
@@ -345,24 +356,32 @@ class Gridplotter:
 
 
 
-
+# Test code
 if __name__ == "__main__":
-    from system_parallelisation import constants, inits, noise_sigmas, fs, duration
 
-    # Setting up grid of params to simulate with
-    a_gains = np.asarray([i * 0.02 for i in range(-128, 128)], dtype=np.float64)
-    b_params = np.asarray([i * 0.04 for i in range(-64, 64)], dtype=np.float64)
+    
+    # #Setting up grid of params to simulate with
+    a_gains = np.asarray([i * 0.01 for i in range(-128, 128)], dtype=np.float64)
+    b_params = np.asarray([i * 0.02 for i in range(-64, 64)], dtype=np.float64)
     grid_params = [(a, b) for a in a_gains for b in b_params]
-    step_size = constants[-1]
-    reference = np.sin(np.linspace(0, duration - step_size, int(duration / step_size)), dtype=np.float64)
-    plotref = np.sin(np.linspace(0, duration - 1/fs, int(duration * fs)), dtype=np.float64)
-
-    ODE = CUDA_ODE(5)
+    grid_labels = ['a', 'b']
+    step_size = 0.001
+    fs = 10
+    duration = np.float64(100)
+    sys = diffeq_system()
+    inits = np.asarray([1.0, 0, 1.0, 0, 1.0], dtype=np.float64)
+    
+    ODE = CUDA_ODE(sys)
     ODE.build_kernel()
-    ODE.euler_maruyama(inits, constants, duration, step_size, fs, grid_params, noise_sigmas, reference)
-    ODE.get_fft(fs=fs)
+    ODE.euler_maruyama(inits,
+                       duration,
+                       step_size,
+                       fs,
+                       grid_labels,
+                       grid_params,
+                       warmup_time=200.0)
+    ODE.get_fft(fs=10.0)
 
     root = tk.Tk()
-    plotter = Gridplotter(root, ODE)
-    plotter.reference = plotref
+    plotter = Gridplotter(root, ODE, grid_params)
     root.mainloop()
