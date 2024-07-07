@@ -4,13 +4,62 @@ Created on Thu Jun 27 20:42:35 2024
 
 @author: cca79
 """
+import os
+
+os.environ["NUMBA_ENABLE_CUDASIM"] = "0"
+os.environ["NUMBA_CUDA_DEBUGINFO"] = "0"
+
 from numba import cuda, float64, int64, int32, float32, from_dtype
 from numpy import asarray
 from _utils import clamp
 import numpy as np
 from math import cos
 
+class system_constant_class(dict):    
+    def set_constant(self, key, item):
+        if key in self:
+            self[key] = self.precision(item)
+        else:
+            raise KeyError(f"Constant {key} not in constants dictionary")
+            
+    def get_constant(self, key):
+        if key in self:
+            return self[key]
+        else:
+            raise KeyError(f"Constant {key} not in constants dictionary")
+                
+def system_constants(constants_dict=None, **kwargs):
 
+    constants = system_constant_class()
+    
+    defaults = {'alpha':0.52,
+                'beta' : 0.0133,
+                'gamma' : 0.0624,
+                'delta' : 0.012,
+                'omega_n' : 1.0,
+                'omH' : 1/114,
+                'omL' : 2.0,
+                'pz_sign' : 1.0,
+                'hpf_sign' : -1.0,
+                'rhat' : 0.01,
+                'cliplevel' : 1,
+                'a' : 1,
+                'b' : -0.4,
+                'omega_forcing': 1.0}
+    
+   
+    if constants_dict is None:
+        constants_dict = {}
+
+    combined_updates = {**defaults, **constants_dict, **kwargs}
+    
+    # Note: If the same value occurs in the dict and 
+    # keyword args, the kwargs one will win.
+    for key, item in combined_updates.items():
+        constants.update(combined_updates)
+        
+    return constants
+        
 class diffeq_system:
     """ This class should contain all system definitions. The constants management
     scheme can be a little tricky, because the GPU stuff can't handle dictionaries.
@@ -34,7 +83,10 @@ class diffeq_system:
     functions. Try using the Cupy function instead if you get an error.
     
     """
-    def __init__(self):
+    def __init__(self,
+                 num_states = 5,
+                 precision=np.float64,
+                 **kwargs):
         """Set system constant values then function as a factory function to 
         build CUDA device functions for use in the ODE solver kernel. No 
         arguments, no returns it's all just bad coding practice in here. 
@@ -43,25 +95,11 @@ class diffeq_system:
         and dxdt assignment at the end is an example, you will need to overwrite"""
         
         self.num_states = 5
+        self.precision = precision
         
-        self.constants_dict  = {
-            'alpha':0.52,
-            'beta' : 0.0133,
-            'gamma' : 0.0624,
-            'delta' : 0.012,
-            'omega_n' : 1.0,
-            'omH' : 1/114,
-            'omL' : 2.0,
-            'pz_sign' : 1.0,
-            'hpf_sign' : -1.0,
-            'rhat' : 0.01,
-            'cliplevel' : 1,
-            'a' : 1,
-            'b' : -0.4,
-            'omega_forcing': 1.0
-            }
+        self.constants_dict  = system_constants(kwargs)
         
-        self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=np.float64)
+        self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=precision)
         self.constant_indices = {label: index for index, (label, constant) in enumerate(self.constants_dict.items())}
         
         self.noise_sigmas = asarray([0.0,
@@ -69,8 +107,21 @@ class diffeq_system:
                                     0.0,
                                     0/8191,
                                     0.0], 
-                                    dtype=np.float64)
+                                    dtype=precision)
         
+        def update_constants(self, updates_dict=None, **kwargs):
+            if updates_dict is None:
+                updates_dict = {}
+    
+            combined_updates = {**updates_dict, **kwargs}
+            
+            # Note: If the same value occurs in the dict and 
+            # keyword args, the kwargs one will win.
+            for key, item in combined_updates.items():
+                self.constants_dict.set_constant(key, self.precision(item))
+            
+            self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=self.precision)
+
         
         @cuda.jit(float64(float64,
                           float64,
@@ -122,33 +173,33 @@ class diffeq_system:
 
 
 
-# #******************************* TEST CODE ******************************** #
-# sys = diffeq_system()
-# dxdt = sys.dxdtfunc
+#******************************* TEST CODE ******************************** #
+sys = diffeq_system()
+dxdt = sys.dxdtfunc
 
-# @cuda.jit()
-# def testkernel(out):
-#     l_dxdt = cuda.local.array(shape=NUM_STATES, dtype=float64)
-#     l_states = cuda.local.array(shape=NUM_STATES, dtype=float64)
-#     l_constants = cuda.local.array(shape=NUM_CONSTANTS, dtype=float64)
-#     l_states[:] = 1.0
-#     l_constants[:] = 1.0
+@cuda.jit()
+def testkernel(out):
+    l_dxdt = cuda.local.array(shape=NUM_STATES, dtype=float64)
+    l_states = cuda.local.array(shape=NUM_STATES, dtype=float64)
+    l_constants = cuda.local.array(shape=NUM_CONSTANTS, dtype=float64)
+    l_states[:] = 1.0
+    l_constants[:] = 1.0
 
-#     t = 1.0
-#     dxdt(l_dxdt,
-#         l_states,
-#         l_constants,
-#         t)
+    t = 1.0
+    dxdt(l_dxdt,
+        l_states,
+        l_constants,
+        t)
 
-#     out = l_dxdt
+    out = l_dxdt
 
-# if __name__ == "__main__":
-#     NUM_STATES = 5
-#     NUM_CONSTANTS = 14
-#     outtest = np.zeros(NUM_STATES, dtype=np.float64)
-#     out = cuda.to_device(outtest)
-#     print("Testing to see if your dxdt function compiles using CUDA...")
-#     testkernel[128,1](out)
-#     cuda.synchronize()
-#     out.copy_to_host(outtest)
-#     print(outtest)
+if __name__ == "__main__":
+    NUM_STATES = 5
+    NUM_CONSTANTS = 14
+    outtest = np.zeros(NUM_STATES, dtype=np.float64)
+    out = cuda.to_device(outtest)
+    print("Testing to see if your dxdt function compiles using CUDA...")
+    testkernel[1,1](out)
+    cuda.synchronize()
+    out.copy_to_host(outtest)
+    print(outtest)

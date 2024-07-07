@@ -22,10 +22,10 @@ from cupyx.scipy.fft import rfft, rfftfreq
 from _utils import get_noise
 from cmath import sin, cos, exp, sqrt, tanh
 
-BLOCKSIZE_X = 2 * 32        #Number of param sets per block
-NUM_STATES = 5
+# BLOCKSIZE_X = 2 * 32        #Number of param sets per block
+# NUM_STATES = 5
 xoro_type = from_dtype(xoroshiro128p_dtype)
-global0 = 0
+# global0 = 0
 
 class CUDA_ODE(object):
 
@@ -45,6 +45,8 @@ class CUDA_ODE(object):
         zero = 0
         global nstates
         nstates = self.system.num_states
+        global constants_length
+        constants_length = len(self.system.constants_array)
         
         
                     
@@ -73,18 +75,15 @@ class CUDA_ODE(object):
             # Don't try and do a run that hasn't been requested.
             if l_param_set >= len(grid_values):
                 return
-            
-            for i, index in enumerate(grid_indices):
-                constants[index] = grid_values[l_param_set, i]
-        
     
             l_step_size = step_size
             l_ds_rate = int32(1 / (output_fs * l_step_size))
             l_n_outer = int32((duration / l_step_size) / l_ds_rate)            #samples per output value
             l_warmup = int32(warmup_time * output_fs)
-            
+
             litzero = literally(zero)
             litstates = literally(nstates)
+            litconstantslength = literally(constants_length)
             
             # Declare arrays to be kept in shared memory - very quick access.
             dynamic_mem = cuda.shared.array(litzero, dtype=float64)
@@ -99,11 +98,19 @@ class CUDA_ODE(object):
             l_noise = cuda.local.array(
                 shape=(litstates),
                 dtype=float64)
+            
+            l_constants = cuda.local.array(
+                shape=(litconstantslength),
+                dtype=float64)
 
             c_sigmas = cuda.const.array_like(noise_sigmas)
             c_RNG = cuda.const.array_like(RNG)
             c_filtercoefficients = cuda.const.array_like(filtercoeffs)
-            c_constants = cuda.const.array_like(constants)
+            for i in range(len(constants)):
+                l_constants[i] = constants[i]
+            
+            for i, index in enumerate(grid_indices):
+                l_constants[index] = grid_values[l_param_set, i]
             
             #Initialise w starting states
             for i in range(nstates):
@@ -132,7 +139,7 @@ class CUDA_ODE(object):
                     # Calculate derivative at sample
                     dxdtfunc(l_dxdt,
                              s_state[tx*litstates: tx*litstates + 5],
-                             c_constants,
+                             l_constants,
                              l_t)
 
                     #Forward-step state using euler-maruyama eq
@@ -142,7 +149,7 @@ class CUDA_ODE(object):
                         s_sums[tx*litstates + k] += s_state[tx*litstates + k] * filtercoeff
                 
                 #Start saving only after warmup period (to get past transient behaviour)
-                if i > l_warmup:
+                if i > (l_warmup - 1):
                     
                 #Grab completed output sample
                     output[i-l_warmup, l_param_set, 0] = s_sums[tx*litstates + 0]
@@ -151,8 +158,8 @@ class CUDA_ODE(object):
                     output[i-l_warmup, l_param_set, 3] = s_sums[tx*litstates + 3]
                     output[i-l_warmup, l_param_set, 4] = s_sums[tx*litstates + 4]
                     
-                    #Reset filters to zero for another run
-                    s_sums[tx*litstates:tx*litstates + 5] = 0
+                #Reset filters to zero for another run
+                s_sums[tx*litstates:tx*litstates + 5] = 0
                 
                 
         self.eulermaruyamakernel = naiive_euler_kernel
@@ -245,7 +252,7 @@ if __name__ == "__main__":
     a_gains = np.asarray([i * 0.01 for i in range(-128, 128)], dtype=np.float64)
     b_params = np.asarray([i * 0.02 for i in range(-64, 64)], dtype=np.float64)
     grid_params = [(a, b) for a in a_gains for b in b_params]
-    grid_labels = ['a', 'b']
+    grid_labels = ['omega_forcing', 'a']
     step_size = 0.001
     fs = 10
     duration = np.float64(100)

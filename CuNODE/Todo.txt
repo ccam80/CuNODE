@@ -16,4 +16,10 @@ x, y axes (fix other free params and offer a dropdown)
 find peak-peak and rms values of tiem for a surface option
 slice arrays if required
 
+
+ODE solver:
+Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
+Control equation options
+rk4
+adjustable step size algo
 Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
