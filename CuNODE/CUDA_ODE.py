@@ -17,14 +17,13 @@ from numba import cuda, from_dtype, literally
 from numba import float32, float64, int32, int64, void
 from diffeq_system import diffeq_system
 from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_float64, xoroshiro128p_dtype
-from cupyx.scipy.signal import firwin
-from cupyx.scipy.fft import rfft, rfftfreq
-from _utils import get_noise
-from cmath import sin, cos, exp, sqrt, tanh
+from cupyx.scipy.signal import firwin, welch
+from cupyx.scipy.fft import rfftfreq
+from _utils import get_noise, timing
 
-# BLOCKSIZE_X = 2 * 32        #Number of param sets per block
-# NUM_STATES = 5
+
 xoro_type = from_dtype(xoroshiro128p_dtype)
+
 # global0 = 0
 
 class CUDA_ODE(object):
@@ -198,15 +197,15 @@ class CUDA_ODE(object):
                                       pass_zero='lowpass',
                                       fs = output_fs)
         
-        d_outputstates = cuda.to_device(self.output_array)
-        d_constants = cuda.to_device(self.system.constants_array)
-        d_gridvalues = cuda.to_device(grid_values)
-        d_gridindices = cuda.to_device(grid_indices)
-        d_inits = cuda.to_device(y0)
+        d_outputstates = asarray(self.output_array)
+        d_constants = asarray(self.system.constants_array)
+        d_gridvalues = asarray(grid_values)
+        d_gridindices = asarray(grid_indices)
+        d_inits = asarray(y0)
         
         #one per system
         d_noise = create_xoroshiro128p_states(len(grid_values), noise_seed)
-        d_noisesigmas = cuda.to_device(self.system.noise_sigmas)
+        d_noisesigmas = asarray(self.system.noise_sigmas)
         
         #total threads / threads per block (or 1 if 1 is greater) 
         BLOCKSPERGRID = int(max(1, np.ceil(len(grid_values) / blocksize_x)))
@@ -232,15 +231,52 @@ class CUDA_ODE(object):
                                      warmup_time)
         cuda.synchronize()
         
-        d_outputstates.copy_to_host(self.output_array)
-        self.output_array = asarray(self.output_array)
+        self.output_array = d_outputstates
+
         self.time_friendly_array = np.ascontiguousarray(self.output_array.T.get())
 
-    def get_fft(self, fs=1.0, window='hann', nperseg=256, noverlap=None):
+    def get_fft(self, window='hann'):
         
-        #Todo: Consider un-cupying these because we're not managing the memory hogged by cupy well enough
-        self.fft_array = rfft(ascontiguousarray(self.output_array.T), axis=2).get()
-        self.f = rfftfreq(self.time_friendly_array.shape[2], d=1/(self.fs*2*np.pi)).get()
+        nperseg = int(self.time_friendly_array.shape[2] / 4)
+        noverlap = int(nperseg/2)
+        nfft = nperseg*2
+
+        # Manage space remaining in VRAM, this will get slow if we have little enough memory left.
+        #If this becomes a sore point we wil need to delete the GPU array holding the output and write
+        # back/forth between fft runs.
+        total_mem = cuda.current_context().get_memory_info()[1]
+        used_bytes = self.output_array.nbytes
+        mem_remaining = total_mem - used_bytes
+        
+        num_segs = self.output_array.shape[0] / (nperseg - noverlap) - 1
+        
+        segsize = nperseg * self.output_array.shape[2] * self.output_array.shape[1] * 16
+        
+        total_mem_for_operation = segsize * num_segs
+        total_chunks = int(np.ceil(total_mem_for_operation / mem_remaining) + 1)
+        
+        self.fft_array = np.zeros((self.output_array.shape[2], 
+                                   self.output_array.shape[1], 
+                                   int(nfft/2) + 1), 
+                                  dtype=np.complex128)
+        
+        for i in range(total_chunks):
+            chunksize = int(np.ceil(self.output_array.shape[1] / total_chunks))
+            index = chunksize * i
+            
+            self.f, self.temp_fft_array = welch(ascontiguousarray(self.output_array[:,index:index + chunksize,:].T),
+                                   fs=self.fs*2*np.pi,
+                                       window=window,
+                                       nperseg=nperseg,
+                                       nfft=nfft,
+                                       detrend='linear',
+                                       scaling='spectrum',
+                                       axis=2)
+            self.fft_array[:, index:index+chunksize, :] = self.temp_fft_array.get()
+            self.f = self.f.get()
+        # self.f = self.f.get()
+        # self.fft_array = self.fft_array.get()
+        # self.f = rfftfreq(self.time_friendly_array.shape[2], d=1/(self.fs*2*np.pi)).get()
         
 
     

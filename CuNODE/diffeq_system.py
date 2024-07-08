@@ -43,7 +43,7 @@ def system_constants(constants_dict=None, **kwargs):
                 'hpf_sign' : -1.0,
                 'rhat' : 0.01,
                 'cliplevel' : 1,
-                'a' : 1,
+                'a' : 2,
                 'b' : -0.4,
                 'omega_forcing': 1.0}
     

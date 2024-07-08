@@ -8,7 +8,7 @@ from numba import cuda, float64, int32, from_dtype
 from time import time
 import numpy as np
 from functools import wraps
-from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_float64, xoroshiro128p_dtype
+from numba.cuda.random import xoroshiro128p_normal_float64, xoroshiro128p_dtype
 xoro_type = from_dtype(xoroshiro128p_dtype)
 
 
