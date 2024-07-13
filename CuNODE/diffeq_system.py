@@ -11,14 +11,15 @@ os.environ["NUMBA_CUDA_DEBUGINFO"] = "0"
 
 from numba import cuda, float64, int64, int32, float32, from_dtype
 from numpy import asarray
-from _utils import clamp
+from _utils import clamp_32, clamp_64
 import numpy as np
 from math import cos
+from numba import from_dtype
 
 class system_constant_class(dict):    
     def set_constant(self, key, item):
         if key in self:
-            self[key] = self.precision(item)
+            self[key] = item
         else:
             raise KeyError(f"Constant {key} not in constants dictionary")
             
@@ -96,6 +97,7 @@ class diffeq_system:
         
         self.num_states = 5
         self.precision = precision
+        self.numba_precision = from_dtype(precision)
         
         self.constants_dict  = system_constants(kwargs)
         
@@ -109,24 +111,15 @@ class diffeq_system:
                                     0.0], 
                                     dtype=precision)
         
-        def update_constants(self, updates_dict=None, **kwargs):
-            if updates_dict is None:
-                updates_dict = {}
-    
-            combined_updates = {**updates_dict, **kwargs}
-            
-            # Note: If the same value occurs in the dict and 
-            # keyword args, the kwargs one will win.
-            for key, item in combined_updates.items():
-                self.constants_dict.set_constant(key, self.precision(item))
-            
-            self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=self.precision)
-
+        if self.numba_precision == float32:
+            clamp = clamp_32
+        else:
+            clamp = clamp_64
         
-        @cuda.jit(float64(float64,
-                          float64,
-                          float64,
-                          float64),
+        @cuda.jit(self.numba_precision(self.numba_precision,
+                                       self.numba_precision,
+                                       self.numba_precision,
+                                       self.numba_precision),
                   device=True,
                   inline=True)
         def linear_control_eq(a,
@@ -136,10 +129,10 @@ class diffeq_system:
             return clamp(a * feedback_state + b, cliplevel)
         
                 
-        @cuda.jit((float64[:],
-                   float64[:],
-                   float64[:],
-                   float64),
+        @cuda.jit((self.numba_precision[:],
+                   self.numba_precision[:],
+                   self.numba_precision[:],
+                   self.numba_precision),
                   device=True,
                   inline=True,)
         def dxdtfunc(outarray,
@@ -156,7 +149,7 @@ class diffeq_system:
             :https://numba.readthedocs.io/en/stable/cuda/cudapysupported.html"""
             
             #reference = rhat * sin(wt), clipped to replicate a hardware limitation
-            ref = clamp(cos(constants[13]*t) * constants[9], constants[10])
+            ref = clamp(cuda.libdevice.cos(precision(constants[13]*t)) * constants[9], constants[10])
             
             #change control function to try different controllers
             control = linear_control_eq(constants[11], constants[12], state[4], constants[10])
@@ -170,36 +163,52 @@ class diffeq_system:
             
         self.dxdtfunc = dxdtfunc
         self.clipfunc = clamp
+      
 
+    def update_constants(self, updates_dict=None, **kwargs):
+        if updates_dict is None:
+            updates_dict = {}
+    
+        combined_updates = {**updates_dict, **kwargs}
+        
+        # Note: If the same value occurs in the dict and 
+        # keyword args, the kwargs one will win.
+        for key, item in combined_updates.items():
+            self.constants_dict.set_constant(key, self.precision(item))
+        
+        self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=self.precision)
 
 
 #******************************* TEST CODE ******************************** #
-sys = diffeq_system()
-dxdt = sys.dxdtfunc
+# if __name__ == '__main__':
+    # sys = diffeq_system()
+    # dxdt = sys.dxdtfunc
+    
+    # @cuda.jit()
+    # def testkernel(out):
+    #     # precision = np.float32
+    #     # numba_precision = float32
+    #     l_dxdt = cuda.local.array(shape=NUM_STATES, dtype=numba_precision)
+    #     l_states = cuda.local.array(shape=NUM_STATES, dtype=numba_precision)
+    #     l_constants = cuda.local.array(shape=NUM_CONSTANTS, dtype=numba_precision)
+    #     l_states[:] = precision(1.0)
+    #     l_constants[:] = precision(1.0)
+    
+    #     t = precision(1.0)
+    #     dxdt(l_dxdt,
+    #         l_states,
+    #         l_constants,
+    #         t)
+    
+    #     out = l_dxdt
+    
 
-@cuda.jit()
-def testkernel(out):
-    l_dxdt = cuda.local.array(shape=NUM_STATES, dtype=float64)
-    l_states = cuda.local.array(shape=NUM_STATES, dtype=float64)
-    l_constants = cuda.local.array(shape=NUM_CONSTANTS, dtype=float64)
-    l_states[:] = 1.0
-    l_constants[:] = 1.0
-
-    t = 1.0
-    dxdt(l_dxdt,
-        l_states,
-        l_constants,
-        t)
-
-    out = l_dxdt
-
-if __name__ == "__main__":
-    NUM_STATES = 5
-    NUM_CONSTANTS = 14
-    outtest = np.zeros(NUM_STATES, dtype=np.float64)
-    out = cuda.to_device(outtest)
-    print("Testing to see if your dxdt function compiles using CUDA...")
-    testkernel[1,1](out)
-    cuda.synchronize()
-    out.copy_to_host(outtest)
-    print(outtest)
+    #     NUM_STATES = 5
+    #     NUM_CONSTANTS = 14
+    #     outtest = np.zeros(NUM_STATES, dtype=np.float4)
+    #     out = cuda.to_device(outtest)
+    #     print("Testing to see if your dxdt function compiles using CUDA...")
+    #     testkernel[1,1](out)
+    #     cuda.synchronize()
+    #     out.copy_to_host(outtest)
+    #     print(outtest)

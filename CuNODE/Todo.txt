@@ -1,25 +1,19 @@
-CuNODE next steps for mems ruig
+CuNODE next steps for mems rig
 
-Overhaul plotter to 
-In a sims pane
-- select grid params and allow entry of ranges
-- modify system parameters (constants) in popup window
-- update labels depending on current grid labels
-- run solver from gui
-Solve button in GUI
-
-In the plots pane:
-change control scheme to:
-3d, 2d
-time, freq
-x, y axes (fix other free params and offer a dropdown)
-find peak-peak and rms values of tiem for a surface option
-slice arrays if required
-
+GUI:
+menu with precision, solver, maybe some other bullshit tidied away up there.
+way to pick log or lin from menu (separate dropdown?)
+better yet: data picker
+figure out why plot doesn't update until clicked
 
 ODE solver:
+
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
+solveralgo(inits, dxdt(contains control), dt, fs, noise_sigmas=None (build zeros array length of dxdt),
+consider whether to have a builder kernel per solver or just a kernel per?
+
 Control equation options
 rk4
 adjustable step size algo
 Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
+figure out instruction parallelisation

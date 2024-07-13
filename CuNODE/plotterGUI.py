@@ -1,16 +1,33 @@
 import numpy as np
 from diffeq_system import diffeq_system, system_constants 
 from CUDA_ODE import CUDA_ODE
+# from CUDA_ODE import CUDA_ODE
+from time import time
 from cupyx.scipy.signal import stft
+from _utils import round_sf, round_list_sf
 from scipy.signal.windows import hann
 import gui_layout
+from tkinter import font as tkFont
+import tkinter as tk
+from tkinter import ttk
+from ctypes import windll
+windll.shcore.SetProcessDpiAwareness(1)
+
+labels = {'param_1': 'a',
+          'param_2': 'b',
+          'time': 'Time (s)',
+          'freq': 'Frequency (Hz-like)',
+          'fft_mag': 'Power Spectral Magnitude (V^2-ish)',
+          'fft_phase': 'Not implmented since switching to welch',
+          'time-domain': 'Amplitude (RMS if no time axis)'}
 
 class Gridplotter:
-    def __init__(self, ODE, grid_values):
+    def __init__(self, ODE, grid_values, precision=np.float64):
         self.grid_values = grid_values
         self.solved_ODE = ODE
         self.local_constants = self.solved_ODE.system.constants_dict.copy()
         
+        self.precision=precision
         self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.fs, int( self.solved_ODE.duration * self.solved_ODE.fs))
         self.spectr_fs = np.floor(2*np.pi*self.solved_ODE.fs) # Correct for normalised freq (bring it to 1)
         self.plotstate = 4
@@ -18,58 +35,90 @@ class Gridplotter:
         self.param_1_val = 0
         self.param_2_val = 0
         self.selected_index = 0
-        self.max_plot_f = 1.05
-        self.min_plot_f = 0.95
-
+        self.sort_sf = 5 #how many sf to round to before finding a match in grid_params list
         
+        self.min_x_index = 0
+        self.max_x_index = None
+        self.min_y_index = 0
+        self.max_y_index = None
+           
+        self.labels = labels
         self.param1_values = np.unique([param[0] for param in self.grid_values])
         self.param2_values = np.unique([param[1] for param in self.grid_values])
-        self.param_index_map = {param: idx for idx, param in enumerate(self.grid_values)}
-
+        self.generate_index_map()
+        
         self.setup_ui = gui_layout.setup_ui.__get__(self)
         self.freqselect_menu = gui_layout.freqselect_menu.__get__(self)
         self.fill_simsettings_frame = gui_layout.fill_simsettings_frame.__get__(self)
         self.fill_plotsettings_frame = gui_layout.fill_plotsettings_frame.__get__(self)
         
         self.setup_ui()
+        
+        # self.canvas.get_tk_widget().bind("<Configure>", self.on_resize)
+
         # self.freqselect_menu()
         # self.fill_simsettings_frame()
         # self.fill_plotsettings_frame()
-        self.update_3d(None)
+        self.update_3d()
         
-
-
-    
     def update_param_label(self, event):
-        self.param1_label = self.current_param1_label.get()
-        self.param2_label = self.current_param2_label.get()
+        self.labels['param_1'] = self.current_param1_label.get()
+        self.labels['param_2'] = self.current_param2_label.get()
+        self.grid_labels = [self.current_param1_label.get(), self.current_param2_label.get()]
+        self.p1select_label.configure(text=self.current_param1_label.get())
+        self.p2select_label.configure(text=self.current_param2_label.get())        
 
     def update_sweep_params(self):
-        self.param1_values = np.linspace(self.param1_start_var.get(),
-                                    self.param1_end_var.get(),
-                                    self.param1_n_var.get(),
-                                    dtype=np.float64)
-        self.param2_values = np.linspace(self.param2_start_var.get(),
-                                    self.param2_end_var.get(),
-                                    self.param2_n_var.get(),
-                                    dtype=np.float64)
-        self.param_index_map = {param: idx for idx, param in enumerate(self.grid_values)}
+        p1_start = self.param1_start_var.get()
+        p1_end = self.param1_end_var.get()
+        p1_n = self.param1_n_var.get()
+        
+        p2_start = self.param2_start_var.get()
+        p2_end = self.param2_end_var.get()
+        p2_n = self.param2_n_var.get()
+        
+        
+        if self.param1_mode.get() == 'lin':
+            self.param1_values = np.linspace(p1_start, p1_end, p1_n,
+                                             dtype=self.precision)
+        else:
+            if ((p1_start < 0) != (p1_end < 0)) :
+                print ("can't log a pos/neg sweep my man")
+            elif ((p1_start == 0) or (p1_end == 0)):
+                print("Pretty hard to log a zero")
+            elif ((p1_start < 0) and (p1_end < 0)):
+                self.param1_values = -np.logspace(np.log10(np.abs(self.param1_start_var.get())),
+                                            np.log10(np.abs(self.param1_end_var.get())),
+                                            self.param1_n_var.get(),
+                                            dtype=self.precision)
+            else:
+                self.param1_values = np.logspace(np.log10(self.param1_start_var.get()),
+                                            np.log10(self.param1_end_var.get()),
+                                            self.param1_n_var.get(),
+                                            dtype=self.precision)
+            
+        if self.param2_mode.get() == 'lin':
+            self.param2_values = np.linspace(p2_start, p2_end, p2_n,                                       
+                                             dtype=self.precision)
+        else:
+            if ((p2_start < 0) != (p2_end < 0)) :
+                print ("can't log a pos/neg sweep my man")
+            elif ((p2_start == 0) or (p2_end == 0)):
+                print("Pretty hard to log a zero")
+            elif ((p2_start < 0) and (p2_end < 0)):
+                self.param2_values = -np.logspace(np.log10(np.abs(self.param2_start_var.get())),
+                                            np.log10(np.abs(self.param2_end_var.get())),
+                                            self.param2_n_var.get(),
+                                            dtype=self.precision)
+            else:
+                self.param2_values = np.logspace(np.log10(self.param2_start_var.get()),
+                                            np.log10(self.param2_end_var.get()),
+                                            self.param2_n_var.get(),
+                                            dtype=self.precision)
 
         self.grid_values = [(p1, p2) for p1 in self.param1_values for p2 in self.param2_values]
-        self.grid_labels = [self.param1_label, self.param2_label]
-        
-        #TODO: add to gui, and add noise sigmas too, both varying length
-        self.inits = np.asarray([1.0, 0.0, 1.0, 0.0, 1.0], dtype=np.float64)
-        
-        self.solved_ODE.build_kernel()
-        self.solved_ODE.euler_maruyama(self.inits,
-                            self.duration,
-                            self.step_size,
-                            self.fs,
-                            self.grid_labels,
-                            self.grid_params,
-                            warmup_time=5000.0) ##TODO: add to GUI
-        self.solved_ODE.get_fft()
+        self.generate_index_map()
+      
     
     def update_local_constants(self):
         for key, var in self.constant_vars.items():
@@ -77,32 +126,59 @@ class Gridplotter:
             
     def update_solve_params(self):
         self.fs = self.fs_var.get()
-        self.duration = self.duration.get()
-        self.step_size = self.step_size.get()
-        
+        self.duration = self.duration_var.get()
+        self.step_size = self.step_size_var.get()
+        self.warmup_time = self.warmup_var.get()
+        self.t = np.linspace(0,  self.duration -  1/self.fs, int( self.duration * self.fs))
+
     def solve_ode(self):
         self.update_local_constants()
+        self.update_solve_params()
         self.update_sweep_params()
+        self.update_param_label(None)
         
         self.solved_ODE.system.update_constants(self.local_constants)
         self.solved_ODE.fs = self.fs
         self.solved_ODE.step_size = self.step_size
         self.solved_ODE.duration = self.duration        
+        self.solved_ODE.noise_sigmas = np.asarray([item.get() for key, item in self.sigma_vars.items()] ,dtype=self.precision)
 
-        print("Solving ODE with current settings")
+        self.inits = np.asarray([item.get() for key, item in self.init_vars.items()] ,dtype=self.precision)
+        
+        self.solved_ODE.build_kernel()
+        self.solved_ODE.euler_maruyama(self.inits,
+                            self.duration,
+                            self.step_size,
+                            self.fs,
+                            self.grid_labels,
+                            self.grid_values,
+                            warmup_time=self.warmup_time)
+        self.solved_ODE.get_fft()
+        
+        self.update_combobox_values(self.p1select_dd, self.param1_values)
+        self.update_combobox_values(self.p2select_dd, self.param2_values)
+        
 
     def select_frequency(self, event):
         # Get the selected item
         selected_index = self.listbox.curselection()
         if selected_index:
             self.freq_index = selected_index  
-            self.update_3d(None)
+            self.update_3d()
             self.freqselect_window.destroy()
 
-    def resize_canvas(self, event):
-    # Resize the canvas to match the window size
-        self.canvas.get_tk_widget().config(width=event.width * 4/5, height=event.height*0.9)
-        self.canvas.draw()
+    def on_resize(self, event):
+        timetoupdate = ((time() - self.resize_time) > 1)
+        if ((event.width, event.height) != self.last_winsize) and (timetoupdate):
+            self.canvas.get_tk_widget().config(width=event.width, height=event.height)
+            self.last_winsize = (event.width, event.height)
+            dpi = self.root.winfo_fpixels('1i')
+            self.fig.set_figheight(event.height * 2 / dpi)
+            self.fig.set_figwidth(event.width / dpi)
+            self.canvas.draw()
+                   
+        # self.update_all_fonts(self.root, event.height // 500)
+
         
     def set_cell_weights(self, widget, weight=1):
         """ Set weight of all cells in tkinter grid to 1 so that they stretch """
@@ -117,11 +193,10 @@ class Gridplotter:
     def update_selected_params(self, event):
         self.param_1_val = self.param1_var.get()
         self.param_2_val = self.param2_var.get()
-        self.param_index = self.grid_values.index((self.param_1_val,
-                                                              self.param_2_val))
-        self.single_state = self.solved_ODE.time_friendly_array[:, self.param_index, :]
+        self.param_index = self.get_param_index((self.param_1_val, self.param_2_val))
+        self.single_state = self.solved_ODE.output_array[:, self.param_index, :]
         self.update_single_plot()
-        self.update_3d(None)
+        self.update_3d()
     
     def update_axes(self):
         selection = self.grid_or_set.get()
@@ -134,7 +209,7 @@ class Gridplotter:
         
         if selection == 'grid':
             self.ax = [self.fig.add_subplot(111, projection='3d')]
-            self.update_3d(None)
+            self.update_3d()
     
         if selection == 'single':
             if self.singleplot_style_var.get() == 'time':
@@ -147,33 +222,34 @@ class Gridplotter:
             else:
                 self.ax = [self.fig.add_subplot(111)]
                 self.update_single_plot()
-
+                
+    def generate_index_map(self):
+        self.param_index_map = {}
+        for idx, (p1, p2) in enumerate(self.grid_values):
+            p1_round = self.precision(round_sf(p1, self.sort_sf))
+            p2_round = self.precision(round_sf(p2, self.sort_sf))
+            self.param_index_map[(p1_round, p2_round)] = idx
+            
     def get_param_index(self, params):
+        params = (self.precision(round_sf(params[0], self.sort_sf)),
+                  self.precision(round_sf(params[1], self.sort_sf)))
         return self.param_index_map.get(params, None)
     
-        
     def load_grid(self, xvals, yvals, surf_type):
         
         z_selection = self.z_axis_var.get()
         #Get 2D array to draw z values from depending on z selection
         if z_selection == 'fft_mag':
-            if surf_type == 'progression':
-                working_zview = np.log10(np.abs(self.solved_ODE.fft_array[self.plotstate, :, self.min_f_index:self.max_f_index]).T)
-
-            else:
-                working_zview = np.log10(np.abs(self.solved_ODE.fft_array[self.plotstate, :, :]).T)
+            working_zview = np.abs(self.solved_ODE.fft_array[self.plotstate, :, :]).T
         elif z_selection == 'fft_phase':
-            if surf_type == 'progression':
-                working_zview = np.angle(self.solved_ODE.fft_array[self.plotstate, :, self.min_f_index:self.max_f_index]).T
-            else:
-                working_zview = np.angle(self.solved_ODE.fft_array[self.plotstate, :, :]).T
-            working_zview = np.where(working_zview < 0, working_zview+2*np.pi, working_zview)
+            working_zview = np.angle(self.solved_ODE.fft_array[self.plotstate, :, :]).T
+            # working_zview = np.where(working_zview < 0, working_zview+2*np.pi, working_zview)
         elif z_selection == 'time-domain':
-            working_zview = self.solved_ODE.time_friendly_array[self.plotstate, :, :].T                
+            working_zview = self.solved_ODE.output_array[self.plotstate, :, :].T              
         
         #Turn x and Y into grid, unsure whether this could be done in an earlier function    
         X, Y = np.meshgrid(xvals, yvals)
-        Z = np.zeros_like(X, dtype=np.float64)
+        Z = np.zeros_like(X, dtype=self.precision)
 
         
         if surf_type == 'grid':
@@ -191,7 +267,7 @@ class Gridplotter:
         elif surf_type == 'progression':
             if self.fixed_var == 'param_1':
                 fixed_val = self.param_1_val
-                working_zview = working_zview[self.min_f_index:self.max_f_index,:]
+                working_zview = working_zview[slice(self.min_x_index,self.max_x_index),slice(self.min_y_index,self.max_y_index)]
                 for i, yval in enumerate(yvals):
                     param_index = self.get_param_index((fixed_val, yval))
                     if param_index is not None:
@@ -199,8 +275,7 @@ class Gridplotter:
                     
             elif self.fixed_var == 'param_2':
                 fixed_val = self.param_2_val
-                working_zview = working_zview[self.min_f_index:self.max_f_index,:]
-
+                working_zview = working_zview[slice(self.min_x_index,self.max_x_index),slice(self.min_y_index,self.max_y_index)]
                 for i, yval in enumerate(yvals):
                     param_index = self.get_param_index((yval, fixed_val))
                     if param_index is not None:
@@ -208,11 +283,9 @@ class Gridplotter:
         
         return X, Y, Z
 
+    def update_3d(self):
         
-    def update_3d(self, event):
-        self.max_f_index = np.argmin(np.abs(self.solved_ODE.f - self.max_plot_f))
-        self.min_f_index = np.argmin(np.abs(self.solved_ODE.f - self.min_plot_f))
-
+        self.update_plot_slice()
         
         if self.grid_or_set.get() == 'grid':
             
@@ -221,43 +294,44 @@ class Gridplotter:
             z_request = self.z_axis_var.get()
             
             if (x_request, y_request) == ('param_1', 'param_2'):
-                xvals = self.param1_values
-                yvals = self.param2_values
+                xvals = round_list_sf(self.param1_values, self.sort_sf)
+                yvals = round_list_sf(self.param2_values, self.sort_sf)
                 self.fixed_var = 'z_slice'
                 surf_type = 'grid'
                 valid_combo = True
                 
             elif (x_request, y_request) == ('param_2', 'param_1'):
-                xvals = self.param1_values
-                yvals = self.param2_values
+                xvals = round_list_sf(self.param1_values, self.sort_sf)
+                yvals = round_list_sf(self.param2_values, self.sort_sf)
                 self.fixed_var = 'z_slice'
                 surf_type = 'grid'
                 valid_combo = True
                 
             elif (x_request, y_request) == ('time', 'param_1'):
                 xvals = self.t
-                yvals = self.param1_values
+                yvals = round_list_sf(self.param1_values, self.sort_sf)
+
                 self.fixed_var = 'param_2'
                 surf_type = 'progression'
                 valid_combo = True
            
             elif (x_request, y_request) == ('time', 'param_2'):
                 xvals = self.t
-                yvals = self.param2_values
+                yvals = round_list_sf(self.param2_values, self.sort_sf)
                 self.fixed_var = 'param_1'
                 surf_type = 'progression'
                 valid_combo = True
             
             elif (x_request, y_request) == ('freq', 'param_1'):
-                xvals = self.solved_ODE.f[self.min_f_index:self.max_f_index]
-                yvals = self.param1_values
+                xvals = self.solved_ODE.f[:]
+                yvals = round_list_sf(self.param1_values, self.sort_sf)
                 self.fixed_var = 'param_2'
                 surf_type = 'progression'
                 valid_combo = True
            
             elif (x_request, y_request) == ('freq', 'param_2'):
-                xvals = self.solved_ODE.f[self.min_f_index:self.max_f_index]
-                yvals = self.param2_values
+                xvals = self.solved_ODE.f[:]
+                yvals = round_list_sf(self.param2_values, self.sort_sf)
                 self.fixed_var = 'param_1'
                 surf_type = 'progression'
                 valid_combo = True
@@ -265,22 +339,87 @@ class Gridplotter:
             else:
                 
                 print("This x-y combo doesn't make sense man")
-                
+            
             if valid_combo == True:
+                xvals = xvals[slice(self.min_x_index, self.max_x_index, None)]
+                yvals = yvals[slice(self.min_y_index,self.max_y_index, None)]
                 X, Y, Z = self.load_grid(xvals, yvals, surf_type)
                 
-                self.update_surface(X, Y, Z, x_request, y_request, z_request)
+                
+                xlabel = self.labels[x_request]
+                ylabel = self.labels[y_request]
+                zlabel = self.labels[z_request]
+                
+                self.update_surface(X, Y, Z, xlabel, ylabel, zlabel)
         
-    def update_surface(self, X, Y, Z, x_request, y_request, z_request):
+    def update_plot_slice(self, *args):
+        xvar = self.x_axis_var.get()
+        yvar = self.y_axis_var.get()
+        # update_x = False
+        # update_y = False
+        
+        # if self.xslicemin != self.xslice_min_var.get():
+        #     self.xslicemin = self.xslice_min_var.get()
+        #     update_x == True
+            
+        # if self.xslicemax != self.xslice_max_var.get():
+        #     self.xslicemax = self.xslice_max_var.get()
+        #     update_x == True
+            
+        # if self.yslicemin != self.yslice_min_var.get():
+        #     self.yslicemin = self.yslice_min_var.get()
+        #     update_y == True
+            
+        # if self.yslicemax != self.yslice_max_var.get():
+        #     self.yslicemax = self.yslice_max_var.get()
+        #     update_y == True
+            
+        # if update_x:
+        self.min_x_index = self.get_slice_index(self.xslice_min_var.get(), xvar)
+        self.max_x_index = self.get_slice_index(self.xslice_max_var.get(), xvar)
+        # if update_y:
+        self.min_y_index = self.get_slice_index(self.yslice_min_var.get(), yvar)
+        self.max_y_index = self.get_slice_index(self.yslice_max_var.get(), yvar)
+                        
+    def get_slice_index(self, value, variable):
+        if variable == 'freq':
+            index = np.argmin(np.abs(self.solved_ODE.f - value))if value < np.amax(self.solved_ODE.f) else None
+        elif variable == 'time':
+            index = np.argmin(np.abs(self.t - value))if value < np.amax(self.t) else None
+        elif variable == 'param_1':
+            index = np.argmin(np.abs(self.param1_values - value))if value < np.amax(self.param1_values) else None
+        elif variable == 'param_2':
+            index = np.argmin(np.abs(self.param2_values - value)) if value < np.amax(self.param2_values) else None
+        else:
+            print("That's a bad slice")
+                   
+        return index
+    
+    def update_zlim(self, *args):
+       self.zslicemin = self.zslice_min_var.get()
+       self.zslicemax = self.zslice_max_var.get()
+       for ax in self.ax:
+           ax.set_zlim((self.zslicemin, self.zslicemax))
+       self.canvas.draw()
+
+           
+    def update_surface(self, X, Y, Z, xlabel, ylabel, zlabel):
+        
+        if self.xscale.get() == 'log':
+            X = np.log10(X)
+        if self.yscale.get() == 'log':
+            Y = np.log10(Y)
+        if self.zscale.get() == 'log':
+            Z = np.log10(Z)
+        
         # Clear previous plot
         self.ax[0].cla() 
         self.ax[0].plot_surface(X, Y, Z, cmap='viridis')
         
-        self.ax[0].set_xlabel(x_request)
-        self.ax[0].set_ylabel(y_request)
-        self.ax[0].set_zlabel(z_request)
+        self.ax[0].set_xlabel(xlabel)
+        self.ax[0].set_ylabel(ylabel)
+        self.ax[0].set_zlabel(zlabel)
         
-        self.canvas.draw()
         
     def update_single_plot(self, **spectral_params):
         if self.grid_or_set.get() == 'single':
@@ -332,24 +471,72 @@ class Gridplotter:
                 self.ax[0].set_xlabel("Time")
     
             self.canvas.draw()
+            
+    def update_combobox_values(self, combobox, new_values):
+        """
+        Update the values of the given combobox.
         
-
+        :param combobox: The tk.Combobox widget to update.
+        :param new_values: A list of new values to set in the combobox.
+        """
+        if isinstance(new_values, np.ndarray):
+            new_values = new_values.tolist()
+            
+        combobox['values'] = new_values
+        combobox.current(0)
+        
+    def update_label_text(self, label, new_text):
+        """
+        Update the text of the given label.
+        
+        :param label: The tk.Label widget to update.
+        :param new_text: The new text to set in the label.
+        """
+        label.config(text=new_text)
+        
+    def update_font_size(self, widget, new_font_size):
+        """
+        Update the font size of a given widget.
+        
+        :param widget: The tk widget to update.
+        :param new_font_size: The new font size to set.
+        """
+        current_font = tkFont.nametofont(widget.cget("font"))
+        current_font.config(size=new_font_size)
+        widget.config(font=current_font)
+    
+    def update_all_fonts(self, parent, new_font_size):
+        """
+        Update the font sizes of all child widgets of a given parent widget.
+        
+        :param parent: The parent widget containing child widgets.
+        :param new_font_size: The new font size to set for all child widgets.
+        """
+        for child in parent.winfo_children():
+            try:
+                self.update_font_size(child, new_font_size)
+            except tk.TclError:
+                pass  
+            if isinstance(child, tk.Frame) or isinstance(child, ttk.Frame):
+                self.update_all_fonts(child, new_font_size)
+                
 # Test code
 if __name__ == "__main__":
 
  #%%   
     #Setting up grid of params to simulate with
-    a_gains = np.asarray([i * 0.001 + 1 for i in range(-100, 100)], dtype=np.float64)
-    b_params = np.asarray([i * 0.0001 + 0.005 for i in range(-50, 50)], dtype=np.float64)
+    precision = np.float32
+    a_gains = np.asarray([i * 0.001 + 1 for i in range(-100, 100)], dtype=precision)
+    b_params = np.asarray([i * 0.0001 + 0.005 for i in range(-50, 50)], dtype=precision)
     grid_params = [(a, b) for a in a_gains for b in b_params]
     grid_labels = ['omega_forcing', 'rhat']
-    step_size = 0.001
-    fs = 1
-    duration = np.float64(10000)
-    sys = diffeq_system(a=10, b=-0.1)
-    inits = np.asarray([0.0, 0, 0.0, 0, 0.0], dtype=np.float64)
+    step_size = precision(0.001)
+    fs = precision(1.0)
+    duration = precision(1000.0)
+    sys = diffeq_system(a=5, b=-0.1, precision=precision)
+    inits = np.asarray([0.0, 0, 0.0, 0, 0.0], dtype=precision)
     
-    ODE = CUDA_ODE(sys)
+    ODE = CUDA_ODE(sys, precision=precision)
     ODE.build_kernel()
     ODE.euler_maruyama(inits,
                         duration,
@@ -357,8 +544,8 @@ if __name__ == "__main__":
                         fs,
                         grid_labels,
                         grid_params,
-                        warmup_time=5000.0)
+                        warmup_time=000.0)
     ODE.get_fft()
 #%% 
-    plotter = Gridplotter(ODE, grid_params)
+    plotter = Gridplotter(ODE, grid_params, precision = precision)
     plotter.root.mainloop()
