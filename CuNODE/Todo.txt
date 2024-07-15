@@ -2,15 +2,16 @@ CuNODE next steps for mems rig
 
 GUI:
 menu with precision, solver, maybe some other bullshit tidied away up there.
-way to pick log or lin from menu (separate dropdown?)
 better yet: data picker
-figure out why plot doesn't update until clicked
+fix log tick zooimng and clash w axis label
 
 ODE solver:
 
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
 solveralgo(inits, dxdt(contains control), dt, fs, noise_sigmas=None (build zeros array length of dxdt),
 consider whether to have a builder kernel per solver or just a kernel per?
+implement "chunking" as implemented on fft system
+
 
 Control equation options
 rk4

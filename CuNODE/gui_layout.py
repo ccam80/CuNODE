@@ -218,7 +218,8 @@ def fill_simsettings_frame(self):
 
     self.param2_select_dd = ttk.Combobox(self.simsettings_frame, textvariable=self.current_param2_label, values=constants)
     self.param2_select_dd.bind("<<ComboboxSelected>>", self.update_param_label)
-    self.param1_select_dd.current(1)
+    self.param2_select_dd.current(1)
+    
     self.p2start_l = tk.Label(self.simsettings_frame, text="Start")
     self.p2start_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_start_var)  
     self.p2end_l = tk.Label(self.simsettings_frame, text="End")
@@ -323,10 +324,7 @@ def setup_ui(self):
     self.root = tk.Tk()
     self.root.title("Gridsearch Visualiser")
     self.root.geometry("1920x1080")
-    
-    self.param1_labels_to_update = []
-    self.param2_labels_to_update = []
-
+ 
     self.fig_frame = ttk.Frame(self.root)
     self.control_frame = ttk.Frame(self.root)
     self.control_frame.grid(row=0, column=3, rowspan=10, sticky='nsew')

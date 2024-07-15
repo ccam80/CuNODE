@@ -29,7 +29,6 @@ class Gridplotter:
         
         self.precision=precision
         self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.fs, int( self.solved_ODE.duration * self.solved_ODE.fs))
-        self.spectr_fs = np.floor(2*np.pi*self.solved_ODE.fs) # Correct for normalised freq (bring it to 1)
         self.plotstate = 4
         self.freq_index = 0
         self.param_1_val = 0
@@ -54,7 +53,7 @@ class Gridplotter:
         
         self.setup_ui()
         
-        # self.canvas.get_tk_widget().bind("<Configure>", self.on_resize)
+        self.canvas.get_tk_widget().bind("<Configure>", self.on_resize)
 
         # self.freqselect_menu()
         # self.fill_simsettings_frame()
@@ -170,14 +169,14 @@ class Gridplotter:
     def on_resize(self, event):
         timetoupdate = ((time() - self.resize_time) > 1)
         if ((event.width, event.height) != self.last_winsize) and (timetoupdate):
-            self.canvas.get_tk_widget().config(width=event.width, height=event.height)
-            self.last_winsize = (event.width, event.height)
-            dpi = self.root.winfo_fpixels('1i')
-            self.fig.set_figheight(event.height * 2 / dpi)
-            self.fig.set_figwidth(event.width / dpi)
-            self.canvas.draw()
+            # self.canvas.get_tk_widget().config(width=event.width, height=event.height)
+            # self.last_winsize = (event.width, event.height)
+            # dpi = self.root.winfo_fpixels('1i')
+            # self.fig.set_figheight(event.height * 2 / dpi)
+            # self.fig.set_figwidth(event.width / dpi)
+            # self.canvas.draw()
                    
-        # self.update_all_fonts(self.root, event.height // 500)
+            self.update_all_fonts(self.root, event.height // 100)
 
         
     def set_cell_weights(self, widget, weight=1):
@@ -224,6 +223,11 @@ class Gridplotter:
                 self.update_single_plot()
                 
     def generate_index_map(self):
+        """Set up a dict mapping paramater sets to their index in the output
+        array, cutting some compute time when populating the z mesh for plotting.
+        
+        Saves results to self.param_index_map
+        """
         self.param_index_map = {}
         for idx, (p1, p2) in enumerate(self.grid_values):
             p1_round = self.precision(round_sf(p1, self.sort_sf))
@@ -355,29 +359,9 @@ class Gridplotter:
     def update_plot_slice(self, *args):
         xvar = self.x_axis_var.get()
         yvar = self.y_axis_var.get()
-        # update_x = False
-        # update_y = False
         
-        # if self.xslicemin != self.xslice_min_var.get():
-        #     self.xslicemin = self.xslice_min_var.get()
-        #     update_x == True
-            
-        # if self.xslicemax != self.xslice_max_var.get():
-        #     self.xslicemax = self.xslice_max_var.get()
-        #     update_x == True
-            
-        # if self.yslicemin != self.yslice_min_var.get():
-        #     self.yslicemin = self.yslice_min_var.get()
-        #     update_y == True
-            
-        # if self.yslicemax != self.yslice_max_var.get():
-        #     self.yslicemax = self.yslice_max_var.get()
-        #     update_y == True
-            
-        # if update_x:
         self.min_x_index = self.get_slice_index(self.xslice_min_var.get(), xvar)
         self.max_x_index = self.get_slice_index(self.xslice_max_var.get(), xvar)
-        # if update_y:
         self.min_y_index = self.get_slice_index(self.yslice_min_var.get(), yvar)
         self.max_y_index = self.get_slice_index(self.yslice_max_var.get(), yvar)
                         
@@ -402,23 +386,69 @@ class Gridplotter:
            ax.set_zlim((self.zslicemin, self.zslicemax))
        self.canvas.draw()
 
-           
+    def generate_log_ticks(self, data):
+        
+        
+        min_data = np.min(data)
+        max_data = np.max(data)
+        if min_data <= 0 and max_data <= 0:
+            data = -data
+            min_data = np.min(data)
+            max_data = np.max(data)
+        if min_data <= 0:
+            return data, data
+        
+        min_exp = int(np.floor(np.log10(min_data)))
+        max_exp = int(np.ceil(np.log10(max_data)))
+        tick_values = []
+
+        for exp in range(min_exp, max_exp + 1):
+            tick_values.extend(np.arange(1, 10) * 10**exp)
+        
+        tick_values = round_list_sf(tick_values, self.plot_sf)
+        tick_values = np.array(tick_values)
+        tickv_alues = tick_values[(tick_values >= min_data) & (tick_values <= max_data)]
+
+        return tick_values, np.log10(tick_values)
+   
     def update_surface(self, X, Y, Z, xlabel, ylabel, zlabel):
+        self.ax[0].cla() 
         
         if self.xscale.get() == 'log':
+            xticklabels, xtickvals = self.generate_log_ticks(X)
             X = np.log10(X)
+            xlabel = "log10 " + xlabel
+
         if self.yscale.get() == 'log':
+            yticklabels, ytickvals = self.generate_log_ticks(Y)
             Y = np.log10(Y)
+            ylabel = "log10 " + ylabel
+
         if self.zscale.get() == 'log':
-            Z = np.log10(Z)
+            zticklabels, ztickvals = self.generate_log_ticks(Z) 
+            Z = np.log10(Z)            
+            zlabel = "log10 " + zlabel
+
+        self.ax[0].plot_surface(X, Y, Z, cmap='viridis', rcount=X.shape[0], ccount=Y.shape[1])      
         
-        # Clear previous plot
-        self.ax[0].cla() 
-        self.ax[0].plot_surface(X, Y, Z, cmap='viridis')
+        if self.xscale.get() == 'log':
+            self.ax[0].set_xticks(xtickvals)
+            self.ax[0].set_xticklabels(xticklabels)
         
-        self.ax[0].set_xlabel(xlabel)
-        self.ax[0].set_ylabel(ylabel)
-        self.ax[0].set_zlabel(zlabel)
+        if self.yscale.get() == 'log':
+            self.ax[0].set_yticks(ytickvals)
+            self.ax[0].set_yticklabels(yticklabels)
+        
+        if self.zscale.get() == 'log':
+            self.ax[0].set_zticks(ztickvals)
+            self.ax[0].set_zticklabels(zticklabels)
+        
+        self.ax[0].set_xlabel(xlabel, labelpad=20)
+        self.ax[0].set_ylabel(ylabel, labelpad=20)
+        self.ax[0].set_zlabel(zlabel, labelpad=20)
+        
+        
+        self.canvas.draw()
         
         
     def update_single_plot(self, **spectral_params):
@@ -447,7 +477,8 @@ class Gridplotter:
     
             if self.singleplot_style_var.get() == "spec":   
                 self.ax[0].cla() 
-                
+
+                spectr_fs = 2*np.pi*self.solved_ODE.fs
                 if 'windowlength' not in spectral_params:
                     windowlength = min(int(np.floor(30*2*np.pi * self.solved_ODE.fs)), int(len(self.t) / 8))
                 if 'hop' not in spectral_params:
