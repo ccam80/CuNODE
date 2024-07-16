@@ -206,25 +206,14 @@ class Gridplotter:
     def update_axes(self):
         selection = self.grid_or_set.get()
 
-        for ax in self.ax:
-            ax.cla()
-            self.fig.delaxes(ax)
+        # for ax in self.ax:
+        #     ax.cla()
+        #     self.fig.delaxes(ax)
 
-        self.ax = []
+        # self.ax = []
 
         if selection == 'grid':
-            self.xax = scene.AxisWidget(pos=[[-0.5, -0.5], [0.5, -0.5]], tick_direction=(0, -1),
-                             font_size=16, axis_color='k', tick_color='k', text_color='k',
-                             parent=self.canvas.view.scene)
-            self.xax.transform = scene.STTransform(translate=(0, 0, -0.2))
 
-            self.yax = scene.AxisWidget(pos=[[-0.5, -0.5], [-0.5, 0.5]], tick_direction=(-1, 0),
-                             font_size=16, axis_color='k', tick_color='k', text_color='k',
-                             parent=self.view.scene)
-            self.yax.transform = scene.STTransform(translate=(0, 0, -0.2))
-
-            # Add a 3D axis to keep us oriented
-            self.axis = scene.visuals.XYZAxis(parent=self.view.scene)
 
             self.update_3d()
 
@@ -402,7 +391,7 @@ class Gridplotter:
        self.zslicemax = self.zslice_max_var.get()
        for ax in self.ax:
            ax.set_zlim((self.zslicemin, self.zslicemax))
-       self.canvas.draw()
+       # self.canvas.draw()
 
     def generate_log_ticks(self, data):
 
@@ -423,7 +412,7 @@ class Gridplotter:
         for exp in range(min_exp, max_exp + 1):
             tick_values.extend(np.arange(1, 10) * 10**exp)
 
-        tick_values = round_list_sf(tick_values, self.plot_sf)
+        tick_values = round_list_sf(tick_values, self.sort_sf)
         tick_values = np.array(tick_values)
         tickv_alues = tick_values[(tick_values >= min_data) & (tick_values <= max_data)]
 
@@ -466,10 +455,8 @@ class Gridplotter:
         # self.ax[0].set_zlabel(zlabel, labelpad=20)
 
         self.view.plot(X, Y, Z, xlabel, ylabel, zlabel)
-        app.process_events()
 # p1._update_data()  # cheating.
-cf = scene.filters.ZColormapFilter('fire', zrange=(z.max(), z.min()))
-p1.attach(cf)
+
 #
         # self.fig_frame.canvas.show()
 
@@ -526,7 +513,7 @@ p1.attach(cf)
             #     self.ax[0].set_ylabel("Frequency")
             #     self.ax[0].set_xlabel("Time")
 
-            self.canvas.draw()
+            # self.canvas.draw()
 
     def update_combobox_values(self, combobox, new_values):
         """

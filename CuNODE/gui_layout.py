@@ -17,6 +17,7 @@ from tkinter.filedialog import askopenfilename
 import platform
 import logging as _logging
 import vispy
+from vispy import color
 from tkinter import font as tkFont
 
 import numpy as np
@@ -120,11 +121,70 @@ class View():
     def plot(self, X, Y, Z, xlabel, ylabel, zlabel):
         self.clear()
 
+        zmax = np.max(Z)
+        zmin = np.amin(Z)
+        ymax = np.max(Y)
+        ymin = np.amin(Y)
+        xmax = np.max(X)
+        xmin = np.amin(X)
+
         self.p1 = vispy.scene.visuals.SurfacePlot(z=Z,x=X,y=Y, color=(0.3, 0.3, 1, 1))
         self.p1.transform = vispy.scene.transforms.MatrixTransform()
-        self.p1.transform.scale([1/249., 1/249., 1/249.])
-        self.p1.transform.translate([-0.5, -0.5, 0])
+        self.p1.transform.translate([-xmin, -ymin,-zmin])
+        self.p1.transform.scale([1/(xmax - xmin), 1/(ymax-ymin), 1/(zmax-zmin)])
+
+        self.xax = vispy.scene.Axis(pos=[[0,0], [1,0]],
+                                    tick_direction=(0, 1),
+                                    domain=(xmin, xmax),
+                                    font_size=16,
+                                    axis_color='k',
+                                    tick_color='k',
+                                    text_color='k',
+                                    parent=self.vpview.scene)
+        # self.xax.transform = vispy.scene.STTransform(translate=(0, 0, -0.2))
+
+        self.yax = vispy.scene.Axis(pos=[[0, 0], [0, 1]],
+                                    tick_direction=(1,0),
+                                    domain=(ymin, ymax),
+                                    major_tick_length = 5,
+                                    minor_tick_length = 5,
+                                    font_size=16,
+                                    axis_color='k',
+                                    tick_color='k',
+                                    text_color='k',
+                                    parent=self.vpview.scene)
+
+
+        self.zax = vispy.scene.Axis(pos=[[0, 0], [-1, 0]],
+                                    tick_direction=(0, -1),
+                                    domain = (zmin, zmax),
+                                    axis_color='k',
+                                    tick_color='k',
+                                    text_color='k',
+                                    font_size=16,
+                                    parent=self.vpview.scene)
+        self.zax.transform = vispy.scene.transforms.MatrixTransform()
+        self.zax.transform.rotate(90, (0, 1, 0))  # rotate cw around yaxis
+        self.zax.transform.rotate(135, (0, 0, 1))  # tick direction towards (1,1)
+
+        # Add a 3D axis to keep us oriented
+        self.axis = vispy.scene.visuals.XYZAxis(parent=self.vpview.scene)
+
+
+        self.vpview.add(self.xax)
+        self.vpview.add(self.yax)
+        self.vpview.add(self.zax)
         self.vpview.add(self.p1)
+
+        cnorm = Z / (zmax - zmin)
+        colors = color.get_colormap("hsl").map(cnorm).reshape(Z.shape + (-1,))
+        colors = colors.flatten().tolist()
+        colors=list(map(lambda X,Y,Z,w:(X,Y,Z,w), colors[0::4],colors[1::4],colors[2::4],colors[3::4]))
+        self.p1.mesh_data.set_vertex_colors(colors) # but explicitly setting vertex colors does work?
+
+        # cf = vispy.scene.filters.color.ZColormapFilter('fire', zrange=(Z.max(), Z.min()))
+
+        # self.p1.attach(cf)
 
         # for mesh in self.model.data:
         #     for type in types:
@@ -146,7 +206,10 @@ class View():
         #             # Unknown plot type
         #             return None
 
-        self.vpview.camera = vispy.scene.TurntableCamera(parent=self.vpview.scene)
+        self.vpview.camera = 'arcball'
+        self.vpview.camera.distance = 2
+        self.vpview.camera.fov = 0
+        # self.vpview.depth_value = 1e2
 
     def xy(self):
         self.vpview.camera.elevation = 90
@@ -189,10 +252,10 @@ class Controller():
         f2 = tk.Frame(f1, highlightthickness=1, highlightbackground="gray")
         options = ["solid","wireframe","solid + wireframe"]
         var = tk.StringVar()
-        # o1 = ttk.OptionMenu(f2, var, options[len(options)-1], *options, command=lambda val: self.view.plot(val))
-        # o1["menu"].configure(bg="white")
-        # setMaxWidth(options, o1)
-        # o1.pack()
+        o1 = ttk.OptionMenu(f2, var, options[len(options)-1], *options, command=lambda val: self.view.plot(val))
+        o1["menu"].configure(bg="white")
+        setMaxWidth(options, o1)
+        o1.pack()
         toolbar.append(f2)
 
         toolbar[0].config(command=lambda: self.open(var))
@@ -215,7 +278,7 @@ class Controller():
         self.root = root
         self.view = view
         self.model = view.model
-        # view.plot()
+        view.plot()
 
     def render(self):
         self.root.mainloop()
@@ -568,10 +631,6 @@ def setup_ui(self):
     # Create plot canvas
     self.context = None
 
-    # self.canvas = scene.SceneCanvas(
-    #     keys='interactive', show=True, size=(1920, 1080), parent=self.root)
-        # self.canvas = vispy.app.Canvas(
-        #     keys='interactive', show=True, size=(1024, 768), parent=self)
 
     self.canvas = vispy.scene.SceneCanvas(
         keys='interactive', show=True, parent=self.root)
@@ -579,14 +638,7 @@ def setup_ui(self):
     self.view = View()
     self.view.canvas = self.canvas
     self.root.update_idletasks()
-    # self.fig = Figure(figsize=(18, 9))
-    # self.ax = [self.fig.add_subplot(111, projection='3d')]
-    # self.canvas = FigureCanvasTkAgg(self.fig, master=self.fig_frame)
-    # self.toolbar = NavigationToolbar2Tk(self.canvas, self.fig_frame, pack_toolbar=False)
-    # self.toolbar.update()
 
-    # self.toolbar.grid(row=0,column=0, sticky='nw')
-    # self.fig_frame.grid(row=1, column=0, rowspan=9, sticky='nsew')
     self.root.update()
     self.resize_time = 0
     self.last_winsize = (0,0)
