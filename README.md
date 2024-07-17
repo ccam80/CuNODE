@@ -14,7 +14,7 @@ numpy, numba, matplotlib, scipy, cupy
 **Intended functionality:**
 
 - You provide a dxdt function (fill in the function template), and select an integration type, step size, duration, and output sample frequency
-- You provide a vector of variables to run (e.g. a 2D grid search looks like ((0, 0), (0,1), (1,0), (1,1))
+- You provide a vector of variables to run (e.g. a 2D grid search looks like ((0, 0), (0,1), (1,0), (1,1)))
 - run euler, rk4, or other integration function
 - reap rewards
 
@@ -24,14 +24,14 @@ numpy, numba, matplotlib, scipy, cupy
 CUDA: go to https://developer.nvidia.com/cuda-toolkit and download the latest CUDA toolkit - I have tested with 12.5, 12.3.
 Python: if you don't have python installed, download python 3.9 from https://www.python.org/downloads/release/python-390/
 - I strongly recommend using a virtual environment, because things tend to break in python when you download a new library and it updates something unintended. You can create a "venv" for each project, which has it's own set of dependencies, for a small amount of extra admin on setup.
--- To do this, you want to create a "venvs" folder somewhere handy, like on C: drive.
--- navigate to this folder in "Terminal" - type: "C:" then "cd venvs" if you put it on c drive
--- in the terminal type "python -m venv cunode"
---- this creates a folder called cunode, with your environment in it
--- whenever you want to install stuff on this version of python, navigate to the venvs/cunode/scripts folder in Terminal and type "activate". It will say (cunode) on the left of terminal when you've successfully activated it, which tells you you're working in this environment
+    - To do this, you want to create a "venvs" folder somewhere handy, like on C: drive.
+    - navigate to this folder in "Terminal" - type: "C:" then "cd venvs" if you put it on c drive
+    - in the terminal type "python -m venv cunode"
+        - this creates a folder called cunode, with your environment in it
+    - whenever you want to install stuff on this version of python, navigate to the venvs/cunode/scripts folder in Terminal and type "activate". It will say (cunode) on the left of terminal when you've successfully activated it, which tells you you're working in this environment
 - Install dependencies: pip install numpy scipy numba cupy-cuda12x matplotlib cuda-python
--- If you want to use the Spyder IDE (it's like MATLAB), then also do: "pip install PyQt5 spyder-kernels"
--- download and install Spyder from https://www.spyder-ide.org/
+    - If you want to use the Spyder IDE (it's like MATLAB), then also do: "pip install PyQt5 spyder-kernels"
+    - download and install Spyder from https://www.spyder-ide.org/
 
 - Install git for windows if you don't have it: https://git-scm.com/download/win
 - set up a folder in your documents for cunode
