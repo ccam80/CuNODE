@@ -4,7 +4,8 @@ GUI:
 menu with precision, solver, maybe some other bullshit tidied away up there.
 better yet: data picker
 fix log tick zooimng and clash w axis label
-
+redo whole GUI in QT to get decent plotting libraries, looks unavoidable.
+use qtpy for bindings so that I can develop in spyder
 ODE solver:
 
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
