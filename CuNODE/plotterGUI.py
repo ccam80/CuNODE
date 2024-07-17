@@ -35,6 +35,7 @@ class Gridplotter:
         self.param_2_val = 0
         self.selected_index = 0
         self.sort_sf = 5 #how many sf to round to before finding a match in grid_params list
+        self.plot_downsample = 2
 
         self.min_x_index = 0
         self.max_x_index = None
@@ -429,7 +430,7 @@ class Gridplotter:
             Z = np.log10(Z)
             zlabel = "log10 " + zlabel
 
-        self.ax[0].plot_surface(X, Y, Z, cmap='viridis', rcount=X.shape[0], ccount=Y.shape[1])
+        self.ax[0].plot_surface(X, Y, Z, cmap='viridis', rcount=X.shape[0] // self.plot_downsample, ccount=Y.shape[1] // self.plot_downsample)
 
         if self.xscale.get() == 'log':
             self.ax[0].set_xticks(xtickvals)

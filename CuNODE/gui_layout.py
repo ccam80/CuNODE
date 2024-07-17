@@ -14,23 +14,23 @@ from matplotlib.figure import Figure
 def update_combobox_values(combobox, new_values):
     """
     Update the values of the given combobox.
-    
+
     :param combobox: The tk.Combobox widget to update.
     :param new_values: A list of new values to set in the combobox.
     """
     combobox['values'] = new_values
-    
+
 def update_label_text(label, new_text):
     """
     Update the text of the given label.
-    
+
     :param label: The tk.Label widget to update.
     :param new_text: The new text to set in the label.
     """
     label.config(text=new_text)
 
 def fill_plotsettings_frame(self):
-    
+
     self.grid_or_set = tk.StringVar(value='grid')
     self.x_axis_var = tk.StringVar(value='param_1')
     self.y_axis_var = tk.StringVar(value='param_2')
@@ -42,25 +42,25 @@ def fill_plotsettings_frame(self):
     self.xscale = tk.StringVar(value='lin')
     self.yscale = tk.StringVar(value='lin')
     self.zscale = tk.StringVar(value='lin')
-    
+
     self.xslice_min_var = tk.DoubleVar(value=0)
     self.xslice_max_var = tk.DoubleVar(value=1e6)
     self.yslice_min_var = tk.DoubleVar(value=0)
     self.yslice_max_var = tk.DoubleVar(value=1e6)
     self.zslice_min_var = tk.DoubleVar(value=0)
-    self.zslice_max_var = tk.DoubleVar(value=1e6)    
-                    
+    self.zslice_max_var = tk.DoubleVar(value=1e6)
+
     #sensible inits
     self.param1_var.set(self.param1_values[0])
     self.param2_var.set(self.param2_values[1])
-    
+
     self.grid_or_set_l = ttk.Label(self.plotsettings_frame, text="Plot whole grid or single set")
     self.gridplot_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.grid_or_set, value='grid', text="Grid", command=self.update_axes)
     self.singleplot_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.grid_or_set, value='single', text="Single", command=self.update_axes)
-    
-    
+
+
     self.gridplot_opts_f = ttk.LabelFrame(self.plotsettings_frame, text="3d plot options")
-    
+
     self.gridx_dd = ttk.Combobox(self.gridplot_opts_f,
                                    textvariable=self.x_axis_var,
                                    values=['param_1', 'param_2', 'time', 'freq'])
@@ -70,7 +70,7 @@ def fill_plotsettings_frame(self):
     self.gridz_dd = ttk.Combobox(self.gridplot_opts_f,
                                    textvariable=self.z_axis_var,
                                    values=['fft_mag', 'fft_phase', 'time-domain'])
-    
+
     self.axes_slice_frame = tk.Frame(self.gridplot_opts_f)
     self.xslice_min_e = tk.Entry(self.axes_slice_frame, textvariable=self.xslice_min_var, width=7).grid(row=0,column=1, sticky='nsew')
     self.xslice_max_e = tk.Entry(self.axes_slice_frame, textvariable=self.xslice_max_var, width=7).grid(row=0,column=3, sticky='nsew')
@@ -98,13 +98,13 @@ def fill_plotsettings_frame(self):
     self.zscale_l = tk.Label(self.axes_slice_frame, text="Z Scale:")
     self.zscale_lin_b = ttk.Radiobutton(self.axes_slice_frame, variable=self.zscale, value='lin', text="Linear")
     self.zscale_log_b = ttk.Radiobutton(self.axes_slice_frame, variable=self.zscale, value='log', text="Logarithmic")
-    
+
     self.xscale_l.grid(row=1, column=0, columnspan=2, sticky='nsew')
     self.xscale_lin_b.grid(row=1, column=2, sticky='nsew')
     self.xscale_log_b.grid(row=1, column=3, sticky='nsew')
     self.yscale_l.grid(row=1, column=4, columnspan=2, sticky='nsew')
     self.yscale_lin_b.grid(row=1, column=6, sticky='nsew')
-    self.yscale_log_b.grid(row=1, column=7, sticky='nsew') 
+    self.yscale_log_b.grid(row=1, column=7, sticky='nsew')
     self.zscale_l.grid(row=1, column=8, columnspan=2, sticky='nsew')
     self.zscale_lin_b.grid(row=1, column=10, sticky='nsew')
     self.zscale_log_b.grid(row=1, column=11, sticky='nsew')
@@ -112,11 +112,11 @@ def fill_plotsettings_frame(self):
     self.updateplot_button = tk.Button(self.gridplot_opts_f, text="Update", command=self.update_3d)
     self.axes_slice_frame.bind("<Return>", self.update_plot_slice)
     self.set_cell_weights(self.axes_slice_frame)
-    
+
     self.singleplot_l = ttk.Label(self.plotsettings_frame,text="Single plot settings")
     self.singletime_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.singleplot_style_var, value='time', text="time", command=self.update_axes)
     self.singlespec_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.singleplot_style_var, value='spec', text="spectrogram", command=self.update_axes)
-    
+
     self.grid_or_set_l.grid(row=0, column=0, columnspan=1, sticky='nsew')
     self.gridplot_b.grid(row=0, column=1, columnspan=1, sticky='nsew')
     self.singleplot_b.grid(row=0, column=2, columnspan=1, sticky='nsew')
@@ -129,7 +129,7 @@ def fill_plotsettings_frame(self):
     self.singleplot_l.grid(row=6, column=0, sticky='nsew')
     self.singletime_b.grid(row=6, column=1, sticky='nsew')
     self.singlespec_b.grid(row=6, column=2, sticky='nsew')
-    
+
     # Create dropdowns for parameter selection
     self.p1select_label = ttk.Label(self.plotsettings_frame, text="Select parameter 1:")
     self.p1select_dd = ttk.Combobox(self.plotsettings_frame,
@@ -140,10 +140,10 @@ def fill_plotsettings_frame(self):
     self.p2select_dd = ttk.Combobox(self.plotsettings_frame
                                    , textvariable=self.param2_var,
                                    values=sorted(list(set([param[1] for param in self.grid_values]))))
-    
+
     self.p1select_dd.bind("<<ComboboxSelected>>", self.update_selected_params)
     self.p2select_dd.bind("<<ComboboxSelected>>", self.update_selected_params)
-    
+
     self.p1select_label.grid(row=7, column=0)
     self.p1select_dd.grid(row=7, column=1)
     self.p2select_label.grid(row=8, column=0)
@@ -152,14 +152,14 @@ def fill_plotsettings_frame(self):
 
     self.freqselect_label = ttk.Label(self.plotsettings_frame, text="Frequency to slice at:")
     self.freqselect_button = ttk.Button(self.plotsettings_frame, text="Open Selection window", command=self.freqselect_menu)
-    
+
     self.freqselect_label.grid(row=9, column=0)
     self.freqselect_button.grid(row=9, column=1)
-    
+
 
     self.set_cell_weights(self.plotsettings_frame)
-    
-    
+
+
 def fill_simsettings_frame(self):
     self.current_param1_label = tk.StringVar()
     self.current_param2_label = tk.StringVar()
@@ -169,7 +169,7 @@ def fill_simsettings_frame(self):
     self.param2_start_var = tk.DoubleVar()
     self.param2_end_var = tk.DoubleVar()
     self.param2_n_var = tk.IntVar()
-    self.constant_vars = {}  
+    self.constant_vars = {}
     self.sigma_vars = {}
     self.init_vars = {}
     self.fs_var = tk.DoubleVar(value=1.0)
@@ -181,26 +181,26 @@ def fill_simsettings_frame(self):
 
 
     self.param1_l = tk.Label(self.simsettings_frame, text='Parameter 1')
-    
+
     constants = list(self.solved_ODE.system.constants_dict.keys())
     self.param1_select_dd = ttk.Combobox(self.simsettings_frame, textvariable=self.current_param1_label, values=constants)
     self.param1_select_dd.bind("<<ComboboxSelected>>", self.update_param_label)
     self.param1_select_dd.current(0)
 
-    
+
     self.p1start_l = tk.Label(self.simsettings_frame, text="Start")
     self.p1start_e = tk.Entry(self.simsettings_frame, textvariable=self.param1_start_var)
-    
+
     self.p1end_l = tk.Label(self.simsettings_frame, text="End")
     self.p1end_e = tk.Entry(self.simsettings_frame, textvariable=self.param1_end_var)
-    
+
     self.p1_n_l = tk.Label(self.simsettings_frame, text="Points")
     self.p1_n_e = tk.Entry(self.simsettings_frame, textvariable=self.param1_n_var)
-    
+
     self.param1_mode_l = tk.Label(self.simsettings_frame, text="Param 1 Sweep mode:")
     self.param1_lin_b = ttk.Radiobutton(self.simsettings_frame, variable=self.param1_mode, value='lin', text="Linear")
     self.param1_log_b = ttk.Radiobutton(self.simsettings_frame, variable=self.param1_mode, value='log', text="Logarithmic")
-    
+
     self.param1_l.grid(row=0, column=0, columnspan=4, sticky='nsew')
     self.param1_select_dd.grid(row=2, column=0, sticky='nsew')
     self.param1_mode_l.grid(row=3, column=0, columnspan=2, sticky='nsew')
@@ -219,11 +219,11 @@ def fill_simsettings_frame(self):
     self.param2_select_dd = ttk.Combobox(self.simsettings_frame, textvariable=self.current_param2_label, values=constants)
     self.param2_select_dd.bind("<<ComboboxSelected>>", self.update_param_label)
     self.param2_select_dd.current(1)
-    
+
     self.p2start_l = tk.Label(self.simsettings_frame, text="Start")
-    self.p2start_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_start_var)  
+    self.p2start_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_start_var)
     self.p2end_l = tk.Label(self.simsettings_frame, text="End")
-    self.p2end_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_end_var) 
+    self.p2end_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_end_var)
     self.p2_n_l = tk.Label(self.simsettings_frame, text="Points")
     self.p2_n_e = tk.Entry(self.simsettings_frame, textvariable=self.param2_n_var)
     self.param2_mode_l = tk.Label(self.simsettings_frame, text="Param 2 Sweep mode:")
@@ -241,7 +241,7 @@ def fill_simsettings_frame(self):
     self.p2end_e.grid(row=6, column=2, sticky='nsew')
     self.p2_n_l.grid(row=5, column=3, sticky='nsew')
     self.p2_n_e.grid(row=6, column=3, sticky='nsew')
-    
+
     self.constants_frame = ttk.Labelframe(self.simsettings_frame, text="System constants")
     self.noise_sigmas_frame = ttk.LabelFrame(self.constants_frame, text='Noise')
     self.init_frame = ttk.LabelFrame(self.constants_frame, text = "y0")
@@ -253,20 +253,20 @@ def fill_simsettings_frame(self):
         label = tk.Label(self.constants_frame, text=key)
         var = tk.DoubleVar(value=value)
         entry = tk.Entry(self.constants_frame, textvariable=var)
-        
+
         label.grid(row=row, column=col, sticky='nsew')
         entry.grid(row=row, column=col + 1, sticky='nsew')
-        
+
         self.constant_vars[key] = var
-        
+
         col += 2
-        if col >= 4:  
+        if col >= 4:
             col = 0
             row += 1
-                
+
     sigmarow = 0
-    
-    for i, value in enumerate(self.solved_ODE.system.noise_sigmas):
+
+    for i, value in enumerate(self.solved_ODE.noise_sigmas):
         var = tk.DoubleVar(value=value)
         label = tk.Label(self.noise_sigmas_frame, text=f'Noise Sigma {i}')
         entry = tk.Entry(self.noise_sigmas_frame, textvariable=var)
@@ -274,7 +274,7 @@ def fill_simsettings_frame(self):
 
         label.grid(row=i, column=0, sticky='nsew')
         entry.grid(row=i, column=1, sticky='nsew')
-        
+
         label = tk.Label(self.init_frame, text=f'y_{i}[0]')
         var = tk.DoubleVar(value=value)
         entry = tk.Entry(self.init_frame, textvariable=var)
@@ -282,11 +282,11 @@ def fill_simsettings_frame(self):
 
         label.grid(row=i, column=0, sticky='nsew')
         entry.grid(row=i, column=1, sticky='nsew')
-        
+
         sigmarow += 1
 
         sigmarows = i
-        
+
     self.constants_frame.grid(row=lastrow + 1,column=0, rowspan=row, columnspan=7, sticky='nsew')
     self.noise_sigmas_frame.grid(row=0,column=5, rowspan=sigmarows, columnspan=2, sticky='nsew')
     self.init_frame.grid(row=sigmarows,column=5, rowspan=sigmarows, columnspan=2, sticky='nsew')
@@ -296,7 +296,7 @@ def fill_simsettings_frame(self):
 
     self.fs_label = tk.Label(self.simsettings_frame, text="fs")
     self.fs_entry = tk.Entry(self.simsettings_frame, textvariable=self.fs_var)
-    
+
     self.duration_label = tk.Label(self.simsettings_frame, text="Duration")
     self.duration_entry = tk.Entry(self.simsettings_frame, textvariable=self.duration_var)
     self.step_size_label = tk.Label(self.simsettings_frame, text="Step Size")
@@ -304,7 +304,7 @@ def fill_simsettings_frame(self):
     self.warmup_label = tk.Label(self.simsettings_frame, text="Warmup Time")
     self.warmup_entry = tk.Entry(self.simsettings_frame, textvariable=self.warmup_var)
     self.solve_button = tk.Button(self.simsettings_frame, text="Solve", command=self.solve_ode)
-    
+
     self.fs_label.grid(row=row, column=0, sticky='nsew')
     self.fs_entry.grid(row=row, column=1, sticky='nsew')
     self.duration_label.grid(row=row+1, column=0, sticky='nsew')
@@ -320,16 +320,16 @@ def fill_simsettings_frame(self):
     self.set_cell_weights(self.init_frame)
     self.set_cell_weights(self.simsettings_frame)
 
-def setup_ui(self): 
+def setup_ui(self):
     self.root = tk.Tk()
     self.root.title("Gridsearch Visualiser")
     self.root.geometry("1920x1080")
- 
+
     self.fig_frame = ttk.Frame(self.root)
     self.control_frame = ttk.Frame(self.root)
     self.control_frame.grid(row=0, column=3, rowspan=10, sticky='nsew')
     self.fig_frame.grid(row=0, column=0, rowspan=10, columnspan=3, sticky='nsew')
-    
+
     # Create plot canvas
     self.fig = Figure(figsize=(18, 9))
     self.ax = [self.fig.add_subplot(111, projection='3d')]
@@ -339,7 +339,7 @@ def setup_ui(self):
 
     self.toolbar.grid(row=0,column=0, sticky='nw')
     self.canvas.get_tk_widget().grid(row=1, column=0, rowspan=9, sticky='nsew')
-    
+
     self.resize_time = 0
     self.last_winsize = (0,0)
     self.plotsettings_frame = ttk.Labelframe(self.control_frame, text="Plot Settings")
@@ -349,12 +349,12 @@ def setup_ui(self):
 
 
     # self.set_cell_weights(self.root, weight=4)
-    # self.root.columnconfigure(4,weight=)    
-    
+    # self.root.columnconfigure(4,weight=)
+
     self.simsettings_frame = ttk.Labelframe(self.control_frame, text="Simulation Settings")
     self.simsettings_frame.grid(row=1, column=0, sticky='new')
     self.fill_simsettings_frame()
-    
+
     self.set_cell_weights(self.root, 1)
     self.root.columnconfigure(0, weight=4)
 
