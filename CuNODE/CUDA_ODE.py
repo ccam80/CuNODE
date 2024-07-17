@@ -200,6 +200,10 @@ class CUDA_ODE(object):
 
         grid_indices = np.zeros(len(grid_labels), dtype=np.int32)
 
+        #TODO: add check here for init conditions - how to separate from real indices when it's not part of the grid?
+        #Maybe tack inits onto the end of the constants array. Maybe noise too? Then we can sweep eeeeeeeverything.
+        # This works I think. index inits by [-1:-num_states - 1], index noise by [-num_states - 2: -2*num_states -1].
+        # I don't think it will ever clash?
         for index, label in enumerate(grid_labels):
             grid_indices[index] = self.system.constant_indices[label]
 
@@ -303,13 +307,13 @@ if __name__ == "__main__":
     precision = np.float32
 
     # #Setting up grid of params to simulate with
-    a_gains = np.asarray([i * 0.01 for i in range(-128, 128)], dtype=precision)
-    b_params = np.asarray([i * 0.02 for i in range(-64, 64)], dtype=precision)
+    a_gains = np.asarray([i * 0.01 for i in range(-500, 500)], dtype=precision)
+    b_params = np.asarray([i * 0.02 for i in range(-500, 500)], dtype=precision)
     grid_params = [(a, b) for a in a_gains for b in b_params]
     grid_labels = ['omega_forcing', 'a']
     step_size = precision(0.001)
     fs = precision(1)
-    duration = precision(100)
+    duration = precision(10)
     sys = diffeq_system(precision = precision)
     inits = np.asarray([1.0, 0, 1.0, 0, 1.0], dtype=precision)
 

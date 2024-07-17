@@ -249,6 +249,7 @@ def fill_simsettings_frame(self):
     lastrow = 7
     row=0
     col=0
+
     for key, value in self.solved_ODE.system.constants_dict.items():
         label = tk.Label(self.constants_frame, text=key)
         var = tk.DoubleVar(value=value)
@@ -266,6 +267,9 @@ def fill_simsettings_frame(self):
 
     sigmarow = 0
 
+    #TODO: Add inits and noise sigmas into constants dict - at least before sending to solver
+    # Maybe to keep them separate we just add to the dropdown list and maintain separate dicts, then stitch
+    # them all together in the euler function. How, then, to manage grid_indices?
     for i, value in enumerate(self.solved_ODE.noise_sigmas):
         var = tk.DoubleVar(value=value)
         label = tk.Label(self.noise_sigmas_frame, text=f'Noise Sigma {i}')

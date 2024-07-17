@@ -6,7 +6,7 @@ better yet: data picker
 fix log tick zooming and clash w axis label
 redo whole GUI in QT to get decent plotting libraries, looks unavoidable.
 - use qtpy for bindings so that I can develop in spyder
-
+-Add initial condition sweep logic
 
 ODE solver:
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
@@ -19,3 +19,4 @@ adjustable step size algo
 Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
 figure out instruction parallelisation for high-state systems.
 Start system from "scratch" - no awkward coding portion before the GUI starts. (will tie into a general refactor)
+-Add initial condition sweep logic
