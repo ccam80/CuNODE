@@ -1,21 +1,19 @@
 CuNODE next steps for mems rig
 
 GUI:
-menu with precision, solver, maybe some other bullshit tidied away up there.
+"File" menu with precision, solver, maybe some other bits tidied away up there.
 better yet: data picker
-fix log tick zooimng and clash w axis label
+fix log tick zooming and clash w axis label
 redo whole GUI in QT to get decent plotting libraries, looks unavoidable.
-use qtpy for bindings so that I can develop in spyder
+- use qtpy for bindings so that I can develop in spyder
+
 ODE solver:
-
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
-solveralgo(inits, dxdt(contains control), dt, fs, noise_sigmas=None (build zeros array length of dxdt),
-consider whether to have a builder kernel per solver or just a kernel per?
-implement "chunking" as implemented on fft system
-
-
+- solveralgo(inits, dxdt(contains control), dt, fs, noise_sigmas=None (build zeros array length of dxdt),
+- consider whether to have a builder kernel per solver or just a kernel per?
+implement "chunking" as implemented on fft system to allow larger solves
 Control equation options
 rk4
 adjustable step size algo
 Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
-figure out instruction parallelisation
+figure out instruction parallelisation for high-state systems.
