@@ -25,13 +25,14 @@ CUDA: go to https://developer.nvidia.com/cuda-toolkit and download the latest CU
 Python: if you don't have python installed, download python 3.9 from https://www.python.org/downloads/release/python-390/
 - I strongly recommend using a virtual environment, because things tend to break in python when you download a new library and it updates something unintended. You can create a "venv" for each project, which has it's own set of dependencies, for a small amount of extra admin on setup.
     - To do this, you want to create a "venvs" folder somewhere handy, like on C: drive.
-    - navigate to this folder in "Terminal" - type: "C:" then "cd venvs" if you put it on c drive
-    - in the terminal type "python -m venv cunode"
+    - navigate to this folder in "command prompt" - type: "C:" then "cd venvs" if you put it on c drive
+    - in the command prompt type "python -m venv cunode"
         - this creates a folder called cunode, with your environment in it
-    - whenever you want to install stuff on this version of python, navigate to the venvs/cunode/scripts folder in Terminal and type "activate". It will say (cunode) on the left of terminal when you've successfully activated it, which tells you you're working in this environment
+    - whenever you want to install stuff on this version of python, navigate to the venvs/cunode/scripts folder in command prompt and type "activate". It will say (cunode) on the left of command prompt when you've successfully activated it, which tells you you're working in this environment
 - Install dependencies: pip install numpy scipy numba cupy-cuda12x matplotlib cuda-python
     - If you want to use the Spyder IDE (it's like MATLAB), then also do: "pip install PyQt5 spyder-kernels"
     - download and install Spyder from https://www.spyder-ide.org/
+    - When you open Spyder, go Tools-Preferences->Python interpreter -> Use the following Python Interpreter -> navigate to wherever your "python.exe" file is (if you followed the above instructions, C:/venvs/cunode/Scripts/python.exe)
 
 - Install git for windows if you don't have it: https://git-scm.com/download/win
 - set up a folder in your documents for cunode
