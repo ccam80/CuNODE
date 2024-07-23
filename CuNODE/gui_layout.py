@@ -57,6 +57,8 @@ def fill_plotsettings_frame(self):
     self.grid_or_set_l = ttk.Label(self.plotsettings_frame, text="Plot whole grid or single set")
     self.gridplot_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.grid_or_set, value='grid', text="Grid", command=self.update_axes)
     self.singleplot_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.grid_or_set, value='single', text="Single", command=self.update_axes)
+    self.phasesurf_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.grid_or_set, value='phase3d', text="3D Phase", command=self.update_axes)
+
 
 
     self.gridplot_opts_f = ttk.LabelFrame(self.plotsettings_frame, text="3d plot options")
@@ -116,19 +118,24 @@ def fill_plotsettings_frame(self):
     self.singleplot_l = ttk.Label(self.plotsettings_frame,text="Single plot settings")
     self.singletime_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.singleplot_style_var, value='time', text="time", command=self.update_axes)
     self.singlespec_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.singleplot_style_var, value='spec', text="spectrogram", command=self.update_axes)
+    self.singlephase_b = ttk.Radiobutton(self.plotsettings_frame, variable=self.singleplot_style_var, value='phase', text="phase", command=self.update_axes)
 
     self.grid_or_set_l.grid(row=0, column=0, columnspan=1, sticky='nsew')
-    self.gridplot_b.grid(row=0, column=1, columnspan=1, sticky='nsew')
-    self.singleplot_b.grid(row=0, column=2, columnspan=1, sticky='nsew')
-    self.gridplot_opts_f.grid(row=1, column=0, columnspan=3, rowspan=3, sticky='nsew')
+    self.gridplot_b.grid(row=1, column=1, columnspan=1, sticky='nsew')
+    self.singleplot_b.grid(row=1, column=2, columnspan=1, sticky='nsew')
+    self.phasesurf_b.grid(row=1, column=0, columnspan=1, sticky='nsew')
+
+    self.gridplot_opts_f.grid(row=2, column=0, columnspan=3, rowspan=3, sticky='nsew')
     self.gridx_dd.grid(row=0, column=0, sticky='nsew')
     self.gridy_dd.grid(row=0, column=1, sticky='nsew')
     self.gridz_dd.grid(row=0, column=2, sticky='nsew')
     self.axes_slice_frame.grid(row=1, column=0, columnspan=3, rowspan=2, sticky='nsew')
     self.updateplot_button.grid(row=0, rowspan=5, column=15, sticky='nsew')
     self.singleplot_l.grid(row=6, column=0, sticky='nsew')
-    self.singletime_b.grid(row=6, column=1, sticky='nsew')
-    self.singlespec_b.grid(row=6, column=2, sticky='nsew')
+    self.singletime_b.grid(row=7, column=0, sticky='nsew')
+    self.singlespec_b.grid(row=7, column=1, sticky='nsew')
+    self.singlephase_b.grid(row=7, column=2, columnspan=1, sticky='nsew')
+
 
     # Create dropdowns for parameter selection
     self.p1select_label = ttk.Label(self.plotsettings_frame, text="Select parameter 1:")
@@ -144,17 +151,17 @@ def fill_plotsettings_frame(self):
     self.p1select_dd.bind("<<ComboboxSelected>>", self.update_selected_params)
     self.p2select_dd.bind("<<ComboboxSelected>>", self.update_selected_params)
 
-    self.p1select_label.grid(row=7, column=0)
-    self.p1select_dd.grid(row=7, column=1)
-    self.p2select_label.grid(row=8, column=0)
-    self.p2select_dd.grid(row=8, column=1)
+    self.p1select_label.grid(row=8, column=0)
+    self.p1select_dd.grid(row=8, column=1)
+    self.p2select_label.grid(row=9, column=0)
+    self.p2select_dd.grid(row=9, column=1)
 
 
     self.freqselect_label = ttk.Label(self.plotsettings_frame, text="Frequency to slice at:")
     self.freqselect_button = ttk.Button(self.plotsettings_frame, text="Open Selection window", command=self.freqselect_menu)
 
-    self.freqselect_label.grid(row=9, column=0)
-    self.freqselect_button.grid(row=9, column=1)
+    self.freqselect_label.grid(row=10, column=0)
+    self.freqselect_button.grid(row=10, column=1)
 
 
     self.set_cell_weights(self.plotsettings_frame)
@@ -163,12 +170,12 @@ def fill_plotsettings_frame(self):
 def fill_simsettings_frame(self):
     self.current_param1_label = tk.StringVar()
     self.current_param2_label = tk.StringVar()
-    self.param1_start_var = tk.DoubleVar()
-    self.param1_end_var = tk.DoubleVar()
-    self.param1_n_var = tk.IntVar()
-    self.param2_start_var = tk.DoubleVar()
-    self.param2_end_var = tk.DoubleVar()
-    self.param2_n_var = tk.IntVar()
+    self.param1_start_var = tk.DoubleVar(value=0.1)
+    self.param1_end_var = tk.DoubleVar(value=10.00)
+    self.param1_n_var = tk.IntVar(value=100)
+    self.param2_start_var = tk.DoubleVar(value=0.01)
+    self.param2_end_var = tk.DoubleVar(value=0.3)
+    self.param2_n_var = tk.IntVar(value=100)
     self.constant_vars = {}
     self.sigma_vars = {}
     self.init_vars = {}
@@ -270,7 +277,7 @@ def fill_simsettings_frame(self):
     #TODO: Add inits and noise sigmas into constants dict - at least before sending to solver
     # Maybe to keep them separate we just add to the dropdown list and maintain separate dicts, then stitch
     # them all together in the euler function. How, then, to manage grid_indices?
-    for i, value in enumerate(self.solved_ODE.noise_sigmas):
+    for i, value in enumerate(self.solved_ODE.system.get_noise_sigmas()):
         var = tk.DoubleVar(value=value)
         label = tk.Label(self.noise_sigmas_frame, text=f'Noise Sigma {i}')
         entry = tk.Entry(self.noise_sigmas_frame, textvariable=var)
@@ -335,7 +342,7 @@ def setup_ui(self):
     self.fig_frame.grid(row=0, column=0, rowspan=10, columnspan=3, sticky='nsew')
 
     # Create plot canvas
-    self.fig = Figure(figsize=(18, 9))
+    self.fig = Figure(figsize=(27, 18))
     self.ax = [self.fig.add_subplot(111, projection='3d')]
     self.canvas = FigureCanvasTkAgg(self.fig, master=self.fig_frame)
     self.toolbar = NavigationToolbar2Tk(self.canvas, self.fig_frame, pack_toolbar=False)
@@ -381,8 +388,13 @@ def freqselect_menu(self):
 
     self.listbox.configure(yscrollcommand=self.scrollbar.set)
 
-    for item in self.solved_ODE.f:
-        self.listbox.insert(tk.END, item)
+    #TODO: Another two-frequency-axes problem
+    if self.z_axis_var.get() == 'fft_mag':
+        for item in self.solved_ODE.mag_f:
+            self.listbox.insert(tk.END, item)
+    else:
+        for item in self.solved_ODE.phase_f:
+            self.listbox.insert(tk.END, item)
 
     # Bind the selection event
     self.listbox.bind("<<ListboxSelect>>", self.select_frequency)

@@ -1,6 +1,6 @@
 import numpy as np
-from diffeq_system import diffeq_system, system_constants
-from CUDA_ODE import CUDA_ODE
+from diffeq_system import diffeq_system
+from Euler_maruyama_solver import Solver
 # from CUDA_ODE import CUDA_ODE
 from time import time
 from cupyx.scipy.signal import stft
@@ -27,8 +27,11 @@ class Gridplotter:
         self.solved_ODE = ODE
         self.local_constants = self.solved_ODE.system.constants_dict.copy()
 
+        self.phase_state_x = 0
+        self.phase_state_y = 1 #TODO: go and get these from the GUI
+        self.phase_state_z = 3
+
         self.precision=precision
-        self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.fs, int( self.solved_ODE.duration * self.solved_ODE.fs))
         self.plotstate = 4
         self.freq_index = 0
         self.param_1_val = 0
@@ -59,6 +62,8 @@ class Gridplotter:
         # self.freqselect_menu()
         # self.fill_simsettings_frame()
         # self.fill_plotsettings_frame()
+        self.solve_ode()
+
         self.update_3d()
 
     def update_param_label(self, event):
@@ -154,6 +159,7 @@ class Gridplotter:
                             self.grid_values,
                             warmup_time=self.warmup_time)
         self.solved_ODE.get_fft()
+        self.t = np.linspace(0,  self.solved_ODE.duration -  1/self.solved_ODE.fs, int( self.solved_ODE.duration * self.solved_ODE.fs))
 
         self.update_combobox_values(self.p1select_dd, self.param1_values)
         self.update_combobox_values(self.p2select_dd, self.param2_values)
@@ -169,12 +175,13 @@ class Gridplotter:
 
     def on_resize(self, event):
         timetoupdate = ((time() - self.resize_time) > 1)
-        # if ((event.width, event.height) != self.last_winsize) and (timetoupdate):
-            # self.canvas.get_tk_widget().config(width=event.width, height=event.height)
-            # self.last_winsize = (event.width, event.height)
-            # dpi = self.root.winfo_fpixels('1i')
-            # self.fig.set_figheight(event.height * 2 / dpi)
-            # self.fig.set_figwidth(event.width / dpi)
+        if ((event.width, event.height) != self.last_winsize) and (timetoupdate):
+            self.canvas.get_tk_widget().config(width=event.width, height=event.height)
+            self.last_winsize = (event.width, event.height)
+            dpi = self.root.winfo_fpixels('1i') / 1.33 #I don't know why /1.33 works here, but it does. Windows scaling factor, perhaps? Maybe because I'm remoting in.
+            self.fig.set_figheight(event.height / dpi)
+            self.fig.set_figwidth(event.width / dpi)
+            self.resize_time = time()
             # self.canvas.draw()
 
             # self.update_all_fonts(self.root, event.height // 100)
@@ -197,6 +204,7 @@ class Gridplotter:
         self.single_state = self.solved_ODE.output_array[:, self.param_index, :]
         self.update_single_plot()
         self.update_3d()
+        self.update_phase3d()
 
     def update_axes(self):
         selection = self.grid_or_set.get()
@@ -210,6 +218,11 @@ class Gridplotter:
         if selection == 'grid':
             self.ax = [self.fig.add_subplot(111, projection='3d')]
             self.update_3d()
+
+        elif selection == 'phase3d':
+            self.ax = [self.fig.add_subplot(111, projection='3d')]
+            self.update_phase3d()
+
 
         if selection == 'single':
             if self.singleplot_style_var.get() == 'time':
@@ -245,9 +258,9 @@ class Gridplotter:
         z_selection = self.z_axis_var.get()
         #Get 2D array to draw z values from depending on z selection
         if z_selection == 'fft_mag':
-            working_zview = np.abs(self.solved_ODE.fft_array[self.plotstate, :, :]).T
+            working_zview = np.abs(self.solved_ODE.fft_mag_array[self.plotstate, :, :]).T
         elif z_selection == 'fft_phase':
-            working_zview = np.angle(self.solved_ODE.fft_array[self.plotstate, :, :]).T
+            working_zview = np.angle(self.solved_ODE.fft_phase_array[self.plotstate, :, :]).T
             # working_zview = np.where(working_zview < 0, working_zview+2*np.pi, working_zview)
         elif z_selection == 'time-domain':
             working_zview = self.solved_ODE.output_array[self.plotstate, :, :].T
@@ -287,6 +300,25 @@ class Gridplotter:
                         Z[i,:] = working_zview[:,param_index]
 
         return X, Y, Z
+
+    def update_phase3d(self):
+        if self.grid_or_set.get() == 'phase3d':
+            self.ax[0].cla()
+
+            # self.ax[0].plot(self.single_state[self.phase_state_x,:],
+            #                 self.single_state[self.phase_state_y,:],
+            #                 self.t)
+            self.ax[0].plot(self.single_state[self.phase_state_x,:-1],
+                            self.single_state[self.phase_state_y,:-1],
+                            np.diff(self.single_state[self.phase_state_y,:]))
+
+            self.ax[0].set_ylabel("Velocity")
+            self.ax[0].set_zlabel("Acceleration")
+
+            self.ax[0].set_xlabel("Displacement")
+            self.canvas.draw()
+
+
 
     def update_3d(self):
 
@@ -328,14 +360,21 @@ class Gridplotter:
                 valid_combo = True
 
             elif (x_request, y_request) == ('freq', 'param_1'):
-                xvals = self.solved_ODE.f[:]
+                #NOTE: This check of z seems a bit dicey - maybe I can trim RFFT to seg length
+                if z_request == 'fft_mag':
+                    xvals = self.solved_ODE.mag_f[:]
+                else:
+                    xvals = self.solved_ODE.phase_f[:]
                 yvals = round_list_sf(self.param1_values, self.sort_sf)
                 self.fixed_var = 'param_2'
                 surf_type = 'progression'
                 valid_combo = True
 
             elif (x_request, y_request) == ('freq', 'param_2'):
-                xvals = self.solved_ODE.f[:]
+                if z_request == 'fft_mag':
+                    xvals = self.solved_ODE.mag_f[:]
+                else:
+                    xvals = self.solved_ODE.phase_f[:]
                 yvals = round_list_sf(self.param2_values, self.sort_sf)
                 self.fixed_var = 'param_1'
                 surf_type = 'progression'
@@ -367,8 +406,14 @@ class Gridplotter:
         self.max_y_index = self.get_slice_index(self.yslice_max_var.get(), yvar)
 
     def get_slice_index(self, value, variable):
+        # Another area to clean up once phase/mag measurements are brought into line.
+        z_request = self.z_axis_var.get()
+
         if variable == 'freq':
-            index = np.argmin(np.abs(self.solved_ODE.f - value))if value < np.amax(self.solved_ODE.f) else None
+            if z_request == 'fft_mag':
+                index = np.argmin(np.abs(self.solved_ODE.mag_f - value))if value < np.amax(self.solved_ODE.mag_f) else None
+            else:
+                index = np.argmin(np.abs(self.solved_ODE.phase_f - value))if value < np.amax(self.solved_ODE.phase_f) else None
         elif variable == 'time':
             index = np.argmin(np.abs(self.t - value))if value < np.amax(self.t) else None
         elif variable == 'param_1':
@@ -408,9 +453,10 @@ class Gridplotter:
 
         tick_values = round_list_sf(tick_values, self.sort_sf)
         tick_values = np.array(tick_values)
-        tickv_alues = tick_values[(tick_values >= min_data) & (tick_values <= max_data)]
+        tick_values = tick_values[(tick_values >= min_data) & (tick_values <= max_data)]
 
         return tick_values, np.log10(tick_values)
+
 
     def update_surface(self, X, Y, Z, xlabel, ylabel, zlabel):
         self.ax[0].cla()
@@ -494,11 +540,19 @@ class Gridplotter:
                 nperseg = windowlength
 
                 f, t, Sx = stft(self.single_state[self.plotstate,:],
-                                self.spectr_fs, nfft=nfft, noverlap=hop,
+                                spectr_fs, nfft=nfft, noverlap=hop,
                                 nperseg = nperseg, return_onesided=True)
 
                 self.ax[0].pcolormesh(t.get(), f.get(), np.abs(Sx.get()), shading='gouraud')
                 self.ax[0].set_ylim([0,2.5])
+                self.ax[0].set_ylabel("Frequency")
+                self.ax[0].set_xlabel("Time")
+
+            if self.singleplot_style_var.get() == "phase":
+
+                self.ax[0].cla()
+
+                self.ax[0].plot(self.single_state[self.phase_state_x,:],self.single_state[self.phase_state_y,:])
                 self.ax[0].set_ylabel("Frequency")
                 self.ax[0].set_xlabel("Time")
 
@@ -557,27 +611,11 @@ if __name__ == "__main__":
 
  #%%
     #Setting up grid of params to simulate with
-    precision = np.float32
-    a_gains = np.asarray([i * 0.001 + 1 for i in range(-100, 100)], dtype=precision)
-    b_params = np.asarray([i * 0.0001 + 0.005 for i in range(-50, 50)], dtype=precision)
-    grid_params = [(a, b) for a in a_gains for b in b_params]
-    grid_labels = ['omega_forcing', 'rhat']
-    step_size = precision(0.001)
-    fs = precision(1.0)
-    duration = precision(1000.0)
-    sys = diffeq_system(a=5, b=-0.1, precision=precision)
-    inits = np.asarray([0.0, 0, 0.0, 0, 0.0], dtype=precision)
+    precision = np.float64
 
-    ODE = CUDA_ODE(sys, precision=precision)
-    ODE.build_kernel()
-    ODE.euler_maruyama(inits,
-                        duration,
-                        step_size,
-                        fs,
-                        grid_labels,
-                        grid_params,
-                        warmup_time=000.0)
-    ODE.get_fft()
-#%%
+    # sys = diffeq_system(precision=precision)
+    grid_params = [(0,1),(1,0)]
+    ODE = Solver(precision=precision)
+    ODE.load_system(diffeq_system(precision=np.float64))
     plotter = Gridplotter(ODE, grid_params, precision = precision)
     plotter.root.mainloop()

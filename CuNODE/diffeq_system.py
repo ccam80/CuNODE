@@ -29,6 +29,8 @@ class system_constant_class(dict):
         else:
             raise KeyError(f"Constant {key} not in constants dictionary")
 
+
+
 def system_constants(constants_dict=None, **kwargs):
 
     constants = system_constant_class()
@@ -60,6 +62,7 @@ def system_constants(constants_dict=None, **kwargs):
         constants.update(combined_updates)
 
     return constants
+
 
 class diffeq_system:
     """ This class should contain all system definitions. The constants management
@@ -98,6 +101,7 @@ class diffeq_system:
         self.num_states = 5
         self.precision = precision
         self.numba_precision = from_dtype(precision)
+        self.noise_sigmas = np.zeros(self.num_states, dtype=precision)
 
         self.constants_dict  = system_constants(kwargs)
 
@@ -173,7 +177,11 @@ class diffeq_system:
 
         self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=self.precision)
 
+    def set_noise_sigmas(self, noise_vector):
+        self.noise_sigmas = np.asarray(noise_vector, dtype=self.precision)
 
+    def get_noise_sigmas(self):
+        return self.noise_sigmas.copy()
 #******************************* TEST CODE ******************************** #
 # if __name__ == '__main__':
     # sys = diffeq_system()

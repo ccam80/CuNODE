@@ -15,7 +15,7 @@ import numpy as np
 from cupy import asarray, ascontiguousarray, get_default_memory_pool
 from numba import cuda, from_dtype, literally
 from numba import float32, float64, int32, int64, void, int16
-from diffeq_system import diffeq_system
+from diffeq_system import  diffeq_system# For testing code only, do not touch otherwise
 from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_float64, xoroshiro128p_dtype
 from cupyx.scipy.signal import firwin, welch
 from cupyx.scipy.fft import rfftfreq, rfft
@@ -26,11 +26,11 @@ xoro_type = from_dtype(xoroshiro128p_dtype)
 
 # global0 = 0
 
-class CUDA_ODE(object):
+class Solver(object):
 
     def __init__(self,
-                 diffeq_sys = None,
-                 precision = np.float32
+                 precision = np.float32,
+                 diffeq_sys = None
                  ):
 
         self.precision = precision
@@ -328,7 +328,8 @@ if __name__ == "__main__":
     sys = diffeq_system(precision = precision)
     inits = np.asarray([1.0, 0, 1.0, 0, 1.0], dtype=precision)
 
-    ODE = CUDA_ODE(sys, precision=precision)
+    ODE = Solver(precision=precision)
+    ODE.load_system(sys)
     ODE.build_kernel()
     ODE.euler_maruyama(inits,
                        duration,

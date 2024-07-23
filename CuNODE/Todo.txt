@@ -5,13 +5,19 @@ GUI:
 better yet: data picker
 fix log tick zooming and clash w axis label
 redo whole GUI in QT to get decent plotting libraries, looks unavoidable.
+- Separate controller and view elements of GUI - plotting and controls should be one class, control windows etc can be another.
 - use qtpy for bindings so that I can develop in spyder
 -Add initial condition sweep logic
+- add phase space plotting
+Stack up phase space plots in 3d for a "tunnel" looking 3d plot
+Tidy up approach to axis slicing - currently the default gets rid of neg numbers.
 
 ODE solver:
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
 - solveralgo(inits, dxdt(contains control), dt, fs, noise_sigmas=None (build zeros array length of dxdt),
 - consider whether to have a builder kernel per solver or just a kernel per?
+-- Thoughts on this: General solver mainclass, which has things like get_fft, load_system, etc.
+-- Specific subclass solvers with their own buildkernel and kernel definition.
 implement "chunking" as implemented on fft system to allow larger solves
 Control equation options
 rk4

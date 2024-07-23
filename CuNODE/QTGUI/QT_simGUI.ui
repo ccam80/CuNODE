@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1123</width>
-    <height>1042</height>
+    <width>1600</width>
+    <height>1364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
      <verstretch>1</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
      <widget class="QFrame" name="plotFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -37,7 +37,7 @@
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QWidget" name="Plotwidget" native="true">
+        <widget class="pyVistaView" name="Plotwidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -49,13 +49,16 @@
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1">
      <widget class="QFrame" name="controlFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>1</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -66,29 +69,36 @@
       <property name="lineWidth">
        <number>1</number>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="6,6,1">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,5,1">
+       <property name="spacing">
+        <number>1</number>
+       </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetMinAndMaxSize</enum>
+        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
        <item alignment="Qt::AlignmentFlag::AlignTop">
         <widget class="QTabWidget" name="plotSettingsTabs">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
+           <verstretch>1</verstretch>
           </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>500</height>
-          </size>
          </property>
          <property name="font">
           <font>
            <pointsize>14</pointsize>
-           <kerning>true</kerning>
+           <strikeout>false</strikeout>
+           <kerning>false</kerning>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="currentIndex">
           <number>0</number>
@@ -109,13 +119,14 @@
           <attribute name="toolTip">
            <string>Plot a three-dimensional surface of selected results</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,1,1,1,1,1,0">
+          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,1,1,1,1,1,0,0">
            <item>
             <widget class="QLabel" name="xAxis_l">
              <property name="font">
               <font>
                <pointsize>14</pointsize>
                <bold>true</bold>
+               <strikeout>false</strikeout>
                <kerning>true</kerning>
               </font>
              </property>
@@ -145,6 +156,15 @@
               <property name="sizeConstraint">
                <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
               </property>
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <property name="bottomMargin">
+               <number>1</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>1</number>
+              </property>
               <item row="1" column="0">
                <widget class="QComboBox" name="xAxisVar_dd">
                 <property name="sizePolicy">
@@ -153,25 +173,77 @@
                   <verstretch>1</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Param 1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Param 2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Time</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Frequency</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="1" column="1">
                <widget class="QTextEdit" name="xSliceLower_entry">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
                 </property>
                </widget>
               </item>
               <item row="1" column="2">
                <widget class="QTextEdit" name="xSliceUpper_entry">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="lineWrapMode">
+                 <enum>QTextEdit::LineWrapMode::FixedColumnWidth</enum>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -180,9 +252,22 @@
               </item>
               <item row="0" column="0">
                <widget class="QLabel" name="xAxisVar_l">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -193,9 +278,22 @@
               </item>
               <item row="0" column="2">
                <widget class="QLabel" name="xTo_l">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -206,9 +304,22 @@
               </item>
               <item row="0" column="1">
                <widget class="QLabel" name="xFrom_l">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>1</horstretch>
+                  <verstretch>1</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -219,28 +330,65 @@
               </item>
               <item row="0" column="3" rowspan="2">
                <widget class="QGroupBox" name="xScale_box">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777208</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
                 <property name="title">
                  <string>Scale</string>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1">
+                <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1">
+                 <property name="spacing">
+                  <number>1</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
                  <item>
                   <widget class="QRadioButton" name="xLin_button">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Linear</string>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">xScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
                   <widget class="QRadioButton" name="xLog_button">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Logarithmic</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">xScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
@@ -261,6 +409,7 @@
               <font>
                <pointsize>14</pointsize>
                <bold>true</bold>
+               <strikeout>false</strikeout>
                <kerning>true</kerning>
               </font>
              </property>
@@ -283,12 +432,25 @@
              <property name="frameShadow">
               <enum>QFrame::Shadow::Raised</enum>
              </property>
-             <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1" columnstretch="1,1,1,1">
+             <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,0" columnstretch="1,1,1,1">
+              <property name="sizeConstraint">
+               <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>0</number>
+              </property>
               <item row="0" column="0">
                <widget class="QLabel" name="yAxisVar_l">
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -302,6 +464,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -313,30 +476,79 @@
               <item row="1" column="0">
                <widget class="QComboBox" name="yAxisVar_dd">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Param 2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Param 1</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="1" column="1">
                <widget class="QTextEdit" name="ySliceLower_entry">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
+                  <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
                 </property>
                </widget>
               </item>
               <item row="1" column="2">
                <widget class="QTextEdit" name="ySliceUpper_entry">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
+                  <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -348,6 +560,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -367,6 +580,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -374,6 +588,15 @@
                  <string>Scale</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,1">
+                 <property name="spacing">
+                  <number>1</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
                  <item>
                   <widget class="QRadioButton" name="yLin_button">
                    <property name="sizePolicy">
@@ -382,9 +605,21 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Linear</string>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">yScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -395,9 +630,18 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Logarithmic</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">yScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
@@ -412,6 +656,7 @@
               <font>
                <pointsize>14</pointsize>
                <bold>true</bold>
+               <strikeout>false</strikeout>
                <kerning>true</kerning>
               </font>
              </property>
@@ -437,6 +682,7 @@
              <property name="font">
               <font>
                <pointsize>12</pointsize>
+               <strikeout>false</strikeout>
                <kerning>true</kerning>
               </font>
              </property>
@@ -447,13 +693,45 @@
               <enum>QFrame::Shadow::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0" columnstretch="1,0,0,0">
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <property name="bottomMargin">
+               <number>1</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>1</number>
+              </property>
               <item row="1" column="2">
                <widget class="QTextEdit" name="zSliceUpper_entry">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="html">
+                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;0.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="acceptRichText">
                  <bool>false</bool>
@@ -471,6 +749,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -482,14 +761,21 @@
               <item row="0" column="2">
                <widget class="QLabel" name="zTo_l">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
                 </property>
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -503,6 +789,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -516,6 +803,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -523,18 +811,51 @@
                  <string>Scale</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,1">
+                 <property name="spacing">
+                  <number>1</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>8</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
                  <item>
                   <widget class="QRadioButton" name="zLin_button">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Linear</string>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">zScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
                   <widget class="QRadioButton" name="zLog_button">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Logarithmic</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">zScale_buttons</string>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
@@ -548,15 +869,43 @@
                   <verstretch>1</verstretch>
                  </sizepolicy>
                 </property>
+                <item>
+                 <property name="text">
+                  <string>PSD Magnitude @f</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FFT Phase @f</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Amplitude (RMS/current)</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="1" column="1">
                <widget class="QTextEdit" name="zSliceLower_entry">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <strikeout>false</strikeout>
+                  <kerning>true</kerning>
+                 </font>
                 </property>
                </widget>
               </item>
@@ -565,6 +914,13 @@
            </item>
            <item>
             <widget class="QFrame" name="freqSelect_f">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::Shape::StyledPanel</enum>
              </property>
@@ -572,11 +928,18 @@
               <enum>QFrame::Shadow::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <property name="bottomMargin">
+               <number>1</number>
+              </property>
               <item>
                <widget class="QLabel" name="frequency_l">
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -607,11 +970,18 @@
               <enum>QFrame::Shadow::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
               <item>
                <widget class="QPushButton" name="animatePlot_button">
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -625,6 +995,7 @@
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
+                  <strikeout>false</strikeout>
                   <kerning>true</kerning>
                  </font>
                 </property>
@@ -636,9 +1007,28 @@
              </layout>
             </widget>
            </item>
+           <item>
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="plotSingle_tab">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <attribute name="title">
            <string>Single Dataset</string>
           </attribute>
@@ -661,6 +1051,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
+                <strikeout>false</strikeout>
                 <kerning>true</kerning>
                </font>
               </property>
@@ -668,30 +1059,61 @@
                <string>Plot Style</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_6">
-               <item row="0" column="3">
-                <widget class="QRadioButton" name="singleTimeDomain_button">
-                 <property name="font">
-                  <font>
-                   <pointsize>12</pointsize>
-                   <kerning>true</kerning>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Time-domain</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="2">
                 <widget class="QRadioButton" name="singleSpectrogram_button">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
                    <kerning>true</kerning>
                   </font>
                  </property>
                  <property name="text">
                   <string>Spectrogram</string>
                  </property>
+                 <attribute name="buttonGroup">
+                  <string notr="true">singlePlotStyle_buttons</string>
+                 </attribute>
+                </widget>
+               </item>
+               <item row="0" column="4">
+                <widget class="QRadioButton" name="singleTimeDomain_button">
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
+                   <kerning>true</kerning>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Time-domain</string>
+                 </property>
+                 <attribute name="buttonGroup">
+                  <string notr="true">singlePlotStyle_buttons</string>
+                 </attribute>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QRadioButton" name="phase2d_button">
+                 <property name="text">
+                  <string>2D Phase Diagram</string>
+                 </property>
+                 <attribute name="buttonGroup">
+                  <string notr="true">singlePlotStyle_buttons</string>
+                 </attribute>
+                </widget>
+               </item>
+               <item row="1" column="4">
+                <widget class="QRadioButton" name="phase3d_button">
+                 <property name="text">
+                  <string>3D Phase Diagram</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <attribute name="buttonGroup">
+                  <string notr="true">singlePlotStyle_buttons</string>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -711,10 +1133,11 @@
               </property>
               <layout class="QGridLayout" name="gridLayout_7">
                <item row="1" column="1">
-                <widget class="QComboBox" name="param2Select_dd">
+                <widget class="QComboBox" name="param2ValSelect_dd">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
                    <kerning>true</kerning>
                   </font>
                  </property>
@@ -725,6 +1148,7 @@
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
                    <kerning>true</kerning>
                   </font>
                  </property>
@@ -733,24 +1157,12 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="0" column="1">
-                <widget class="QComboBox" name="param1Select_dd">
+                <widget class="QComboBox" name="param1ValSelect_dd">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
                    <kerning>true</kerning>
                   </font>
                  </property>
@@ -761,6 +1173,7 @@
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <strikeout>false</strikeout>
                    <kerning>true</kerning>
                   </font>
                  </property>
@@ -773,6 +1186,19 @@
              </widget>
             </widget>
            </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </widget>
         </widget>
@@ -781,8 +1207,8 @@
         <widget class="QToolBox" name="simSettingsTabs">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
           </sizepolicy>
          </property>
          <property name="font">
@@ -790,16 +1216,19 @@
            <pointsize>16</pointsize>
           </font>
          </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="simSettings_tab">
           <property name="geometry">
            <rect>
-            <x>-57</x>
-            <y>-364</y>
-            <width>466</width>
-            <height>641</height>
+            <x>0</x>
+            <y>0</y>
+            <width>503</width>
+            <height>505</height>
            </rect>
           </property>
           <attribute name="label">
@@ -811,6 +1240,12 @@
           <layout class="QGridLayout" name="gridLayout_11">
            <item row="0" column="0" colspan="2">
             <widget class="QFrame" name="frame_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
              <property name="frameShape">
               <enum>QFrame::Shape::StyledPanel</enum>
              </property>
@@ -819,422 +1254,709 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QSplitter" name="splitter_2">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>481</height>
-                 </size>
-                </property>
+               <widget class="QSplitter" name="splitter_5">
                 <property name="orientation">
                  <enum>Qt::Orientation::Vertical</enum>
                 </property>
-                <widget class="QFrame" name="zAxis_f_2">
+                <widget class="QSplitter" name="splitter_2">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                    <horstretch>1</horstretch>
-                   <verstretch>0</verstretch>
+                   <verstretch>1</verstretch>
                   </sizepolicy>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>238</height>
+                   <width>16777214</width>
+                   <height>337</height>
                   </size>
                  </property>
-                 <property name="frameShape">
-                  <enum>QFrame::Shape::StyledPanel</enum>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Raised</enum>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_8" rowstretch="1,1" columnstretch="1,1,0,0,1,1" rowminimumheight="10,10">
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="zFrom_l_2">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>from</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="4">
-                   <widget class="QLabel" name="zTo_l_2">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>to</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="zAxisVar_l_2">
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Variable</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QComboBox" name="zAxisVar_dd_2">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QTextEdit" name="zSliceLower_entry_2">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="4">
-                   <widget class="QTextEdit" name="zSliceUpper_entry_2">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="acceptRichText">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="5" rowspan="2">
-                   <widget class="QGroupBox" name="zScale_box_2">
-                    <property name="title">
-                     <string>Scale</string>
-                    </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_7" stretch="2,1">
-                     <item>
-                      <widget class="QRadioButton" name="zLin_button_2">
-                       <property name="font">
-                        <font>
-                         <pointsize>12</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Linear</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QRadioButton" name="zLog_button_2">
-                       <property name="font">
-                        <font>
-                         <pointsize>12</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Logarithmic</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QFrame" name="p1SweepConfig_f">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>1</horstretch>
+                    <verstretch>1</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777214</width>
+                    <height>100</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_8" rowstretch="1,1" columnstretch="1,1,0,0,1,1" rowminimumheight="10,10">
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="p1From_l">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>from</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4">
+                    <widget class="QLabel" name="p1To_l">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>to</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="p1Var_l">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Variable</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QComboBox" name="p1Select_dd">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QTextEdit" name="p1SliceLower_entry">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="html">
+                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;0.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="4">
+                    <widget class="QTextEdit" name="p1SliceUpper_entry">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="html">
+                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="acceptRichText">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="5" rowspan="2">
+                    <widget class="QGroupBox" name="p1SweepScale_box">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="title">
+                      <string>Scale</string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_7" stretch="2,1">
+                      <property name="spacing">
+                       <number>1</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>1</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>1</number>
+                      </property>
+                      <item>
+                       <widget class="QRadioButton" name="p1Lin_button">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Linear</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">param1SweepScale_buttons</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="p1Log_button">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Logarithmic</string>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">param1SweepScale_buttons</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QFrame" name="p2SweepConfig_f">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                    <horstretch>1</horstretch>
+                    <verstretch>1</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>232</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_10" rowstretch="0,0,0,0" columnstretch="1,0,0,0,0,0">
+                   <item row="1" column="4">
+                    <widget class="QTextEdit" name="p2SliceUpper_entry_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="html">
+                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1.0&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="acceptRichText">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QTextEdit" name="p2SliceLower_entry_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="html">
+                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;0.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="p2From_l">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>from</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="p2Var_l">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Variable</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <spacer name="verticalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QComboBox" name="p2Select_dd">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4">
+                    <widget class="QLabel" name="p2To_l_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>to</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="5" rowspan="2">
+                    <widget class="QGroupBox" name="p2SweepScale_box">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="title">
+                      <string>Scale</string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_9" stretch="2,1">
+                      <property name="spacing">
+                       <number>1</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>1</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>1</number>
+                      </property>
+                      <item>
+                       <widget class="QRadioButton" name="p2Lin_button">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Linear</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">param2SweepScale_buttons</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="p2Log_button">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Logarithmic</string>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">param2SweepScale_buttons</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </widget>
-                <widget class="QFrame" name="zAxis_f_3">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                   <horstretch>1</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <widget class="QSplitter" name="splitter_4">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>238</height>
-                  </size>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::Shape::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Raised</enum>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_10" rowstretch="1,1,0,0" columnstretch="1,1,0,0,1,1" rowminimumheight="10,10,0,0">
-                  <item row="1" column="1">
-                   <widget class="QTextEdit" name="zSliceLower_entry_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="zFrom_l_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>from</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="4">
-                   <widget class="QLabel" name="zTo_l_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>to</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QComboBox" name="zAxisVar_dd_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="5" rowspan="2">
-                   <widget class="QGroupBox" name="zScale_box_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="title">
-                     <string>Scale</string>
-                    </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_9" stretch="2,1">
-                     <item>
-                      <widget class="QRadioButton" name="zLin_button_4">
-                       <property name="font">
-                        <font>
-                         <pointsize>12</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Linear</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QRadioButton" name="zLog_button_4">
-                       <property name="font">
-                        <font>
-                         <pointsize>12</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Logarithmic</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item row="1" column="4">
-                   <widget class="QTextEdit" name="zSliceUpper_entry_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                      <horstretch>1</horstretch>
-                      <verstretch>1</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="acceptRichText">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="zAxisVar_l_4">
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Variable</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Orientation::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
+                 <widget class="QFrame" name="simTime_f">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout">
+                   <property name="sizeConstraint">
+                    <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+                   </property>
+                   <property name="fieldGrowthPolicy">
+                    <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
+                   </property>
+                   <property name="verticalSpacing">
+                    <number>2</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>3</number>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label">
+                     <property name="toolTip">
+                      <string>How long to record for</string>
+                     </property>
+                     <property name="text">
+                      <string>Duration</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_2">
+                     <property name="toolTip">
+                      <string>How long to wait before you start recording (to reach steady state)</string>
+                     </property>
+                     <property name="text">
+                      <string>Warmup</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QPlainTextEdit" name="plainTextEdit_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="plainText">
+                      <string>100.0
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_3">
+                     <property name="toolTip">
+                      <string>Sample rate - how frequently you need to record samples. Max response freq * 2.5 is pretty safe.</string>
+                     </property>
+                     <property name="text">
+                      <string>fs</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QPlainTextEdit" name="plainTextEdit_2">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="plainText">
+                      <string>1.0</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_4">
+                     <property name="toolTip">
+                      <string>(for fixed step solvers) The integration step size</string>
+                     </property>
+                     <property name="text">
+                      <string>Step Size</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QPlainTextEdit" name="plainTextEdit_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="plainText">
+                      <string>0.001</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QPlainTextEdit" name="plainTextEdit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>1</horstretch>
+                       <verstretch>1</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="sizeIncrement">
+                      <size>
+                       <width>10</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="baseSize">
+                      <size>
+                       <width>0</width>
+                       <height>60</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>Segoe UI</family>
+                       <pointsize>10</pointsize>
+                       <stylestrategy>NoAntialias</stylestrategy>
+                      </font>
+                     </property>
+                     <property name="plainText">
+                      <string>100.0
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QGroupBox" name="inits_box">
+                  <property name="title">
+                   <string>y0</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_9">
+                   <item row="0" column="0">
+                    <widget class="QSplitter" name="splitter_3">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                     <widget class="QLabel" name="init_0">
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                     </widget>
+                     <widget class="QTextEdit" name="init0_e"/>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </widget>
                </widget>
               </item>
              </layout>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QFrame" name="simTime_f">
-             <property name="frameShape">
-              <enum>QFrame::Shape::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Shadow::Raised</enum>
-             </property>
-             <layout class="QFormLayout" name="formLayout">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Recording Duration</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QPlainTextEdit" name="plainTextEdit"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Warmup Period</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QPlainTextEdit" name="plainTextEdit_3"/>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>fs</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Step Size</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QPlainTextEdit" name="plainTextEdit_4"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QGroupBox" name="groupBox">
-             <property name="title">
-              <string>y0</string>
-             </property>
             </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="sysPArams_tab">
+         <widget class="QWidget" name="sysParams_tab">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>426</width>
-            <height>294</height>
+            <width>503</width>
+            <height>505</height>
            </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
           </property>
           <attribute name="label">
            <string>System Parameters</string>
@@ -1242,6 +1964,40 @@
           <attribute name="toolTip">
            <string>Modify system constants and settings</string>
           </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>16</pointsize>
+               <italic>true</italic>
+              </font>
+             </property>
+             <property name="text">
+              <string>No System Loaded</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -1303,7 +2059,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1123</width>
+     <width>1600</width>
      <height>22</height>
     </rect>
    </property>
@@ -1311,11 +2067,676 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuPrecision">
+     <property name="title">
+      <string>Precision</string>
+     </property>
+     <addaction name="action64_bit_2"/>
+     <addaction name="action32_bit_2"/>
+    </widget>
+    <addaction name="actionLoad_System_File"/>
+    <addaction name="menuPrecision"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionLoad_System_File">
+   <property name="text">
+    <string>Load System File</string>
+   </property>
+  </action>
+  <action name="action64_bit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>64-bit</string>
+   </property>
+   <property name="iconText">
+    <string>64-bit</string>
+   </property>
+   <property name="toolTip">
+    <string>64-bit floating-point values</string>
+   </property>
+  </action>
+  <action name="action32_bit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>32-bit</string>
+   </property>
+  </action>
+  <action name="action64_bit_2">
+   <property name="text">
+    <string>64-bit</string>
+   </property>
+  </action>
+  <action name="action32_bit_2">
+   <property name="text">
+    <string>32-bit</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>pyVistaView</class>
+   <extends>QWidget</extends>
+   <header>pyVistaView.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>updatePlot_button</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1399</x>
+     <y>470</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1559</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisVar_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_z_var()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1178</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>393</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisVar_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_y_var()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1172</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>287</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisVar_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_x_var()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1143</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xSliceLower_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_x_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1267</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xSliceUpper_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_x_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1348</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>164</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ySliceLower_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_y_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1272</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ySliceUpper_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_y_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1339</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zSliceLower_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_z_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1252</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zSliceUpper_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_z_slice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1343</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>animatePlot_button</sender>
+   <signal>objectNameChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>animate_3D()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1208</x>
+     <y>468</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>511</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frequency_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>currentFrequency_l</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1479</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1536</x>
+     <y>438</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frequency_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_current_fft_freq()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1274</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>466</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_singlePlot_style()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>682</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_zScale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>682</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_yScale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>682</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_xScale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>682</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p1Select_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param1_var()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1160</x>
+     <y>747</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>657</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p2Select_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param2_var()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1199</x>
+     <y>856</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>638</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p1SliceLower_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param1Sweep_bounds()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1281</x>
+     <y>750</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>696</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p1SliceUpper_entry</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param1Sweep_bounds()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1377</x>
+     <y>759</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>729</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p2SliceLower_entry_4</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param2Sweep_bounds()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1304</x>
+     <y>863</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>p2SliceUpper_entry_4</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param2Sweep_bounds()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1410</x>
+     <y>863</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>824</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1SweepScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param1Sweep_scale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2SweepScale_buttons</sender>
+   <signal>idClicked(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_param2Sweep_scale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plainTextEdit</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_duration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1296</x>
+     <y>937</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>928</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plainTextEdit_3</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_warmup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1264</x>
+     <y>979</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>974</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plainTextEdit_2</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_fs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1301</x>
+     <y>1018</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1015</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plainTextEdit_4</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_dt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1287</x>
+     <y>1063</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1077</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>init0_e</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_y0()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1479</x>
+     <y>1056</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>save_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>save_results()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1232</x>
+     <y>1284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solve_button</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>solve_ODE()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1524</x>
+     <y>1288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1ValSelect_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>select_param1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1368</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>205</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2ValSelect_dd</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>select_param2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1490</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_System_File</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>load_system_from_filedialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>795</x>
+     <y>672</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_plot()</slot>
+  <slot>update_z_var()</slot>
+  <slot>update_x_slice()</slot>
+  <slot>update_y_slice()</slot>
+  <slot>update_z_slice()</slot>
+  <slot>update_x_var()</slot>
+  <slot>update_y_var()</slot>
+  <slot>animate_3D()</slot>
+  <slot>set_current_fft_freq()</slot>
+  <slot>set_singlePlot_style()</slot>
+  <slot>set_xScale()</slot>
+  <slot>set_yScale()</slot>
+  <slot>set_zScale()</slot>
+  <slot>set_param1_var()</slot>
+  <slot>set_param2_var()</slot>
+  <slot>set_param1Sweep_scale()</slot>
+  <slot>set_param2Sweep_scale()</slot>
+  <slot>set_param1Sweep_bounds()</slot>
+  <slot>set_param2Sweep_bounds()</slot>
+  <slot>set_duration()</slot>
+  <slot>set_fs()</slot>
+  <slot>set_warmup()</slot>
+  <slot>set_dt()</slot>
+  <slot>set_y0()</slot>
+  <slot>save_results()</slot>
+  <slot>solve_ODE()</slot>
+  <slot>select_param1()</slot>
+  <slot>select_param2()</slot>
+  <slot>load_system_from_filedialog()</slot>
+  <slot>set_precision()</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="yScale_buttons"/>
+  <buttongroup name="xScale_buttons"/>
+  <buttongroup name="param1SweepScale_buttons"/>
+  <buttongroup name="singlePlotStyle_buttons"/>
+  <buttongroup name="param2SweepScale_buttons"/>
+  <buttongroup name="zScale_buttons"/>
+ </buttongroups>
 </ui>
