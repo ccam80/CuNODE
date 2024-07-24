@@ -1,0 +1,6 @@
+/logs
+/CuNODE_parallelisation_attempts
+/timings
+*.rtf
+/__pycache__
+/.spyproject
