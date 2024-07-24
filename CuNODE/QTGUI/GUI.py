@@ -13,14 +13,14 @@ from os.path import splitext, basename
 import logging
 sys.path.append("..") # This is an easily-broken, dangerous way to get at the solver files until the project directory is refactored
 from _utils import round_sf
-from Euler_maruyama_solver import Solver
+from solvers import eulermaruyama
 import numpy as np
 from importlib.util import spec_from_file_location, module_from_spec
 
 from qtpy.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QGridLayout, QWidget, QFileDialog, QGroupBox, QErrorMessage
 from qtpy.QtGui import QAction, QActionGroup
 from qtpy import QtCore
-from QT_simGUI import Ui_MainWindow  # Import the generated class from your_file.py
+from QT_designer_source.QT_simGUI import Ui_MainWindow  # Import the generated class from your_file.py
 
 
 class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
@@ -79,7 +79,7 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         logging.basicConfig(
             filename='logs/GUIlog.log',
             level=logging.DEBUG,
-            format='%(asctime)s - %(levelname)s - %(message)s',
+            format='%(asctime)s - %(levelname)s - %(funcName)s - %(message)s',
             datefmt='%m/%d/%Y %I:%M:%S %p'
         )
 
@@ -138,7 +138,7 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         Populate the system paramaters box, the inits and noise sigmas fields,
         fill the param select lists, load default sweep if present. """
 
-        self.solver = Solver(self.precision)
+        self.solver = eulermaruyama.Solver(self.precision)
         self.solver.load_system(system)
         self.populate_sysParams_tab(self.solver.system.constants_dict)
         self.populate_groupbox_with_array(self.ui.inits_box, np.zeros(self.solver.system.num_states))
@@ -168,12 +168,18 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         pass
 
     def select_param1(self):
-        self.plot_state['param1_val'] = self.ui.param1ValSelect_dd.currentText()
-        self.update_selected_params()
+        param1 = self.p1Select_dd.currentText()
+        param1 = self.check_type(param1, str)
+        if param1:
+            self.plot_state['param1'] = param1
+            self.update_selected_params()
 
     def select_param2(self):
-        self.plot_state['param2_val'] = self.ui.param2ValSelect_dd.currentText()
-        self.update_selected_params()
+        param2 = self.p2Select_dd.currentText()
+        param2 = self.check_type(param2, str)
+        if param2:
+            self.plot_state['param2'] = param2
+            self.update_selected_params()
 
     def update_selected_params(self):
         p1 = self.plot_state['param1_val']
@@ -185,16 +191,28 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         pass
 
     def set_duration(self):
-        self.sim_state['duration'] = self.ui.duration_e.value()
+        duration  = self.ui.duration_e.value()
+        duration = self.check_type(duration, self.precision)
+        if duration:
+            self.sim_state['duration'] = duration
 
     def set_fs(self):
-        self.sim_state['fs'] = self.ui.fs_e.value()
+        fs = self.ui.fs_e.value()
+        fs = self.check_type(fs, self.precision)
+        if fs:
+            self.sim_state['fs'] = self.ui.fs_e.value()
 
     def set_dt(self):
-        self.sim_state['dt'] = self.ui.stepsize_e.value()
+        dt = self.ui.stepsize_e.value()
+        dt = self.check_type(dt, self.precision)
+        if dt:
+            self.sim_state['fs'] = dt
 
     def set_warmup(self):
-        self.sim_state['warmup'] = self.ui.warmup_e.value()
+        warmup = self.ui.warmup_e.value()
+        warmup = self.check_type(warmup, self.precision)
+        if warmup:
+            self.sim_state['fs'] = warmup
 
     def set_param1Sweep_bounds(self):
         lower_bound = self.ui.p1SweepLower_entry.value()
@@ -209,7 +227,10 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.sim_state['param1_sweep_scale'] = scale
 
     def set_param1_var(self):
-        self.sim_state['param1_var'] = self.ui.p1Select_dd.value()
+        p1var = self.ui.p1Select_dd.value()
+        p1var = self.check_type(p1var, str)
+        if p1var:
+            self.sim_state['param1_var'] = p1var
 
     def set_param2Sweep_bounds(self):
         lower_bound = self.ui.p2SweepLower_entry.value()
@@ -224,7 +245,10 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.sim_state['param1_sweep_scale'] = scale
 
     def set_param2_var(self):
-        self.sim_state['param2_var'] = self.ui.p2select_dd.value()
+        p2var = self.ui.p2Select_dd.value()
+        p2var = self.check_type(p2var, str)
+        if p2var:
+            self.sim_state['param2_var'] = p2var
 
     def build_sweeps(self):
         #TODO: Add num values to GUI and logic.
@@ -284,21 +308,42 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
     def set_singlePlot_style(self):
         pass
 
-    #TODO: fix widget names from here down.
-    def set_xScale(self):
-        self.plot_state['x_scale'] = self.ui.x_scale.currentText()
+    # def set_xScale(self):
+    #     x_scale = self.xScale_dd.currentText()
+    #     x_scale = self.check_type(x_scale, str)
+    #     if x_scale:
+    #         self.plot_state['x_scale'] = x_scale
 
-    def set_yScale(self):
-        self.plot_state['y_scale'] = self.ui.y_scale.currentText()
+    # def set_yScale(self):
+    #     y_scale = self.yScale_dd.currentText()
+    #     y_scale = self.check_type(y_scale, str)
+    #     if y_scale:
+    #         self.plot_state['y_scale'] = y_scale
 
-    def set_zScale(self):
-        self.plot_state['z_scale'] = self.ui.z_scale.currentText()
+    # def set_zScale(self):
+    #     z_scale = self.zScale_dd.currentText()
+    #     z_scale = self.check_type(z_scale, str)
+    #     if z_scale:
+    #         self.plot_state['z_scale'] = z_scale
+
 
     def set_y0(self):
-        self.sim_state['inits'] = [self.ui.inits_box.itemAt(i).widget().value() for i in range(self.ui.inits_box.count())]
+        inits = []
+        for i in range(self.y0_box.count()):
+            sigma = self.y0_box.itemAt(i).widget().value()
+            sigma = self.check_type(sigma, self.precision)
+            if sigma is not None: #Nonecheck as val could be 0
+                inits.append(sigma)
+        self.sim_state['inits'] = inits
 
     def set_noise_sigmas(self):
-        self.sim_state['noise_sigmas'] = [self.ui.noise_sigmas_box.itemAt(i).widget().value() for i in range(self.ui.noise_sigmas_box.count())]
+        noise_sigmas = []
+        for i in range(self.noiseSigmas_box.count()):
+            sigma = self.noiseSigmas_box.itemAt(i).widget().value()
+            sigma = self.check_type(sigma, self.precision)
+            if sigma is not None:
+                noise_sigmas.append(sigma)
+        self.sim_state['noise_sigmas'] = noise_sigmas
 
     def solve_ODE(self):
         self.build_sweeps()
@@ -310,34 +355,56 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.solver.warmup_time = self.sim_state['warmup']
         self.t = np.linspace(0,  self.duration -  1/self.fs, int( self.duration * self.fs))
 
-    def update_x_var(self):
-        self.plot_state['x_var'] = self.ui.x_var_select.currentText()
+    # def update_x_var(self):
+    #     x_var = self.xAxisVar_dd.currentText()
+    #     x_var = self.check_type(x_var, str)
+    #     if x_var:
+    #         self.plot_state['x_var'] = x_var
 
-    def update_y_var(self):
-        self.plot_state['y_var'] = self.ui.y_var_select.currentText()
+    # def update_y_var(self):
+    #     y_var = self.yAxisVar_dd.currentText()
+    #     y_var = self.check_type(y_var, str)
+    #     if y_var:
+    #         self.plot_state['y_var'] = y_var
 
-    def update_z_var(self):
-        self.plot_state['z_var'] = self.ui.z_var_select.currentText()
+    # def update_z_var(self):
+    #     z_var = self.zAxisVar_dd.currentText()
+    #     z_var = self.check_type(z_var, str)
+    #     if z_var:
+    #         self.plot_state['z_var'] = z_var
 
     def update_plot(self):
         pass
-    def solve_ODE(self):
-        self.build_sweeps()
 
-        # Update solver with simulation parameters
-        self.solver.duration = self.sim_state['duration']
-        self.solver.fs = self.sim_state['fs']
-        self.solver.step_size = self.sim_state['dt']
-        self.solver.warmup_time = self.sim_state['warmup']
+    # def update_x_slice(self):
+    #     x_slice_min = self.xSliceLower_entry.toPlainText()
+    #     x_slice_max = self.xSliceUpper_entry.toPlainText()
+    #     x_slice_min = self.check_type(x_slice_min, self.precision)
+    #     x_slice_max = self.check_type(x_slice_max, self.precision)
 
-    def update_x_slice(self):
-        self.plot_state['x_slice'] = (self.ui.x_slice_min.value(), self.ui.x_slice_max.value())
+    #     #Have to explicitly check for None since slice could be 0
+    #     if x_slice_min is not None and x_slice_max is not None:
+    #         self.plot_state['x_slice'] = (x_slice_min, x_slice_max)
 
-    def update_y_slice(self):
-        self.plot_state['y_slice'] = (self.ui.y_slice_min.value(), self.ui.y_slice_max.value())
+    # def update_y_slice(self):
+    #     y_slice_min = self.ySliceLower_entry.toPlainText()
+    #     y_slice_max = self.ySliceUpper_entry.toPlainText()
+    #     y_slice_min = self.check_type(y_slice_min, self.precision)
+    #     y_slice_max = self.check_type(y_slice_max, self.precision)
 
-    def update_z_slice(self):
-        self.plot_state['z_slice'] = (self.ui.z_slice_min.value(), self.ui.z_slice_max.value())
+    #     #Have to explicitly check for None since slice could be 0
+    #     if y_slice_min is not None and y_slice_max is not None:
+    #         self.plot_state['y_slice'] = (y_slice_min, y_slice_max)
+
+    # def update_z_slice(self):
+    #     z_slice_min = self.zSliceLower_entry.toPlainText()
+    #     z_slice_max = self.zSliceUpper_entry.toPlainText()
+    #     z_slice_min = self.check_type(z_slice_min, self.precision)
+    #     z_slice_max = self.check_type(z_slice_max, self.precision)
+
+    #     #Have to explicitly check for None since slice could be 0
+    #     if z_slice_min is not None and z_slice_max is not None:
+    #         self.plot_state['z_slice'] = (z_slice_min, z_slice_max)
 
     def populate_sysParams_tab(self, data_dict):
     # Clear existing widgets
@@ -401,7 +468,20 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
 
     def displayerror(self, message):
         error_dialog = QErrorMessage()
+        logging.warning(message)
         error_dialog.showMessage(message)
+
+    def check_type(self, argument, dtype):
+        try:
+            # If the dtype is a numpy array type, attempt to cast the entire array
+            if isinstance(argument, (list, np.ndarray)):
+                argument = np.array(argument, dtype=dtype)
+            else:
+                argument = dtype(argument)
+        except (ValueError, TypeError):
+            self.display_error(f"The argument {argument} cannot be interpreted as {dtype}")
+            return None
+        return argument
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
