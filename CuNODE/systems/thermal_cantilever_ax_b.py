@@ -16,6 +16,14 @@ import numpy as np
 from math import cos
 from numba import from_dtype
 
+
+state_labels = {'Displacement': 0,
+                'Velocity': 1,
+                'Control Signal': 2,
+                'Temperature': 3,
+                'HPF Displacement': 4}
+
+
 class system_constant_class(dict):
     def set_constant(self, key, item):
         if key in self:
@@ -90,6 +98,7 @@ class diffeq_system:
     def __init__(self,
                  num_states = 5,
                  precision=np.float64,
+                 state_labels = state_labels,
                  **kwargs):
         """Set system constant values then function as a factory function to
         build CUDA device functions for use in the ODE solver kernel. No
@@ -104,11 +113,10 @@ class diffeq_system:
         self.noise_sigmas = np.zeros(self.num_states, dtype=precision)
 
         self.constants_dict  = system_constants(kwargs)
-
         self.constants_array = asarray([constant for (label, constant) in self.constants_dict.items()], dtype=precision)
         self.constant_indices = {label: index for index, (label, constant) in enumerate(self.constants_dict.items())}
 
-
+        self.state_labels = state_labels
 
         if self.numba_precision == float32:
             clamp = clamp_32

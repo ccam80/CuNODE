@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1718</width>
+    <height>1364</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0" columnstretch="0,0" rowminimumheight="0">
+    <item row="0" column="0">
+     <widget class="QFrame" name="plotFrame">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>2</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="pyVistaView" name="Plotwidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>2</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QFrame" name="controlFrame">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,5,1">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="plot_controller_widget" name="plotController">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>5</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="midLineWidth">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="sim_controller_widget" name="simController">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>5</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="saveOrSolve_f">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+          <item>
+           <widget class="QPushButton" name="save_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="solve_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Solve</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1718</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuPrecision">
+     <property name="title">
+      <string>Precision</string>
+     </property>
+     <addaction name="action64_bit_2"/>
+     <addaction name="action32_bit_2"/>
+    </widget>
+    <addaction name="actionLoad_System_File"/>
+    <addaction name="menuPrecision"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionLoad_System_File">
+   <property name="text">
+    <string>Load System File</string>
+   </property>
+  </action>
+  <action name="action64_bit_2">
+   <property name="text">
+    <string>64-bit</string>
+   </property>
+  </action>
+  <action name="action32_bit_2">
+   <property name="text">
+    <string>32-bit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>pyVistaView</class>
+   <extends>QWidget</extends>
+   <header>gui/resources/widgets/pyVistaView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>plot_controller_widget</class>
+   <extends>QFrame</extends>
+   <header>gui/resources/widgets/plot_controller_widget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>update_plot()</signal>
+    <slot>set_current_params_from_plotter(QString,QString)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>sim_controller_widget</class>
+   <extends>QFrame</extends>
+   <header>gui/resources/widgets/sim_controller_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>save_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>save_results()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1232</x>
+     <y>1284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solve_button</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>solve_ODE()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1524</x>
+     <y>1288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1591</x>
+     <y>1280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_System_File</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>load_system_from_filedialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>795</x>
+     <y>672</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_plot()</slot>
+  <slot>update_z_var()</slot>
+  <slot>update_x_slice()</slot>
+  <slot>update_y_slice()</slot>
+  <slot>update_z_slice()</slot>
+  <slot>update_x_var()</slot>
+  <slot>update_y_var()</slot>
+  <slot>animate_3D()</slot>
+  <slot>set_current_fft_freq()</slot>
+  <slot>set_singlePlot_style()</slot>
+  <slot>set_xScale()</slot>
+  <slot>set_yScale()</slot>
+  <slot>set_zScale()</slot>
+  <slot>set_param1_var()</slot>
+  <slot>set_param2_var()</slot>
+  <slot>set_param1Sweep_scale()</slot>
+  <slot>set_param2Sweep_scale()</slot>
+  <slot>set_param1Sweep_bounds()</slot>
+  <slot>set_param2Sweep_bounds()</slot>
+  <slot>set_duration()</slot>
+  <slot>set_fs()</slot>
+  <slot>set_warmup()</slot>
+  <slot>set_dt()</slot>
+  <slot>set_y0()</slot>
+  <slot>save_results()</slot>
+  <slot>solve_ODE()</slot>
+  <slot>select_param1()</slot>
+  <slot>select_param2()</slot>
+  <slot>load_system_from_filedialog()</slot>
+  <slot>set_precision()</slot>
+ </slots>
+</ui>

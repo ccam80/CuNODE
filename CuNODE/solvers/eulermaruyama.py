@@ -11,11 +11,13 @@ import os
 os.environ["NUMBA_ENABLE_CUDASIM"] = "0"
 os.environ["NUMBA_CUDA_DEBUGINFO"] = "0"
 
+
+
 import numpy as np
 from cupy import asarray, ascontiguousarray, get_default_memory_pool
 from numba import cuda, from_dtype, literally
 from numba import float32, float64, int32, int64, void, int16
-from diffeq_system import  diffeq_system# For testing code only, do not touch otherwise
+from systems import  thermal_cantilever_ax_b # For testing code only, do not touch otherwise
 from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_float64, xoroshiro128p_dtype
 from cupyx.scipy.signal import firwin, welch
 from cupyx.scipy.fft import rfftfreq, rfft
@@ -37,7 +39,7 @@ class Solver(object):
         self.numba_precision = from_dtype(precision)
 
         if diffeq_sys:
-            self.load_system = diffeq_system
+            self.load_system = diffeq_sys
 
 
     def load_system(self, diffeq_system):
@@ -325,7 +327,7 @@ if __name__ == "__main__":
     step_size = precision(0.001)
     fs = precision(1)
     duration = precision(10)
-    sys = diffeq_system(precision = precision)
+    sys = thermal_cantilever_ax_b.diffeq_system(precision = precision)
     inits = np.asarray([1.0, 0, 1.0, 0, 1.0], dtype=precision)
 
     ODE = Solver(precision=precision)

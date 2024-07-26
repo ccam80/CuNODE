@@ -1,16 +1,7 @@
 CuNODE next steps for mems rig
 
 GUI:
-"File" menu with precision, solver, maybe some other bits tidied away up there.
-better yet: data picker
-fix log tick zooming and clash w axis label
-redo whole GUI in QT to get decent plotting libraries, looks unavoidable.
-- Separate controller and view elements of GUI - plotting and controls should be one class, control windows etc can be another.
-- use qtpy for bindings so that I can develop in spyder
--Add initial condition sweep logic
-- add phase space plotting
-Stack up phase space plots in 3d for a "tunnel" looking 3d plot
-Tidy up approach to axis slicing - currently the default gets rid of neg numbers.
+Whole GUI remake is underway, refactored with it's own todo list in gui/
 
 ODE solver:
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference

@@ -1,0 +1,22 @@
+
+**Plot Controller**
+Implement an auto-update of plot parameters when changing tabs.
+Add plot state option - potentially labels in the system as well to present this in a sensible way
+figure out how to send a data request without sending data
+Add a "load_system" method that opoulates all lists and fields
+
+**Sim controller**
+implement init & noise sweeps.
+
+**Plotter**
+start with Grid3D - generate a structured mesh from data
+set labels in a separate function that can be reused
+get picker data back to plot control frame for single set slicing
+figure out how to communicate animation requests.
+I think labels should live in plotter, loaded by controller when we load a system.
+
+**Toplevel**
+Start by passing sim params to system for solving, and passing plot state to plotter.
+Plot state interpretation and data requesting is the big hard one here I think.
+Controller should ferry data between model, controllers, and glue.
+Does SOLVER need to own SYSTEM?

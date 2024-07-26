@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>simController</class>
+ <widget class="QWidget" name="simController">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>440</width>
+    <height>634</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QToolBox" name="simSettingsTabs">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
+        </property>
+        <property name="lineWidth">
+         <number>5</number>
+        </property>
+        <property name="midLineWidth">
+         <number>5</number>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="simSettings_tab">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>400</width>
+           <height>510</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <attribute name="label">
+          <string>Simulation settings</string>
+         </attribute>
+         <attribute name="toolTip">
+          <string>Modify per-simulation settings</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_11">
+          <item row="0" column="0" colspan="2">
+           <widget class="QFrame" name="frame_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Shape::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QSplitter" name="splitter">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <widget class="variable_from_to_n_scale_widget" name="param1Sweep_options">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>1</horstretch>
+                  <verstretch>1</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Shape::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
+                </property>
+                <property name="variableMax" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="variableMin" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="variableDecimals" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="fromEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="toEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryMinValue" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryMaxValue" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryDecimals" stdset="0">
+                 <string/>
+                </property>
+                <property name="nEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="varDdItems" stdset="0">
+                 <stringlist/>
+                </property>
+               </widget>
+               <widget class="variable_from_to_n_scale_widget" name="param2Sweep_options">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>1</horstretch>
+                  <verstretch>1</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Shape::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
+                </property>
+                <property name="variableMax" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="variableMin" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="variableDecimals" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="fromEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="toEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryMinValue" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryMaxValue" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="nEntryDecimals" stdset="0">
+                 <string/>
+                </property>
+                <property name="nEntryDefault" stdset="0">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="varDdItems" stdset="0">
+                 <stringlist/>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSplitter" name="splitter_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>1</horstretch>
+                 <verstretch>1</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <widget class="QSplitter" name="splitter_4">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>1</horstretch>
+                  <verstretch>1</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <widget class="QFrame" name="simTime_f">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>1</horstretch>
+                   <verstretch>1</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout">
+                  <property name="sizeConstraint">
+                   <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+                  </property>
+                  <property name="fieldGrowthPolicy">
+                   <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="duration_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>How long to record for</string>
+                    </property>
+                    <property name="text">
+                     <string>Duration</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="warmup_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>How long to wait before you start recording (to reach steady state)</string>
+                    </property>
+                    <property name="text">
+                     <string>Warmup</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="fs_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Sample rate - how frequently you need to record samples. Max response freq * 2.5 is pretty safe.</string>
+                    </property>
+                    <property name="text">
+                     <string>fs</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="stepsize_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>(for fixed step solvers) The integration step size</string>
+                    </property>
+                    <property name="text">
+                     <string>Step Size</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="floatLineEdit" name="stepsize_e">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>0.001</string>
+                    </property>
+                    <property name="minValue" stdset="0">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maxValue" stdset="0">
+                     <double>1000000000.000000000000000</double>
+                    </property>
+                    <property name="decimals" stdset="0">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="floatLineEdit" name="fs_e">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>1</string>
+                    </property>
+                    <property name="minValue" stdset="0">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maxValue" stdset="0">
+                     <double>1000000000.000000000000000</double>
+                    </property>
+                    <property name="decimals" stdset="0">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="floatLineEdit" name="warmup_e">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>0.001</string>
+                    </property>
+                    <property name="minValue" stdset="0">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maxValue" stdset="0">
+                     <double>1000000000.000000000000000</double>
+                    </property>
+                    <property name="decimals" stdset="0">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="floatLineEdit" name="duration_e">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>1</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>0.001</string>
+                    </property>
+                    <property name="minValue" stdset="0">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maxValue" stdset="0">
+                     <double>1000000000.000000000000000</double>
+                    </property>
+                    <property name="decimals" stdset="0">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QGroupBox" name="inits_box">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>1</horstretch>
+                   <verstretch>1</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="title">
+                  <string>y0</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_9">
+                  <item row="0" column="0">
+                   <widget class="QSplitter" name="splitter_3">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>1</horstretch>
+                      <verstretch>1</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <widget class="QLabel" name="init_0">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                    <widget class="floatLineEdit" name="init0_e">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                       <horstretch>1</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0.001</string>
+                     </property>
+                     <property name="minValue" stdset="0">
+                      <double>0.000000000000000</double>
+                     </property>
+                     <property name="maxValue" stdset="0">
+                      <double>1000000000.000000000000000</double>
+                     </property>
+                     <property name="decimals" stdset="0">
+                      <number>10</number>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="sysParams_tab">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>400</width>
+           <height>510</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <attribute name="label">
+          <string>System Parameters</string>
+         </attribute>
+         <attribute name="toolTip">
+          <string>Modify system constants and settings</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>16</pointsize>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>No System Loaded</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="1" margin="9"/>
+ <customwidgets>
+  <customwidget>
+   <class>variable_from_to_n_scale_widget</class>
+   <extends>QFrame</extends>
+   <header>gui/resources/widgets/variable_from_to_n_scale_widget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>n_changed(QString)</signal>
+    <signal>from_changed(QString,int)</signal>
+    <signal>to_changed(QString,int)</signal>
+    <signal>scale_changed(QString)</signal>
+    <signal>variable_changed(QString)</signal>
+    <slot>edit_from(QString)</slot>
+    <slot>edit_to(QString)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>floatLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>gui/resources/widgets/floatLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>param1Sweep_options</sender>
+   <signal>from_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p1_from(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>22</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1Sweep_options</sender>
+   <signal>to_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p1_to(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>35</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1Sweep_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p1_scale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1Sweep_options</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p1_var(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>368</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1Sweep_options</sender>
+   <signal>n_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p1_n(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Sweep_options</sender>
+   <signal>from_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p2_from(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Sweep_options</sender>
+   <signal>to_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p2_to(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Sweep_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p2_scale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Sweep_options</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p2_var(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>340</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Sweep_options</sender>
+   <signal>n_changed(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_p2_n(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stepsize_e</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_dt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fs_e</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_fs(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>247</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>warmup_e</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_warmup(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>duration_e</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_duration(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <designerdata>
+  <property name="gridDeltaX">
+   <number>2</number>
+  </property>
+  <property name="gridDeltaY">
+   <number>2</number>
+  </property>
+  <property name="gridSnapX">
+   <bool>true</bool>
+  </property>
+  <property name="gridSnapY">
+   <bool>true</bool>
+  </property>
+  <property name="gridVisible">
+   <bool>true</bool>
+  </property>
+ </designerdata>
+ <slots>
+  <signal>update_system()</signal>
+  <slot>update_p1_from(QString)</slot>
+  <slot>update_p1_to(QString)</slot>
+  <slot>update_p1_n(QString)</slot>
+  <slot>update_p1_scale(QString)</slot>
+  <slot>update_p1_var(QString)</slot>
+  <slot>update_p2_from(QString)</slot>
+  <slot>update_p2_to(QString)</slot>
+  <slot>update_p2_n(QString)</slot>
+  <slot>update_p2_scale(QString)</slot>
+  <slot>update_p2_var(QString)</slot>
+  <slot>update_duration(QString)</slot>
+  <slot>update_warmup(QString)</slot>
+  <slot>update_fs(QString)</slot>
+  <slot>update_dt(QString)</slot>
+  <slot>update_param(Qstring,Qstring)</slot>
+  <slot>update_init(QString,QString)</slot>
+  <slot>update_noise(QString,QString)</slot>
+ </slots>
+</ui>

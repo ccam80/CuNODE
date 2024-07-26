@@ -1,0 +1,2654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>plotController</class>
+ <widget class="QWidget" name="plotController">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>422</width>
+    <height>504</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="cursor">
+   <cursorShape>IBeamCursor</cursorShape>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QTabWidget" name="plotSettingsTabs">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <strikeout>false</strikeout>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::NoFocus</enum>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <property name="usesScrollButtons">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="plot3d_tab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>3D Grid</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Plot a three-dimensional surface of selected results</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0,0">
+       <item>
+        <widget class="QSplitter" name="splitter_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <widget class="QSplitter" name="splitter_8">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <widget class="QLabel" name="plot_state_grid3D_l">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>1</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+             <strikeout>false</strikeout>
+             <kerning>false</kerning>
+            </font>
+           </property>
+           <property name="text">
+            <string>State to plot:</string>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="plot_state_grid3D">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>2</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </widget>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="xAxis_l">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>X axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="xAxisGridPlotOptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Parameter 1</string>
+           <string>Parameter 2</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="yAxis_l">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Y axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="yAxisGridPlotOptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Parameter 1</string>
+           <string>Parameter 2</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="zAxis_l">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Z axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="zAxisGridPlotOptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>PSD at selected frequency</string>
+           <string>FFT phase at selected frequency</string>
+           <string>RMS amplitude</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="freqSelect_f">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="frequency_l">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="text">
+             <string>Frequency</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="frequency_slider">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TickPosition::TicksBelow</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="currentFrequency_l">
+            <property name="smallDecimalPoint">
+             <bool>true</bool>
+            </property>
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+            <property name="value" stdset="0">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="plotCommands_f">
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="updatePlot_button">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Update Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="timeHistory3D_tab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>3D Time</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QSplitter" name="splitter_5">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <widget class="QLabel" name="plot_state_time3D_l">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <bold>true</bold>
+            <strikeout>false</strikeout>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>State to plot:</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="plot_state_time3D">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="paramAxis_l">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Parameter axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="progressionVarTime_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Parameter 1</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="timeAxis_l">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Time axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="timeAxis3d_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Time</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="amplAxis_l">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Amplitude axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="amplAxisTime3d_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Signal Amplitude</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="fixedParamSelectTime_f">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="fixedParamTime_l">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="text">
+             <string>Fixed Parameter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="fixedParamTime_slider">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="fixedParamTime_display">
+            <property name="smallDecimalPoint">
+             <bool>true</bool>
+            </property>
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="fixedParamTimeAnimate_button">
+            <property name="text">
+             <string>Animate</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::ArrowType::NoArrow</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="updatePlot_button_2">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Update Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="spectrogram3d_tab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>3D Spectrum</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QSplitter" name="splitter_6">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <widget class="QSplitter" name="splitter_7">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <widget class="QLabel" name="plot_state_spec3D_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>1</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+             <strikeout>false</strikeout>
+             <kerning>false</kerning>
+            </font>
+           </property>
+           <property name="text">
+            <string>State to plot:</string>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="plot_state_spec3D">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>2</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </widget>
+         <widget class="Line" name="line_3">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="paramAxisSpec_l">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Parameter axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="paramAxisSpec3d_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Parameter 1</string>
+           <string>Parameter 2</string>
+           <string></string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="freqAxisSpec3d_l">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Frequency axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="freqAxisSpec3d_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>Frequency</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="amplAxisSpec3d_l">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Amplitude axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="variable_from_to_scale_widget" name="amplAxisSpec3d_options">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <property name="variableMin" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableMax" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="variableDecimals" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="toEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="fromEntryDefault" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="varDdItems" stdset="0">
+          <stringlist>
+           <string>PSD Magnitude</string>
+           <string>FFT Phase</string>
+          </stringlist>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="fixedParamSelectTime_f_2">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="fixedParamSpec_l">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="text">
+             <string>Fixed Parameter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="fixedParamSpec_slider">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="fixedParamSpec_display">
+            <property name="smallDecimalPoint">
+             <bool>true</bool>
+            </property>
+            <property name="digitCount">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="fixedParamSpecAnimate_button">
+            <property name="text">
+             <string>Animate</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::ArrowType::NoArrow</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="updatePlot_button_3">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Update Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="plotSingle_tab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>Single Dataset</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Plot a single dataset in two dimensions</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <widget class="QGroupBox" name="singlePlotStyle_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <strikeout>false</strikeout>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="title">
+           <string>Plot Style</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="0" column="2">
+            <widget class="QRadioButton" name="singleSpectrogram_button">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Spectrogram</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">singlePlotStyle_buttons</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QRadioButton" name="singleTimeDomain_button">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Time-domain</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">singlePlotStyle_buttons</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QRadioButton" name="phase2d_button">
+             <property name="text">
+              <string>2D Phase Diagram</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">singlePlotStyle_buttons</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QRadioButton" name="phase3d_button">
+             <property name="text">
+              <string>3D Phase Diagram</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">singlePlotStyle_buttons</string>
+             </attribute>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QFrame" name="paramSelect_f">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Shape::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Shadow::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="8" column="0">
+            <widget class="variable_from_to_scale_widget" name="zAxisSinglePlotOptions">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+             <property name="toEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="fromEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMax" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMin" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableDecimals" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="varDdItems" stdset="0">
+              <stringlist/>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QSplitter" name="splitter_2">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="param1Select_l">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <strikeout>false</strikeout>
+                <kerning>true</kerning>
+               </font>
+              </property>
+              <property name="text">
+               <string>Parameter 1:</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="param1ValSelect_dd">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <strikeout>false</strikeout>
+                <kerning>true</kerning>
+               </font>
+              </property>
+             </widget>
+             <widget class="QToolButton" name="param1Animate_button">
+              <property name="text">
+               <string>Animate</string>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>false</bool>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::ArrowType::NoArrow</enum>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="variable_from_to_scale_widget" name="yAxisSinglePlotOptions">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+             <property name="toEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="fromEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMax" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMin" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableDecimals" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="varDdItems" stdset="0">
+              <stringlist/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="zAxis_l_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <bold>true</bold>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Z axis</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="xAxis_l_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <bold>true</bold>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>X axis</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="variable_from_to_scale_widget" name="xAxisSinglePlotOptions">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+             <property name="toEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="fromEntryDefault" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMax" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableMin" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="variableDecimals" stdset="0">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="varDdItems" stdset="0">
+              <stringlist/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="yAxis_l_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <bold>true</bold>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Y axis</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QSplitter" name="splitter_3">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="Param2Select_l">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <strikeout>false</strikeout>
+                <kerning>true</kerning>
+               </font>
+              </property>
+              <property name="text">
+               <string>Parameter 2:</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="param2ValSelect_dd">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <strikeout>false</strikeout>
+                <kerning>true</kerning>
+               </font>
+              </property>
+             </widget>
+             <widget class="QToolButton" name="param2Animate_button">
+              <property name="text">
+               <string>Animate</string>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>false</bool>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::ArrowType::NoArrow</enum>
+              </property>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="updatePlot_button_4">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>Update Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+  <action name="action1x">
+   <property name="text">
+    <string>1x</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>variable_from_to_scale_widget</class>
+   <extends>QFrame</extends>
+   <header>gui/resources/widgets/variable_from_to_scale_widget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>variable_changed(QString)</signal>
+    <signal>from_changed(QString,int)</signal>
+    <signal>to_changed(QString,int)</signal>
+    <signal>scale_changed(QString)</signal>
+    <slot>edit_from(QString)</slot>
+    <slot>edit_to(QString)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>singlePlotStyle_buttons</sender>
+   <signal>buttonReleased(QAbstractButton*)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_singlePlotStyle(QAbstractButton*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisSinglePlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>250</x>
+     <y>232</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisGridPlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>41</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatePlot_button_4</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>on_updatePlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>450</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>singleTimeDomain_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxisSinglePlotOptions</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisSpec3d_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisSinglePlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase3d_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxisSinglePlotOptions</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatePlot_button_3</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>on_updatePlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>423</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisGridPlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>316</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2ValSelect_dd</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>select_single_param2(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisGridPlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paramAxisSpec3d_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>92</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>singleSpectrogram_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxisSinglePlotOptions</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>112</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisGridPlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>35</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progressionVarTime_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progressionVarTime_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisTime3d_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqAxisSpec3d_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisSpec3d_options</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamSpec_slider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>set_fixedParam(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>347</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>singleTimeDomain_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxis_l_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>246</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatePlot_button_2</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>on_updatePlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>429</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisGridPlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>32</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paramAxisSpec3d_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisTime3d_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamSpecAnimate_button</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>animate_fixedparam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeAxis3d_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisGridPlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisSinglePlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>235</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param2Animate_button</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>animate_param2_singleSet()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>377</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqAxisSpec3d_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase3d_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxis_l_2</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamTime_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>set_fixedParam(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>319</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamTimeAnimate_button</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>animate_fixedparam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisSinglePlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisSpec3d_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>351</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frequency_slider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>set_slice_frequency(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisSinglePlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisSpec3d_options</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>391</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>singleSpectrogram_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxis_l_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>87</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqAxisSpec3d_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progressionVarTime_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>398</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotSettingsTabs</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>plotMode_select(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>32</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisSinglePlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>356</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisSinglePlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>updatePlot_button</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>on_updatePlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1ValSelect_dd</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>select_single_param1(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>332</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisGridPlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progressionVarTime_options</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>381</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase2d_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxis_l_2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>137</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>141</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisGridPlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>300</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paramAxisSpec3d_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeAxis3d_options</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase2d_button</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>zAxisSinglePlotOptions</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>125</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisGridPlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>136</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>365</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paramAxisSpec3d_options</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisSinglePlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_ySlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>233</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisSinglePlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisSinglePlotOptions</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>368</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisGridPlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>304</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xAxisGridPlotOptions</sender>
+   <signal>to_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_xSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>56</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yAxisGridPlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeAxis3d_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_yScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>353</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>189</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisSinglePlotOptions</sender>
+   <signal>from_changed(QString,int)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zSlice(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zAxisSinglePlotOptions</sender>
+   <signal>variable_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zVar(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>243</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>337</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amplAxisTime3d_options</sender>
+   <signal>scale_changed(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_zScale(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>288</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>param1Animate_button</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>animate_param1_singleSet()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plot_state_grid3D</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_state_to_plot(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>565</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plot_state_spec3D</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_state_to_plot(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>328</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>481</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plot_state_time3D</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>plotController</receiver>
+   <slot>update_state_to_plot(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>240</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>3</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>updatePlot()</signal>
+  <slot>plotMode_select(int)</slot>
+  <slot>update_xSlice(QString,int)</slot>
+  <slot>update_ySlice(QString,int)</slot>
+  <slot>update_zSlice(QString,int)</slot>
+  <slot>update_xScale(QString)</slot>
+  <slot>update_yScale(QString)</slot>
+  <slot>update_zScale(QString)</slot>
+  <slot>update_xVar(QString)</slot>
+  <slot>update_yVar(QString)</slot>
+  <slot>update_zVar(QString)</slot>
+  <slot>on_updatePlot()</slot>
+  <slot>set_slice_frequency(int)</slot>
+  <slot>set_fixedParam(int)</slot>
+  <slot>animate_fixedparam()</slot>
+  <slot>update_singlePlotStyle(QAbstractButton*)</slot>
+  <slot>animate_param1_singleSet()</slot>
+  <slot>animate_param2_singleSet()</slot>
+  <slot>set_current_params_from_plotter(int,int)</slot>
+  <slot>update_state_to_plot(QString)</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="singlePlotStyle_buttons"/>
+ </buttongroups>
+</ui>

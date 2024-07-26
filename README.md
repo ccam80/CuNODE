@@ -43,7 +43,7 @@ Python: if you don't have python installed, download python 3.9 from https://www
 
 **How to run:**
 *This stuff will change a bit as I tidy things up to make it easier to use!!!*
-1. Ignore everything in the base folder, this is where I am hiding my junk. Go into "CuNODE". 
+1. Go into "CuNODE/for_deletion".
 2. Open CUDA_ODE.py, diffeq_system.py, and plotterGUI.py in your IDE.
 3. save diffeq_system.py as "[name of your system].py"
 4. Change "defaults" under "system_constants" (currently on line 36) to the constants and parameters of your system - feel free to use as many as you want, rather than having magic numbers in your dydt code, to allow you to mess around with parameters later.
