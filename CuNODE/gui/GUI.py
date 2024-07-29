@@ -13,9 +13,11 @@ from os.path import splitext, basename
 import logging
 from _utils import round_sf
 from solvers import eulermaruyama
+from gui.modelController import modelController
 import numpy as np
 from importlib.util import spec_from_file_location, module_from_spec
 
+from datetime import datetime
 from qtpy.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QGridLayout, QWidget, QFileDialog, QGroupBox, QErrorMessage
 from qtpy.QtGui import QAction, QActionGroup
 from qtpy import QtCore
@@ -28,55 +30,32 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.init_logging()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.set_starting_state()
         self.precision = np.float64
         self.init_precision_action_group()
         self.diffeq_system_file_path = None
 
         logging.info("ODE_Explorer_Controller initialized")
 
-        # self.plot_state = {
-        #     'param1': None,
-        #     'param2': None,
-        #     'current_fft_freq': None,
-        #     'single_plot_style': None,
-        #     'x_var': None,
-        #     'y_var': None,
-        #     'z_var': None,
-        #     'x_slice': None,
-        #     'y_slice': None,
-        #     'z_slice': None,
-        #     'x_scale': None,
-        #     'y_scale': None,
-        #     'z_scale': None,
-        # }
-
-        self.sim_state = {
-            'dt': None,
-            'duration': None,
-            'fs': None,
-            'param1_sweep_bounds': None,
-            'param1_sweep_scale': None,
-            'param1_num_values': 100,
-            'param1_var': None,
-            'param1_values': [],
-            'param2_sweep_bounds': None,
-            'param2_sweep_scale': None,
-            'param2_num_values': 100,
-            'param2_var': None,
-            'param2_values': [],
-            'warmup': None,
-
-            'y0': None
-        }
         self.param_index_map = {}
+        self.grid_list = np.zeros(1, dtype=self.precision)
         self.display_sig_figs = 4
+
+        self.model = modelController()
+        self.model.loadController(eulermaruyama)
+
+    def set_starting_state(self):
+        self.ui.controlToolBox.setCurrentIndex(1)
+        self.ui.plotController.plotSettingsTabs.setCurrentIndex(0)
+        self.ui.simController.simSettingsTabs.setCurrentIndex(0)
+
     def init_logging(self):
         # Create logs directory if it doesn't exist
         makedirs("logs", exist_ok=True)
 
         # Configure the logger
         logging.basicConfig(
-            filename='logs/GUIlog.log',
+            filename = f"log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
             level=logging.DEBUG,
             format='%(asctime)s - %(levelname)s - %(funcName)s - %(message)s',
             datefmt='%m/%d/%Y %I:%M:%S %p'
@@ -136,13 +115,12 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         """ Start a new solver instance, and load a provided ODE system into it.
         Populate the system paramaters box, the inits and noise sigmas fields,
         fill the param select lists, load default sweep if present. """
-
+        #TODO: Load model controller instead.
         self.solver = eulermaruyama.Solver(self.precision)
         self.solver.load_system(system)
         self.ui.simController.load_system(self.solver.system.constants_dict, self.solver.system.noise_sigmas)
         self.ui.plotController.load_state_labels(self.solver.system.state_labels)
         # self.fill_paramSelect_lists()
-
 
     def reload_system(self):
         """ Assumes we have already located the ODE_system file, and are just
@@ -162,145 +140,50 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
     #     p2 = self.plot_state['param2_val']
     #     self.solver.param_index = self.solver.get_param_index((p1, p2))
     #     self.single_state = self.solver.solved_ODE.output_array[:, self.solver.param_index, :]
+    def generate_sweep(self, bounds, scale, n):
+        if scale == 'Linear':
+            sweep = np.linspace(bounds[0], bounds[1], n, dtype=self.precision)
+        elif scale == 'Logarithmic':
+            try:
+                sweep = np.logspace(np.log10(bounds[0], bounds[1], n, dtype=self.precision))
+            except:
+                logging.warning(f"Bounds: {bounds} unable to create a log space")
+                self.displayerror("The requested logarithmic sweep contains un-loggable values, change bounds or try a linear sweep.")
+
+    def prepare_parameter_sweeps(self):
+        p1_bounds, p1_n, p1_scale = self.ui.simController.get_swept_parameters('param1')
+        p2_bounds, p2_n, p2_scale = self.ui.simController.get_swept_parameters('param2')
+        param1_values = self.generate_sweep(p1_bounds, p1_n, p1_scale)
+        param2_values = self.generate_sweep(p1_bounds, p1_n, p1_scale)
+
+        self.param1_values = param1_values
+        self.param2_values = param2_values
+        self.generate_grid_list_and_map(param1_values, param2_values)
 
 
-    def set_duration(self):
-        duration  = self.ui.duration_e.value()
-        duration = self.check_type(duration, self.precision)
-        if duration:
-            self.sim_state['duration'] = duration
+    def generate_grid_list_and_map(self, param1_sweep, param2_sweep):
+        """Generate 1D list of all requested parameter combinations.
+        Save a rounded version of each index into a dict for easy lookup
+        to match with a dataset request from the plotter.
 
-    def set_fs(self):
-        fs = self.ui.fs_e.value()
-        fs = self.check_type(fs, self.precision)
-        if fs:
-            self.sim_state['fs'] = self.ui.fs_e.value()
-
-    def set_dt(self):
-        dt = self.ui.stepsize_e.value()
-        dt = self.check_type(dt, self.precision)
-        if dt:
-            self.sim_state['fs'] = dt
-
-    def set_warmup(self):
-        warmup = self.ui.warmup_e.value()
-        warmup = self.check_type(warmup, self.precision)
-        if warmup:
-            self.sim_state['fs'] = warmup
-
-    def set_param1Sweep_bounds(self):
-        lower_bound = self.ui.p1SweepLower_entry.value()
-        upper_bound = self.ui.p1SweepUpper_entry.value()
-        self.sim_state['param1_sweep_bounds'] = (lower_bound, upper_bound)
-
-    def set_param1Sweep_scale(self, index):
-        if index == 1:
-            scale = 'log'
-        else:
-            scale = 'lin'
-        self.sim_state['param1_sweep_scale'] = scale
-
-    def set_param1_var(self):
-        p1var = self.ui.p1Select_dd.value()
-        p1var = self.check_type(p1var, str)
-        if p1var:
-            self.sim_state['param1_var'] = p1var
-
-    def set_param2Sweep_bounds(self):
-        lower_bound = self.ui.p2SweepLower_entry.value()
-        upper_bound = self.ui.p2SweepUpper_entry.value()
-        self.sim_state['param2_sweep_bounds'] = (lower_bound, upper_bound)
-
-    def set_param2Sweep_scale(self, index):
-        if index == 1:
-            scale = 'log'
-        else:
-            scale = 'lin'
-        self.sim_state['param1_sweep_scale'] = scale
-
-    def set_param2_var(self):
-        p2var = self.ui.p2Select_dd.value()
-        p2var = self.check_type(p2var, str)
-        if p2var:
-            self.sim_state['param2_var'] = p2var
-
-    def build_sweeps(self):
-        param1_bounds = self.sim_state['param1_sweep_bounds']
-        param1_scale = self.sim_state['param1_sweep_scale']
-        param1_num_values = self.sim_state['param1_num_values']
-
-        param2_bounds = self.sim_state['param2_sweep_bounds']
-        param2_scale = self.sim_state['param2_sweep_scale']
-        param2_num_values = self.sim_state['param2_num_values']
-
-        if param1_bounds and param1_scale and param1_num_values:
-            if param1_scale == 'lin':
-                self.sim_state['param1_values'] = np.linspace(param1_bounds[0],
-                                                              param1_bounds[1],
-                                                              param1_num_values,
-                                                              dtype=self.precision)
-            elif param1_scale == 'log':
-                try:
-                    self.sim_state['param1_values'] = np.logspace(np.log10(param1_bounds[0]),
-                                                                  np.log10(param1_bounds[1]),
-                                                                  param1_num_values,
-                                                                  dtype=self.precision)
-                except:
-                    logging.warning(f"P1 bounds: {param1_bounds} unable to create a log space")
-                    self.displayerror("Param 1 values are unloggable, try a linear sweep or change values")
-
-        if param2_bounds and param2_scale and param2_num_values:
-            if param2_scale == 'lin':
-                self.sim_state['param2_values'] = np.linspace(param2_bounds[0],
-                                                              param2_bounds[1],
-                                                              param2_num_values,
-                                                              dtype=self.precision)
-            elif param2_scale == 'log':
-                try:
-                    self.sim_state['param2_values'] = np.logspace(np.log10(param2_bounds[0]),
-                                                                  np.log10(param2_bounds[1]),
-                                                                  param2_num_values,
-                                                                  dtype=self.precision)
-                except:
-                    logging.warning(f"P1 bounds: {param1_bounds} unable to create a log space")
-                    self.displayerror("Param 1 values are unloggable, try a linear sweep or change values")
-
-    def generate_index_map(self):
-        """Set up a dict mapping parameter sets to their index in the output
-        array, cutting some compute time when populating the z mesh for plotting.
-
-        Saves results to self.param_index_map.
         """
         self.param_index_map = {}
-        grid_values = [(p1, p2) for p1 in self.sim_state['param1_values'] for p2 in self.sim_state['param2_values']]
-        for idx, (p1, p2) in enumerate(grid_values):
+        grid_list = [(p1, p2) for p1 in param1_sweep for p2 in param2_sweep]
+        for idx, (p1, p2) in enumerate(self.grid_list):
             p1_round = self.precision(round_sf(p1, self.display_sig_figs))
             p2_round = self.precision(round_sf(p2, self.display_sig_figs))
             self.param_index_map[(p1_round, p2_round)] = idx
+        self.grid_list = grid_list
 
+    def update_plotController_sweeps(self):
+        self.ui.plotController.populate_swept_parameter_values(self.param1_values, self.param2_values)
+        self.ui.plotController.update_fixed_sliders('param2')
 
-
-    def set_y0(self):
-        inits = []
-        for i in range(self.y0_box.count()):
-            sigma = self.y0_box.itemAt(i).widget().value()
-            sigma = self.check_type(sigma, self.precision)
-            if sigma is not None: #Nonecheck as val could be 0
-                inits.append(sigma)
-        self.sim_state['inits'] = inits
-
-    def set_noise_sigmas(self):
-        noise_sigmas = []
-        for i in range(self.noiseSigmas_box.count()):
-            sigma = self.noiseSigmas_box.itemAt(i).widget().value()
-            sigma = self.check_type(sigma, self.precision)
-            if sigma is not None:
-                noise_sigmas.append(sigma)
-        self.sim_state['noise_sigmas'] = noise_sigmas
+    def on_solve_complete(self):
+        self.update_plotController_sweeps()
 
     def solve_ODE(self):
-        self.build_sweeps()
-
+        self.prepare_parameter_sweeps()
         # Update solver with simulation parameters
         self.solver.duration = self.sim_state['duration']
         self.solver.fs = self.sim_state['fs']
@@ -312,11 +195,10 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
     def update_plot(self):
         pass
 
-
     def closeEvent(self, event):
-        self
+        self.Plotwidget.closeEvent(event)
+        self.close()
         print("Goodbye.")
-
 
     def displayerror(self, message):
         error_dialog = QErrorMessage()

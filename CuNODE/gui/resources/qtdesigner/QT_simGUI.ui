@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1718</width>
-    <height>1364</height>
+    <height>853</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
      <verstretch>1</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0" columnstretch="0,0" rowminimumheight="0">
+   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0" columnstretch="0,0">
     <item row="0" column="0">
      <widget class="QFrame" name="plotFrame">
       <property name="sizePolicy">
@@ -69,7 +69,7 @@
       <property name="lineWidth">
        <number>1</number>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,5,1">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="9,1">
        <property name="spacing">
         <number>1</number>
        </property>
@@ -83,41 +83,95 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="plot_controller_widget" name="plotController">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>5</verstretch>
-          </sizepolicy>
+        <widget class="QToolBox" name="controlToolBox">
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
-         </property>
-         <property name="lineWidth">
+         <property name="currentIndex">
           <number>1</number>
          </property>
-         <property name="midLineWidth">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="sim_controller_widget" name="simController">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>5</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
-         </property>
+         <widget class="QWidget" name="plotController_page">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>545</width>
+            <height>626</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <attribute name="label">
+           <string>Plot Settings</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="plot_controller_widget" name="plotController">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>5</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+             <property name="lineWidth">
+              <number>1</number>
+             </property>
+             <property name="midLineWidth">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="simController_page">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>545</width>
+            <height>626</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <attribute name="label">
+           <string>Simulation Settings</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="sim_controller_widget" name="simController">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>5</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Shadow::Raised</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
        <item>
@@ -134,7 +188,7 @@
          <property name="frameShadow">
           <enum>QFrame::Shadow::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1">
           <item>
            <widget class="QPushButton" name="save_button">
             <property name="sizePolicy">
@@ -150,24 +204,6 @@
             </property>
             <property name="text">
              <string>Save</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="solve_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>1</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Solve</string>
             </property>
            </widget>
           </item>
@@ -261,28 +297,12 @@
    <slot>save_results()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1232</x>
-     <y>1284</y>
+     <x>1688</x>
+     <y>811</y>
     </hint>
     <hint type="destinationlabel">
      <x>1591</x>
-     <y>1195</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>solve_button</sender>
-   <signal>released()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>solve_ODE()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1524</x>
-     <y>1288</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1591</x>
-     <y>1280</y>
+     <y>852</y>
     </hint>
    </hints>
   </connection>

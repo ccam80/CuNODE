@@ -28,7 +28,7 @@ class Ui_plotController(object):
     def setupUi(self, plotController):
         if not plotController.objectName():
             plotController.setObjectName(u"plotController")
-        plotController.resize(422, 504)
+        plotController.resize(428, 504)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
@@ -109,10 +109,10 @@ class Ui_plotController(object):
         self.xAxisGridPlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.xAxisGridPlotOptions.setFrameShadow(QFrame.Shadow.Raised)
         self.xAxisGridPlotOptions.setProperty("toEntryDefault", 0.000000000000000)
-        self.xAxisGridPlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.xAxisGridPlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.xAxisGridPlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.xAxisGridPlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.xAxisGridPlotOptions.setProperty("fromEntryDefault", 1.000000000000000)
+        self.xAxisGridPlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.xAxisGridPlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.xAxisGridPlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.verticalLayout.addWidget(self.xAxisGridPlotOptions)
 
@@ -133,11 +133,11 @@ class Ui_plotController(object):
         self.yAxisGridPlotOptions.setSizePolicy(sizePolicy)
         self.yAxisGridPlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.yAxisGridPlotOptions.setFrameShadow(QFrame.Shadow.Raised)
-        self.yAxisGridPlotOptions.setProperty("toEntryDefault", 0.000000000000000)
-        self.yAxisGridPlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.yAxisGridPlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.yAxisGridPlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.yAxisGridPlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.yAxisGridPlotOptions.setProperty("toEntryDefault", 1.000000000000000)
+        self.yAxisGridPlotOptions.setProperty("fromEntryDefault", 1.000000000000000)
+        self.yAxisGridPlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.yAxisGridPlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.yAxisGridPlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.verticalLayout.addWidget(self.yAxisGridPlotOptions)
 
@@ -154,10 +154,10 @@ class Ui_plotController(object):
         self.zAxisGridPlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.zAxisGridPlotOptions.setFrameShadow(QFrame.Shadow.Raised)
         self.zAxisGridPlotOptions.setProperty("toEntryDefault", 0.000000000000000)
-        self.zAxisGridPlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.zAxisGridPlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.zAxisGridPlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.zAxisGridPlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.zAxisGridPlotOptions.setProperty("fromEntryDefault", 1.000000000000000)
+        self.zAxisGridPlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.zAxisGridPlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.zAxisGridPlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.verticalLayout.addWidget(self.zAxisGridPlotOptions)
 
@@ -207,7 +207,7 @@ class Ui_plotController(object):
 
         self.verticalLayout.addWidget(self.plotCommands_f)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer_3)
 
@@ -263,11 +263,11 @@ class Ui_plotController(object):
         self.progressionVarTime_options.setMinimumSize(QSize(0, 10))
         self.progressionVarTime_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.progressionVarTime_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.progressionVarTime_options.setProperty("variableMax", 0.000000000000000)
-        self.progressionVarTime_options.setProperty("variableMin", 0.000000000000000)
-        self.progressionVarTime_options.setProperty("variableDecimals", 0.000000000000000)
+        self.progressionVarTime_options.setProperty("variableMax", 10000000.000000000000000)
+        self.progressionVarTime_options.setProperty("variableMin", -10000000.000000000000000)
+        self.progressionVarTime_options.setProperty("variableDecimals", 10.000000000000000)
         self.progressionVarTime_options.setProperty("fromEntryDefault", 0.000000000000000)
-        self.progressionVarTime_options.setProperty("toEntryDefault", 0.000000000000000)
+        self.progressionVarTime_options.setProperty("toEntryDefault", 1.000000000000000)
 
         self.verticalLayout_3.addWidget(self.progressionVarTime_options)
 
@@ -286,11 +286,11 @@ class Ui_plotController(object):
         self.timeAxis3d_options.setMinimumSize(QSize(0, 10))
         self.timeAxis3d_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.timeAxis3d_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.timeAxis3d_options.setProperty("variableMax", 0.000000000000000)
-        self.timeAxis3d_options.setProperty("variableMin", 0.000000000000000)
-        self.timeAxis3d_options.setProperty("variableDecimals", 0.000000000000000)
+        self.timeAxis3d_options.setProperty("variableMax", 10000000.000000000000000)
+        self.timeAxis3d_options.setProperty("variableMin", -10000000.000000000000000)
+        self.timeAxis3d_options.setProperty("variableDecimals", 10.000000000000000)
         self.timeAxis3d_options.setProperty("fromEntryDefault", 0.000000000000000)
-        self.timeAxis3d_options.setProperty("toEntryDefault", 0.000000000000000)
+        self.timeAxis3d_options.setProperty("toEntryDefault", 1.000000000000000)
 
         self.verticalLayout_3.addWidget(self.timeAxis3d_options)
 
@@ -307,11 +307,11 @@ class Ui_plotController(object):
         self.amplAxisTime3d_options.setMinimumSize(QSize(0, 10))
         self.amplAxisTime3d_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.amplAxisTime3d_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.amplAxisTime3d_options.setProperty("variableMax", 0.000000000000000)
-        self.amplAxisTime3d_options.setProperty("variableMin", 0.000000000000000)
-        self.amplAxisTime3d_options.setProperty("variableDecimals", 0.000000000000000)
+        self.amplAxisTime3d_options.setProperty("variableMax", 10000000.000000000000000)
+        self.amplAxisTime3d_options.setProperty("variableMin", -10000000.000000000000000)
+        self.amplAxisTime3d_options.setProperty("variableDecimals", 10.000000000000000)
         self.amplAxisTime3d_options.setProperty("fromEntryDefault", 0.000000000000000)
-        self.amplAxisTime3d_options.setProperty("toEntryDefault", 0.000000000000000)
+        self.amplAxisTime3d_options.setProperty("toEntryDefault", 1.000000000000000)
 
         self.verticalLayout_3.addWidget(self.amplAxisTime3d_options)
 
@@ -354,7 +354,7 @@ class Ui_plotController(object):
 
         self.verticalLayout_3.addWidget(self.fixedParamSelectTime_f)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_4 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
 
@@ -412,11 +412,11 @@ class Ui_plotController(object):
         self.paramAxisSpec3d_options.setMinimumSize(QSize(0, 10))
         self.paramAxisSpec3d_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.paramAxisSpec3d_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.paramAxisSpec3d_options.setProperty("variableMin", 0.000000000000000)
-        self.paramAxisSpec3d_options.setProperty("variableMax", 0.000000000000000)
-        self.paramAxisSpec3d_options.setProperty("variableDecimals", 0.000000000000000)
+        self.paramAxisSpec3d_options.setProperty("variableMin", -10000000.000000000000000)
+        self.paramAxisSpec3d_options.setProperty("variableMax", 10000000.000000000000000)
+        self.paramAxisSpec3d_options.setProperty("variableDecimals", 10.000000000000000)
         self.paramAxisSpec3d_options.setProperty("toEntryDefault", 0.000000000000000)
-        self.paramAxisSpec3d_options.setProperty("fromEntryDefault", 0.000000000000000)
+        self.paramAxisSpec3d_options.setProperty("fromEntryDefault", 1.000000000000000)
 
         self.verticalLayout_2.addWidget(self.paramAxisSpec3d_options)
 
@@ -433,11 +433,11 @@ class Ui_plotController(object):
         self.freqAxisSpec3d_options.setMinimumSize(QSize(0, 10))
         self.freqAxisSpec3d_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.freqAxisSpec3d_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.freqAxisSpec3d_options.setProperty("variableMin", 0.000000000000000)
-        self.freqAxisSpec3d_options.setProperty("variableMax", 0.000000000000000)
-        self.freqAxisSpec3d_options.setProperty("variableDecimals", 0.000000000000000)
+        self.freqAxisSpec3d_options.setProperty("variableMin", -10000000.000000000000000)
+        self.freqAxisSpec3d_options.setProperty("variableMax", 10000000.000000000000000)
+        self.freqAxisSpec3d_options.setProperty("variableDecimals", 10.000000000000000)
         self.freqAxisSpec3d_options.setProperty("toEntryDefault", 0.000000000000000)
-        self.freqAxisSpec3d_options.setProperty("fromEntryDefault", 0.000000000000000)
+        self.freqAxisSpec3d_options.setProperty("fromEntryDefault", 1.000000000000000)
 
         self.verticalLayout_2.addWidget(self.freqAxisSpec3d_options)
 
@@ -456,11 +456,11 @@ class Ui_plotController(object):
         self.amplAxisSpec3d_options.setMinimumSize(QSize(0, 10))
         self.amplAxisSpec3d_options.setFrameShape(QFrame.Shape.StyledPanel)
         self.amplAxisSpec3d_options.setFrameShadow(QFrame.Shadow.Raised)
-        self.amplAxisSpec3d_options.setProperty("variableMin", 0.000000000000000)
-        self.amplAxisSpec3d_options.setProperty("variableMax", 0.000000000000000)
-        self.amplAxisSpec3d_options.setProperty("variableDecimals", 0.000000000000000)
+        self.amplAxisSpec3d_options.setProperty("variableMin", -10000000.000000000000000)
+        self.amplAxisSpec3d_options.setProperty("variableMax", 10000000.000000000000000)
+        self.amplAxisSpec3d_options.setProperty("variableDecimals", 10.000000000000000)
         self.amplAxisSpec3d_options.setProperty("toEntryDefault", 0.000000000000000)
-        self.amplAxisSpec3d_options.setProperty("fromEntryDefault", 0.000000000000000)
+        self.amplAxisSpec3d_options.setProperty("fromEntryDefault", 1.000000000000000)
 
         self.verticalLayout_2.addWidget(self.amplAxisSpec3d_options)
 
@@ -503,7 +503,7 @@ class Ui_plotController(object):
 
         self.verticalLayout_2.addWidget(self.fixedParamSelectTime_f_2)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 
@@ -530,7 +530,11 @@ class Ui_plotController(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.singlePlotStyle_box.sizePolicy().hasHeightForWidth())
         self.singlePlotStyle_box.setSizePolicy(sizePolicy3)
-        self.singlePlotStyle_box.setFont(font3)
+        font4 = QFont()
+        font4.setPointSize(10)
+        font4.setStrikeOut(False)
+        font4.setKerning(True)
+        self.singlePlotStyle_box.setFont(font4)
         self.gridLayout_6 = QGridLayout(self.singlePlotStyle_box)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
         self.singleSpectrogram_button = QRadioButton(self.singlePlotStyle_box)
@@ -538,26 +542,28 @@ class Ui_plotController(object):
         self.singlePlotStyle_buttons.setObjectName(u"singlePlotStyle_buttons")
         self.singlePlotStyle_buttons.addButton(self.singleSpectrogram_button)
         self.singleSpectrogram_button.setObjectName(u"singleSpectrogram_button")
-        self.singleSpectrogram_button.setFont(font3)
+        self.singleSpectrogram_button.setFont(font4)
 
         self.gridLayout_6.addWidget(self.singleSpectrogram_button, 0, 2, 1, 1)
 
         self.singleTimeDomain_button = QRadioButton(self.singlePlotStyle_box)
         self.singlePlotStyle_buttons.addButton(self.singleTimeDomain_button)
         self.singleTimeDomain_button.setObjectName(u"singleTimeDomain_button")
-        self.singleTimeDomain_button.setFont(font3)
+        self.singleTimeDomain_button.setFont(font4)
 
         self.gridLayout_6.addWidget(self.singleTimeDomain_button, 0, 4, 1, 1)
 
         self.phase2d_button = QRadioButton(self.singlePlotStyle_box)
         self.singlePlotStyle_buttons.addButton(self.phase2d_button)
         self.phase2d_button.setObjectName(u"phase2d_button")
+        self.phase2d_button.setFont(font4)
 
         self.gridLayout_6.addWidget(self.phase2d_button, 1, 2, 1, 1)
 
         self.phase3d_button = QRadioButton(self.singlePlotStyle_box)
         self.singlePlotStyle_buttons.addButton(self.phase3d_button)
         self.phase3d_button.setObjectName(u"phase3d_button")
+        self.phase3d_button.setFont(font4)
         self.phase3d_button.setChecked(True)
 
         self.gridLayout_6.addWidget(self.phase3d_button, 1, 4, 1, 1)
@@ -580,11 +586,11 @@ class Ui_plotController(object):
         self.zAxisSinglePlotOptions.setSizePolicy(sizePolicy4)
         self.zAxisSinglePlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.zAxisSinglePlotOptions.setFrameShadow(QFrame.Shadow.Raised)
-        self.zAxisSinglePlotOptions.setProperty("toEntryDefault", 0.000000000000000)
+        self.zAxisSinglePlotOptions.setProperty("toEntryDefault", 1.000000000000000)
         self.zAxisSinglePlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.zAxisSinglePlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.zAxisSinglePlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.zAxisSinglePlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.zAxisSinglePlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.zAxisSinglePlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.zAxisSinglePlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.gridLayout_7.addWidget(self.zAxisSinglePlotOptions, 8, 0, 1, 1)
 
@@ -593,14 +599,23 @@ class Ui_plotController(object):
         self.splitter_2.setOrientation(Qt.Orientation.Horizontal)
         self.param1Select_l = QLabel(self.splitter_2)
         self.param1Select_l.setObjectName(u"param1Select_l")
-        self.param1Select_l.setFont(font3)
+        font5 = QFont()
+        font5.setPointSize(11)
+        font5.setStrikeOut(False)
+        font5.setKerning(True)
+        self.param1Select_l.setFont(font5)
         self.splitter_2.addWidget(self.param1Select_l)
         self.param1ValSelect_dd = QComboBox(self.splitter_2)
         self.param1ValSelect_dd.setObjectName(u"param1ValSelect_dd")
-        self.param1ValSelect_dd.setFont(font3)
+        self.param1ValSelect_dd.setFont(font5)
         self.splitter_2.addWidget(self.param1ValSelect_dd)
         self.param1Animate_button = QToolButton(self.splitter_2)
         self.param1Animate_button.setObjectName(u"param1Animate_button")
+        font6 = QFont()
+        font6.setPointSize(11)
+        font6.setStrikeOut(False)
+        font6.setKerning(False)
+        self.param1Animate_button.setFont(font6)
         self.param1Animate_button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.param1Animate_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.param1Animate_button.setAutoRaise(False)
@@ -615,11 +630,11 @@ class Ui_plotController(object):
         self.yAxisSinglePlotOptions.setSizePolicy(sizePolicy4)
         self.yAxisSinglePlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.yAxisSinglePlotOptions.setFrameShadow(QFrame.Shadow.Raised)
-        self.yAxisSinglePlotOptions.setProperty("toEntryDefault", 0.000000000000000)
+        self.yAxisSinglePlotOptions.setProperty("toEntryDefault", 1.000000000000000)
         self.yAxisSinglePlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.yAxisSinglePlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.yAxisSinglePlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.yAxisSinglePlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.yAxisSinglePlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.yAxisSinglePlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.yAxisSinglePlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.gridLayout_7.addWidget(self.yAxisSinglePlotOptions, 6, 0, 1, 1)
 
@@ -627,7 +642,12 @@ class Ui_plotController(object):
         self.zAxis_l_2.setObjectName(u"zAxis_l_2")
         sizePolicy4.setHeightForWidth(self.zAxis_l_2.sizePolicy().hasHeightForWidth())
         self.zAxis_l_2.setSizePolicy(sizePolicy4)
-        self.zAxis_l_2.setFont(font2)
+        font7 = QFont()
+        font7.setPointSize(11)
+        font7.setBold(True)
+        font7.setStrikeOut(False)
+        font7.setKerning(True)
+        self.zAxis_l_2.setFont(font7)
 
         self.gridLayout_7.addWidget(self.zAxis_l_2, 7, 0, 1, 1)
 
@@ -635,7 +655,7 @@ class Ui_plotController(object):
         self.xAxis_l_2.setObjectName(u"xAxis_l_2")
         sizePolicy4.setHeightForWidth(self.xAxis_l_2.sizePolicy().hasHeightForWidth())
         self.xAxis_l_2.setSizePolicy(sizePolicy4)
-        self.xAxis_l_2.setFont(font2)
+        self.xAxis_l_2.setFont(font7)
 
         self.gridLayout_7.addWidget(self.xAxis_l_2, 0, 0, 1, 1)
 
@@ -645,11 +665,11 @@ class Ui_plotController(object):
         self.xAxisSinglePlotOptions.setSizePolicy(sizePolicy4)
         self.xAxisSinglePlotOptions.setFrameShape(QFrame.Shape.StyledPanel)
         self.xAxisSinglePlotOptions.setFrameShadow(QFrame.Shadow.Raised)
-        self.xAxisSinglePlotOptions.setProperty("toEntryDefault", 0.000000000000000)
+        self.xAxisSinglePlotOptions.setProperty("toEntryDefault", 1.000000000000000)
         self.xAxisSinglePlotOptions.setProperty("fromEntryDefault", 0.000000000000000)
-        self.xAxisSinglePlotOptions.setProperty("variableMax", 0.000000000000000)
-        self.xAxisSinglePlotOptions.setProperty("variableMin", 0.000000000000000)
-        self.xAxisSinglePlotOptions.setProperty("variableDecimals", 0.000000000000000)
+        self.xAxisSinglePlotOptions.setProperty("variableMax", 10000000.000000000000000)
+        self.xAxisSinglePlotOptions.setProperty("variableMin", -10000000.000000000000000)
+        self.xAxisSinglePlotOptions.setProperty("variableDecimals", 10.000000000000000)
 
         self.gridLayout_7.addWidget(self.xAxisSinglePlotOptions, 3, 0, 1, 1)
 
@@ -657,7 +677,7 @@ class Ui_plotController(object):
         self.yAxis_l_2.setObjectName(u"yAxis_l_2")
         sizePolicy4.setHeightForWidth(self.yAxis_l_2.sizePolicy().hasHeightForWidth())
         self.yAxis_l_2.setSizePolicy(sizePolicy4)
-        self.yAxis_l_2.setFont(font2)
+        self.yAxis_l_2.setFont(font7)
 
         self.gridLayout_7.addWidget(self.yAxis_l_2, 5, 0, 1, 1)
 
@@ -666,14 +686,15 @@ class Ui_plotController(object):
         self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
         self.Param2Select_l = QLabel(self.splitter_3)
         self.Param2Select_l.setObjectName(u"Param2Select_l")
-        self.Param2Select_l.setFont(font3)
+        self.Param2Select_l.setFont(font5)
         self.splitter_3.addWidget(self.Param2Select_l)
         self.param2ValSelect_dd = QComboBox(self.splitter_3)
         self.param2ValSelect_dd.setObjectName(u"param2ValSelect_dd")
-        self.param2ValSelect_dd.setFont(font3)
+        self.param2ValSelect_dd.setFont(font5)
         self.splitter_3.addWidget(self.param2ValSelect_dd)
         self.param2Animate_button = QToolButton(self.splitter_3)
         self.param2Animate_button.setObjectName(u"param2Animate_button")
+        self.param2Animate_button.setFont(font6)
         self.param2Animate_button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.param2Animate_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.param2Animate_button.setAutoRaise(False)
@@ -773,8 +794,12 @@ class Ui_plotController(object):
         self.plot_state_grid3D.currentTextChanged.connect(plotController.update_state_to_plot)
         self.plot_state_spec3D.currentTextChanged.connect(plotController.update_state_to_plot)
         self.plot_state_time3D.currentTextChanged.connect(plotController.update_state_to_plot)
+        self.freqAxisSpec3d_options.variable_changed.connect(plotController.update_yVar)
+        self.timeAxis3d_options.variable_changed.connect(plotController.update_yVar)
+        self.amplAxisTime3d_options.variable_changed.connect(plotController.update_zVar)
+        self.frequency_slider.valueChanged.connect(plotController.set_slice_frequency)
 
-        self.plotSettingsTabs.setCurrentIndex(1)
+        self.plotSettingsTabs.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(plotController)
@@ -806,7 +831,8 @@ class Ui_plotController(object):
         self.plot_state_time3D_l.setText(QCoreApplication.translate("plotController", u"State to plot:", None))
         self.paramAxis_l.setText(QCoreApplication.translate("plotController", u"Parameter axis", None))
         self.progressionVarTime_options.setProperty("varDdItems", [
-            QCoreApplication.translate("plotController", u"Parameter 1", None)])
+            QCoreApplication.translate("plotController", u"Parameter 1", None),
+            QCoreApplication.translate("plotController", u"Parameter 2", None)])
         self.timeAxis_l.setText(QCoreApplication.translate("plotController", u"Time axis", None))
         self.timeAxis3d_options.setProperty("varDdItems", [
             QCoreApplication.translate("plotController", u"Time", None)])

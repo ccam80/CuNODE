@@ -22,10 +22,6 @@ class plot_controller_widget(QFrame, Ui_plotController):
 
     def __init__(self, parent=None):
         super(plot_controller_widget, self).__init__(parent)
-        self.setupUi(self)
-        self.populate_toolbutton_menus()
-
-
         self.plot_state = {
             'state_to_plot': 0,
             'plot_type': 'grid3d',
@@ -42,9 +38,10 @@ class plot_controller_widget(QFrame, Ui_plotController):
             'x_scale': 'Linear',
             'y_scale': 'Linear',
             'z_scale': 'Linear',
-
         }
 
+        self.setupUi(self)
+        self.populate_toolbutton_menus()
         self.state_labels = {'': 0}
         #Keep a copy of these bins in this class, as otherwise the int slider
         #would need to request the data each time it's updated.
@@ -52,13 +49,7 @@ class plot_controller_widget(QFrame, Ui_plotController):
         self.param1_values = np.zeros(1)
         self.param2_values = np.zeros(1)
 
-        self.state_label_boxes = [self.plot_state_grid3D,
-                                  self.plot_state_time3D,
-                                  self.plot_state_spec3D]
 
-        self.time_and_state_boxes = [self.xAxisSinglePlotOptions,
-                                     self.yAxisSinglePlotOptions,
-                                     self.zAxisSinglePlotOptions]
 
 
 
@@ -68,10 +59,9 @@ class plot_controller_widget(QFrame, Ui_plotController):
         the plot_state dict with their current values"""
 
         current_tab = self.plotSettingsTabs.widget(index)
-        self.trigger_text_changed_on_tab(current_tab)
+        self.get_tab_values(current_tab)
         logging.debug(f"Plot mode selected: {index}")
         self.plot_state['plot_type'] = self.plotstyles[index]
-
 
     @Slot(str, int)
     def update_xSlice(self, value, index):
@@ -121,6 +111,9 @@ class plot_controller_widget(QFrame, Ui_plotController):
     @Slot()
     def on_updatePlot(self):
         logging.debug("Update plot")
+        # for key, item in self.plot_state.items():
+        #     print(key + ": " + str(item))
+        # print("")
         self.updatePlot.emit()
 
     @Slot(int, int)
@@ -185,25 +178,56 @@ class plot_controller_widget(QFrame, Ui_plotController):
 
     @Slot(str)
     def update_state_to_plot(self, state):
-        self.state_to_plot = self.state_labels[state]
-        logging.debug("Plot state set to {self.state_to_plot}")
+        state_index = self.state_labels[state]
+        self.plot_state['state_to_plot'] = state_index
+        state_to_plot_comboboxes = [self.plot_state_time3D,
+                                    self.plot_state_spec3D,
+                                    self.plot_state_grid3D]
 
-    def fill_paramVal_lists(self, param1list, param2list):
+        for box in state_to_plot_comboboxes:
+            box.setCurrentIndex(state_index)
+        logging.debug("Plot state set to {state_index}")
+
+    def populate_swept_parameter_values(self, param1_values, param2_values):
         self.param1ValSelect_dd.clear()
-        self.param1ValSelect_dd.addItems(param1list)
-        self.param1ValSelect_dd.setCurrentIndex(0)
         self.param2ValSelect_dd.clear()
-        self.param2ValSelect_dd.addItems(param1list)
+        self.param1ValSelect_dd.addItems(param1_values)
+        self.param2ValSelect_dd.addItems(param2_values)
+        self.param1ValSelect_dd.setCurrentIndex(0)
         self.param2ValSelect_dd.setCurrentIndex(0)
+        self.sim_state['param1_values'] = param1_values
+        self.sim_state['param2_values'] = param2_values
+
+    def update_fixed_sliders(self, param):
+        if param == 'param1':
+            sliderlength = len(self.sim_s) - 1
+        elif param == 'param2':
+            sliderlength = len(self.sim_s) - 1
+        self.fixedParamSpec_slider.setMaximum(sliderlength)
+        self.fixedParamTime_slider.setMaximum(sliderlength)
+
+    def update_frequency_slider(self, frequencies):
+        self.frequency_slider.setMaximum(len(frequencies) - 1)
 
     def load_state_labels(self, state_labels):
-        for box in self.state_label_boxes:
+
+        self.state_labels = state_labels
+
+        state_label_boxes = [self.plot_state_grid3D,
+                             self.plot_state_time3D,
+                             self.plot_state_spec3D]
+
+        time_and_state_boxes = [self.xAxisSinglePlotOptions,
+                                self.yAxisSinglePlotOptions,
+                                self.zAxisSinglePlotOptions]
+
+        for box in state_label_boxes:
             box.clear()
             box.addItems(list(state_labels.keys()))
 
         time_and_state = state_labels.copy()
         time_and_state['Time'] = -1                                            #NOTE: This magic number is probably not the ideal way to denote time.
-        for from_to_widget in self.time_and_state_boxes:
+        for from_to_widget in time_and_state_boxes:
             from_to_widget.varDdItems = time_and_state.keys()
 
     def load_solution_values(self, param1_values,
@@ -261,20 +285,20 @@ class plot_controller_widget(QFrame, Ui_plotController):
                 menu.addAction(create_action(speed))
             button.setMenu(menu)
 
-    def set_animation_speed(self, speed_text):
+    def set_animation_speed(self, speed_string):
         """
         Sets the animation speed based on the selected menu option.
 
         Args:
-            speed_text (str): The text value from the menu option (e.g., '1.0x').
+            speed_string (str): The text value from the menu option (e.g., '1.0x').
         """
-        self.plot_state['animation_speed'] = float(speed_text[:-1])
+        self.plot_state['animation_speed'] = float(speed_string[:-1])
 
 
-    def trigger_text_changed_on_tab(self, tab):
+    def get_tab_values(self, tab):
         """
-        Triggers the textChanged signal for all QLineEdit (and its subclasses) and currentTextChanged signal
-        for all QComboBox widgets on the specified tab.
+        Triggers the textChanged signal for all entry and combo boxes on
+        on the specified tab.
 
         Args:
             tab (QWidget): The tab on which to trigger signals.

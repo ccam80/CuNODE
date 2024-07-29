@@ -18,8 +18,8 @@ from qtpy.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from qtpy.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
     QLayout, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QStatusBar, QVBoxLayout,
-    QWidget)
+    QPushButton, QSizePolicy, QStatusBar, QToolBox,
+    QVBoxLayout, QWidget)
 
 from gui.resources.widgets.plot_controller_widget import plot_controller_widget
 from gui.resources.widgets.pyVistaView import pyVistaView
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1718, 1364)
+        MainWindow.resize(1718, 853)
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
         self.actionLoad_System_File = QAction(MainWindow)
@@ -81,7 +81,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
         self.verticalLayout_2.setContentsMargins(-1, 0, -1, 0)
-        self.plotController = plot_controller_widget(self.controlFrame)
+        self.controlToolBox = QToolBox(self.controlFrame)
+        self.controlToolBox.setObjectName(u"controlToolBox")
+        font = QFont()
+        font.setPointSize(16)
+        self.controlToolBox.setFont(font)
+        self.plotController_page = QWidget()
+        self.plotController_page.setObjectName(u"plotController_page")
+        self.plotController_page.setGeometry(QRect(0, 0, 545, 626))
+        sizePolicy.setHeightForWidth(self.plotController_page.sizePolicy().hasHeightForWidth())
+        self.plotController_page.setSizePolicy(sizePolicy)
+        self.verticalLayout_3 = QVBoxLayout(self.plotController_page)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.plotController = plot_controller_widget(self.plotController_page)
         self.plotController.setObjectName(u"plotController")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(1)
@@ -93,16 +105,28 @@ class Ui_MainWindow(object):
         self.plotController.setLineWidth(1)
         self.plotController.setMidLineWidth(0)
 
-        self.verticalLayout_2.addWidget(self.plotController)
+        self.verticalLayout_3.addWidget(self.plotController)
 
-        self.simController = sim_controller_widget(self.controlFrame)
+        self.controlToolBox.addItem(self.plotController_page, u"Plot Settings")
+        self.simController_page = QWidget()
+        self.simController_page.setObjectName(u"simController_page")
+        self.simController_page.setGeometry(QRect(0, 0, 545, 626))
+        sizePolicy.setHeightForWidth(self.simController_page.sizePolicy().hasHeightForWidth())
+        self.simController_page.setSizePolicy(sizePolicy)
+        self.verticalLayout = QVBoxLayout(self.simController_page)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.simController = sim_controller_widget(self.simController_page)
         self.simController.setObjectName(u"simController")
         sizePolicy2.setHeightForWidth(self.simController.sizePolicy().hasHeightForWidth())
         self.simController.setSizePolicy(sizePolicy2)
         self.simController.setFrameShape(QFrame.Shape.StyledPanel)
         self.simController.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.verticalLayout_2.addWidget(self.simController)
+        self.verticalLayout.addWidget(self.simController)
+
+        self.controlToolBox.addItem(self.simController_page, u"Simulation Settings")
+
+        self.verticalLayout_2.addWidget(self.controlToolBox)
 
         self.saveOrSolve_f = QFrame(self.controlFrame)
         self.saveOrSolve_f.setObjectName(u"saveOrSolve_f")
@@ -119,28 +143,18 @@ class Ui_MainWindow(object):
         self.save_button.setObjectName(u"save_button")
         sizePolicy.setHeightForWidth(self.save_button.sizePolicy().hasHeightForWidth())
         self.save_button.setSizePolicy(sizePolicy)
-        font = QFont()
-        font.setPointSize(24)
-        self.save_button.setFont(font)
+        font1 = QFont()
+        font1.setPointSize(24)
+        self.save_button.setFont(font1)
 
         self.horizontalLayout.addWidget(self.save_button)
 
-        self.solve_button = QPushButton(self.saveOrSolve_f)
-        self.solve_button.setObjectName(u"solve_button")
-        sizePolicy.setHeightForWidth(self.solve_button.sizePolicy().hasHeightForWidth())
-        self.solve_button.setSizePolicy(sizePolicy)
-        self.solve_button.setFont(font)
-
-        self.horizontalLayout.addWidget(self.solve_button)
-
         self.horizontalLayout.setStretch(0, 1)
-        self.horizontalLayout.setStretch(1, 1)
 
         self.verticalLayout_2.addWidget(self.saveOrSolve_f)
 
-        self.verticalLayout_2.setStretch(0, 5)
-        self.verticalLayout_2.setStretch(1, 5)
-        self.verticalLayout_2.setStretch(2, 1)
+        self.verticalLayout_2.setStretch(0, 9)
+        self.verticalLayout_2.setStretch(1, 1)
 
         self.gridLayout_2.addWidget(self.controlFrame, 0, 1, 1, 1)
 
@@ -167,8 +181,10 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.save_button.clicked.connect(MainWindow.save_results)
-        self.solve_button.released.connect(MainWindow.solve_ODE)
         self.actionLoad_System_File.triggered.connect(MainWindow.load_system_from_filedialog)
+
+        self.controlToolBox.setCurrentIndex(1)
+
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -179,8 +195,9 @@ class Ui_MainWindow(object):
         self.actionLoad_System_File.setText(QCoreApplication.translate("MainWindow", u"Load System File", None))
         self.action64_bit_2.setText(QCoreApplication.translate("MainWindow", u"64-bit", None))
         self.action32_bit_2.setText(QCoreApplication.translate("MainWindow", u"32-bit", None))
+        self.controlToolBox.setItemText(self.controlToolBox.indexOf(self.plotController_page), QCoreApplication.translate("MainWindow", u"Plot Settings", None))
+        self.controlToolBox.setItemText(self.controlToolBox.indexOf(self.simController_page), QCoreApplication.translate("MainWindow", u"Simulation Settings", None))
         self.save_button.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.solve_button.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuPrecision.setTitle(QCoreApplication.translate("MainWindow", u"Precision", None))
     # retranslateUi

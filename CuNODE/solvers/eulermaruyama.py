@@ -22,44 +22,32 @@ from numba.cuda.random import create_xoroshiro128p_states, xoroshiro128p_normal_
 from cupyx.scipy.signal import firwin, welch
 from cupyx.scipy.fft import rfftfreq, rfft
 from _utils import get_noise_64, get_noise_32, timing
+from solvers.genericSolver import genericSolver
 
 
 xoro_type = from_dtype(xoroshiro128p_dtype)
 
 # global0 = 0
 
-class Solver(object):
+class Solver(genericSolver):
 
     def __init__(self,
                  precision = np.float32,
                  diffeq_sys = None
                  ):
+        super().__init__(precision, diffeq_sys)
 
         self.precision = precision
-        self.numba_precision = from_dtype(precision)
 
-        if diffeq_sys:
-            self.load_system = diffeq_sys
-
-
-    def load_system(self, diffeq_system):
-        self.system = diffeq_system
-        if self.precision != self.system.precision:
-            print("Precision mismatch between CUDA_ODE and diffeq_system - abandon ship")
-            self.system = None
-        # Building the kernel should only require num_states and system functions, and so should be handled only once per system here.
-        self.build_kernel()
-
-
-    def build_kernel(self):
-        dxdtfunc = self.system.dxdtfunc
+    def build_kernel(self, system):
+        dxdtfunc = system.dxdtfunc
 
         global zero
         zero = 0
         global nstates
-        nstates = self.system.num_states
+        nstates = system.num_states
         global constants_length
-        constants_length = len(self.system.constants_array)
+        constants_length = len(system.constants_array)
 
         precision = self.numba_precision
 
@@ -69,7 +57,7 @@ class Solver(object):
             get_noise = get_noise_64
 
         @cuda.jit(opt=True, lineinfo=True) # Lazy compilation allows for literalisation of shared mem params.
-        def naiive_euler_kernel(xblocksize,
+        def eulermaruyamakernel(xblocksize,
                                 output,
                                 grid_values,
                                 grid_indices,
@@ -180,139 +168,9 @@ class Solver(object):
                 s_sums[tx*litstates:tx*litstates + 5] = precision(0)
 
 
-        self.eulermaruyamakernel = naiive_euler_kernel
-
-    def euler_maruyama(self,
-                       y0,
-                       duration,
-                       step_size,
-                       output_fs,
-                       grid_labels,
-                       grid_values,
-                       noise_seed=1,
-                       blocksize_x=64,
-                       warmup_time=0.0):
+        self.integratorKernel = eulermaruyamakernel
 
 
-        self.fs = output_fs
-        self.duration = duration
-        self.step_size = step_size
-
-        self.output_array = cuda.pinned_array((int(output_fs * duration),
-                                               len(grid_values),
-                                               self.system.num_states),
-                                               dtype=self.precision)
-        self.output_array[:, :, :] = 0
-
-        grid_indices = np.zeros(len(grid_labels), dtype=np.int32)
-        #TODO: add check here for init conditions - how to separate from real indices when it's not part of the grid?
-        #Maybe tack inits onto the end of the constants array. Maybe noise too? Then we can sweep eeeeeeeverything.
-        # This works I think. index inits by [-1:-num_states - 1], index noise by [-num_states - 2: -2*num_states -1].
-        # I don't think it will ever clash?
-        for index, label in enumerate(grid_labels):
-            grid_indices[index] = self.system.constant_indices[label]
-
-        d_filtercoefficients = firwin(int32(round(1 / (self.numba_precision(step_size) * self.numba_precision(output_fs)))),
-                                      output_fs/2.01,
-                                      window='hann',
-                                      pass_zero='lowpass',
-                                      fs = output_fs)
-        d_filtercoefficients = asarray(d_filtercoefficients, dtype=self.precision)
-
-        d_outputstates = asarray(self.output_array, dtype=self.precision)
-        d_constants = asarray(self.system.constants_array, dtype=self.precision)
-        d_gridvalues = asarray(grid_values, dtype=self.precision)
-        d_gridindices = asarray(grid_indices)
-        d_inits = asarray(y0, dtype=self.precision)
-
-        #one per system
-        d_noise = create_xoroshiro128p_states(len(grid_values), noise_seed)
-        d_noisesigmas = asarray(self.system.get_noise_sigmas(), dtype=self.precision)
-
-        #total threads / threads per block (or 1 if 1 is greater)
-        BLOCKSPERGRID = int(max(1, np.ceil(len(grid_values) / blocksize_x)))
-
-        #Size of shared allocation (n states per thread per block, times 2 (for sums) x 8 for float64)
-        if self.numba_precision == float32:
-            bytes_per_val = 4
-        else:
-            bytes_per_val = 8
-        dynamic_sharedmem = 2 * blocksize_x * self.system.num_states * bytes_per_val
-
-        cuda.profile_start()
-        self.eulermaruyamakernel[BLOCKSPERGRID, blocksize_x,
-                                 0, dynamic_sharedmem](
-                                     blocksize_x,
-                                     d_outputstates,
-                                     d_gridvalues,
-                                     d_gridindices,
-                                     d_constants,
-                                     d_inits,
-                                     step_size,
-                                     duration,
-                                     output_fs,
-                                     d_filtercoefficients,
-                                     d_noise,
-                                     d_noisesigmas,
-                                     warmup_time)
-        cuda.profile_stop()
-        cuda.synchronize()
-
-        self.output_array = np.ascontiguousarray(d_outputstates.get().T)
-
-
-    def get_fft(self, window='hann'):
-
-        nperseg = int(self.output_array.shape[2] / 4)
-        noverlap = int(nperseg/2)
-        nfft = nperseg*2
-
-        mem_remaining = self.get_free_memory()
-
-
-        num_segs = (self.output_array.shape[2] - noverlap) // (nperseg - noverlap)
-        segsize = nperseg * self.output_array.shape[0] * self.output_array.shape[1] * 16
-
-        total_mem_for_operation = segsize * num_segs
-        total_chunks = int(np.ceil(total_mem_for_operation / mem_remaining))
-
-        self.fft_mag_array = np.zeros((self.output_array.shape[0],
-                                   self.output_array.shape[1],
-                                   int(nfft/2) + 1),
-                                  dtype=self.precision)
-        self.fft_phase_array = np.zeros((self.output_array.shape[0],
-                                         self.output_array.shape[1],
-                                         int(self.output_array.shape[2]/ 2) + 1),
-                                        dtype=self.precision)
-
-        for i in range(total_chunks):
-            chunksize = int(np.ceil(self.output_array.shape[1] / total_chunks))
-            index = chunksize * i
-
-            self.mag_f, self.temp_fft_array = welch(asarray(self.output_array[:,index:index + chunksize,:], order='C'),
-                                   fs=self.fs*2*np.pi,
-                                       window=window,
-                                       nperseg=nperseg,
-                                       nfft=nfft,
-                                       detrend='linear',
-                                       scaling='spectrum',
-                                       axis=2)
-            self.fft_mag_array[:, index:index+chunksize, :] = np.abs(self.temp_fft_array.get())
-            self.mag_f = self.mag_f.get()
-
-        #Add in available cuda memory check - might be redundant as this will be the size of output_array but will need chunked if we implement output array chunking
-        self.fft_phase_array = np.angle(rfft(asarray(self.output_array), axis=2).get())
-        self.phase_f = rfftfreq(self.output_array.shape[2], d=1/(self.fs*2*np.pi)).get()
-
-        # self.f = self.f.get()
-        # self.fft_array = self.fft_array.get()
-
-
-    def get_free_memory(self):
-        total_mem = cuda.current_context().get_memory_info()[1] - 1024**3  # Leave 1G for misc overhead
-        allocated_mem = get_default_memory_pool().used_bytes()
-
-        return total_mem - allocated_mem
 
 
 #%% Test Code
@@ -332,12 +190,13 @@ if __name__ == "__main__":
 
     ODE = Solver(precision=precision)
     ODE.load_system(sys)
-    ODE.build_kernel()
-    ODE.euler_maruyama(inits,
-                       duration,
-                       step_size,
-                       fs,
-                       grid_labels,
-                       grid_params,
-                       warmup_time=precision(100.0))
-    ODE.get_fft()
+    solutions = ODE.run(sys,
+                        inits,
+                        duration,
+                        step_size,
+                        fs,
+                        grid_labels,
+                        grid_params,
+                        warmup_time=precision(100.0))
+    psd, f_psd = ODE.get_psd(solutions, fs)
+    phase, f_phase = ODE.get_fft_phase(solutions, fs)

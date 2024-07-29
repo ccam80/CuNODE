@@ -56,7 +56,7 @@ class variable_from_to_n_scale_widget(QFrame, Ui_variable_from_to_n_scale):
     @Slot(QAbstractButton)
     def on_scale_change(self, button):
         scale = button.text()
-        self.variable_changed.emit(scale)
+        self.scale_changed.emit(scale)
         logging.debug(f"scale changed to: {scale}")
 
     @Slot(str)
@@ -187,7 +187,7 @@ class variable_from_to_n_scale_widget(QFrame, Ui_variable_from_to_n_scale):
         """
         return self.from_entry.text()
 
-    fromEntryDefault = Property(str, getToEntryDefault, setToEntryDefault)
+    fromEntryDefault = Property(str, getFromEntryDefault, setFromEntryDefault)
 
     def setNEntryMinValue(self, _min):
         """

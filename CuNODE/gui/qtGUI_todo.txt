@@ -1,9 +1,19 @@
 
 **Plot Controller**
-Implement an auto-update of plot parameters when changing tabs.
-Add plot state option - potentially labels in the system as well to present this in a sensible way
 figure out how to send a data request without sending data
-Add a "load_system" method that opoulates all lists and fields
+Add method to populate with sim values: min/max values for each of:
+- psd freq
+- fft freq
+- time
+- rms ampl
+- psd ampl
+- param1
+- param2
+
+then, on setting a fixed value:
+-per-set min/max of each state
+- max of swept-param * single param sets.
+-   - for this one, the controller could send back the data after a request that changes plot state.
 
 **Sim controller**
 implement init & noise sweeps.
@@ -17,6 +27,7 @@ I think labels should live in plotter, loaded by controller when we load a syste
 
 **Toplevel**
 Start by passing sim params to system for solving, and passing plot state to plotter.
+Autopopulate a menu with available solvers. Fancy solvers might require a modification of paramaeters in the guis. Figure out how to get em all in one place - perhaps classes in a soverkernels module.
 Plot state interpretation and data requesting is the big hard one here I think.
 Controller should ferry data between model, controllers, and glue.
 Does SOLVER need to own SYSTEM?

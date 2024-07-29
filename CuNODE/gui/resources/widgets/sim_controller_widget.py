@@ -5,7 +5,7 @@ Created on Thu Jul 25 20:02:51 2024
 @author: cca79
 """
 
-from qtpy.QtWidgets import QFrame, QGridLayout, QLabel, QLineEdit, QGroupBox, QWidget
+from qtpy.QtWidgets import QFrame, QGridLayout, QLabel, QLineEdit, QGroupBox, QWidget, QSizePolicy, QSpacerItem
 from qtpy.QtCore import Slot, Signal
 from numpy import zeros
 from gui.resources.widgets.qtdesigner.sim_controller import Ui_simController
@@ -13,7 +13,7 @@ import logging
 
 class sim_controller_widget(QFrame, Ui_simController):
 
-    update_system = Signal()
+    solve_request = Signal()
 
     def __init__(self, parent=None):
         super(sim_controller_widget, self).__init__(parent)
@@ -34,14 +34,15 @@ class sim_controller_widget(QFrame, Ui_simController):
             'param2_var': '',
             'param2_values': zeros(1),
             'warmup': 0.0,
-            'y0': zeros(1)
+            'y0': zeros(1),
+            'noise_sigmas': zeros(1)
         }
 
         self.system_params_local = {}
-        self.param_data = {'param1_var': '',
-                           'param2_var': '',
-                           'param1_vals': zeros(1),
-                           'param2_vals': zeros(1)}
+        # self.param_data = {'param1_var': '',
+        #                    'param2_var': '',
+        #                    'param1_vals': zeros(1),
+        #                    'param2_vals': zeros(1)}
 
     @Slot(str)
     def update_p1_from(self, _from):
@@ -93,6 +94,17 @@ class sim_controller_widget(QFrame, Ui_simController):
         self.sim_state["param2_var"] = var
         logging.debug(f"P2 var updated: {var}")
 
+    def get_swept_parameters(self, param):
+        if param == 'param1':
+            bounds = self.sim_state['param1_sweep_bounds']
+            n = self.sim_state['param1_num_values']
+            scale = self.sim_state['param1_sweep_scale']
+        elif param == 'param2':
+            bounds = self.sim_state['param2_sweep_bounds']
+            n = self.sim_state['param2_num_values']
+            scale = self.sim_state['param2_sweep_scale']
+        return bounds, n, scale
+
     @Slot(str)
     def update_duration(self, duration):
         self.sim_state['duration'] = float(duration)
@@ -120,7 +132,7 @@ class sim_controller_widget(QFrame, Ui_simController):
 
     @Slot(str, str)
     def update_init(self, index, value):
-        self.inits[index] =  float(value)
+        self.sim_state['y0'][index] =  float(value)
         logging.debug(f"Init updated: {index}, {value}")
 
     @Slot(str, str)
@@ -129,20 +141,19 @@ class sim_controller_widget(QFrame, Ui_simController):
 
         logging.debug(f"Noise updated: {index}, {value}")
 
-
     def load_system(self, sysparams, noise_sigmas):
         self.local_sysparams_dict = sysparams
-        self.local_noise_array = noise_sigmas
+        self.sim_state['noise_sigmas'] = noise_sigmas
         self.populate_sysParams_tab(sysparams, noise_sigmas)
-        self.inits = zeros(len(noise_sigmas))
+        self.sim_state['y0'] = zeros(len(noise_sigmas))
         self.param1Sweep_options.varDdItems = sysparams.keys()
         self.param2Sweep_options.varDdItems = sysparams.keys()
-        self.populate_groupbox_with_array(self.inits_box, self.inits)
+        self.populate_groupbox_with_array(self.inits_box, self.sim_state['y0'])
 
     def populate_sysParams_tab(self, sysparams_dict, noise_array):
-        if self.sysParams_tab.layout():
-            for i in reversed(range(self.sysParams_tab.layout().count())):
-                widget = self.sysParams_tab.layout().itemAt(i).widget()
+        if self.SystemParameters_tab.layout():
+            for i in reversed(range(self.SystemParameters_tab.layout().count())):
+                widget = self.SystemParameters_tab.layout().itemAt(i).widget()
                 if widget:
                     widget.deleteLater()
 
@@ -174,9 +185,13 @@ class sim_controller_widget(QFrame, Ui_simController):
         self.populate_groupbox_with_array(noise_groupbox, noise_array)
         layout.addWidget(noise_groupbox, (len(keys) + 1) // numcols, 0, 1, numcols * 2)
 
+        # Add a vertical spacer to the bottom of a QVBoxLayout called "layout"
+        spacerItem = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        layout.addItem(spacerItem)
+
         container = QWidget()
         container.setLayout(layout)
-        self.sysParams_tab.layout().addWidget(container)
+        self.SystemParameters_tab.layout().addWidget(container)
 
     def populate_groupbox_with_array(self, groupbox, array):
         layout = groupbox.layout()
@@ -211,3 +226,12 @@ class sim_controller_widget(QFrame, Ui_simController):
             array[index] = float(text)
         except ValueError:
             pass
+
+    def solve(self):
+        # for key, item in self.sim_state.items():
+        #     print(key + ": " + str(item))
+        # print("")
+        # for key, item in self.local_sysparams_dict.items():
+        #     print(key + ": " + str(item))
+        # print("")
+        self.solve_request.emit()

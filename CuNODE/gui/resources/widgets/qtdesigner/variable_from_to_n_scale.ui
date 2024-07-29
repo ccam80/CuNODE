@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>94</height>
+    <height>80</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,6 +16,23 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>60</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <hintingpreference>PreferDefaultHinting</hintingpreference>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -23,10 +40,16 @@
    <item>
     <widget class="QFrame" name="variable_from_to_frame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>1</horstretch>
-       <verstretch>5</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>62</height>
+      </size>
      </property>
      <property name="frameShape">
       <enum>QFrame::Shape::StyledPanel</enum>
@@ -34,7 +57,7 @@
      <property name="frameShadow">
       <enum>QFrame::Shadow::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,0" columnstretch="1,1,1,1,0">
+     <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="1,1,1,1,0" columnminimumwidth="0,0,0,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
       </property>
@@ -49,11 +72,18 @@
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="Var_l">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
           <strikeout>false</strikeout>
           <kerning>true</kerning>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
         </property>
         <property name="text">
@@ -64,8 +94,8 @@
       <item row="1" column="0">
        <widget class="QComboBox" name="Var_dd">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>1</horstretch>
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>2</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
         </property>
@@ -74,6 +104,7 @@
           <pointsize>12</pointsize>
           <strikeout>false</strikeout>
           <kerning>true</kerning>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
         </property>
         <item>
@@ -90,23 +121,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="From_l">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <strikeout>false</strikeout>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="text">
-         <string>from</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4" rowspan="2">
-       <widget class="QGroupBox" name="Scale_box">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>1</horstretch>
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
@@ -115,78 +132,28 @@
           <pointsize>12</pointsize>
           <strikeout>false</strikeout>
           <kerning>true</kerning>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
         </property>
-        <property name="title">
-         <string>Scale</string>
+        <property name="text">
+         <string>from</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,1">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="lin_button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Linear</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">scale_button_group</string>
-           </attribute>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="log_button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Logarithmic</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">scale_button_group</string>
-           </attribute>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="to_l">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
           <strikeout>false</strikeout>
           <kerning>true</kerning>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
         </property>
         <property name="text">
@@ -196,9 +163,16 @@
       </item>
       <item row="0" column="3">
        <widget class="QLabel" name="n_l">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
         </property>
         <property name="text">
@@ -272,6 +246,85 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="4" rowspan="2">
+       <widget class="QGroupBox" name="Scale_box">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <strikeout>false</strikeout>
+          <kerning>true</kerning>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
+         </font>
+        </property>
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,1">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="topMargin">
+          <number>1</number>
+         </property>
+         <property name="bottomMargin">
+          <number>1</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="lin_button">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Linear</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">scale_button_group</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="log_button">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Logarithmic</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">scale_button_group</string>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -325,12 +378,12 @@
    <slot>on_n_change()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>324</x>
-     <y>74</y>
+     <x>356</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
-     <x>512</x>
-     <y>46</y>
+     <x>507</x>
+     <y>47</y>
     </hint>
    </hints>
   </connection>
@@ -341,12 +394,12 @@
    <slot>on_to_change()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>256</x>
-     <y>73</y>
+     <x>270</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
-     <x>512</x>
-     <y>69</y>
+     <x>507</x>
+     <y>70</y>
     </hint>
    </hints>
   </connection>
@@ -357,12 +410,12 @@
    <slot>on_from_change()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>157</x>
-     <y>74</y>
+     <x>185</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
-     <x>512</x>
-     <y>26</y>
+     <x>507</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>
