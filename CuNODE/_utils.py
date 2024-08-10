@@ -39,7 +39,7 @@ def clamp_64(value,
         return clip_value
     else:
         return -clip_value
-    
+
 @cuda.jit(float32(float32,
                   float32),
           device=True,
@@ -52,7 +52,7 @@ def clamp_32(value,
         return clip_value
     else:
         return -clip_value
-    
+
 @cuda.jit((float64[:],
             float64[:],
             int32,
@@ -68,7 +68,7 @@ def get_noise_64(noise_array,
     for i in range(len(noise_array)):
         if sigmas[i] != 0.0:
             noise_array[i] = xoroshiro128p_normal_float64(RNG, idx) * sigmas[i]
-            
+
 @cuda.jit((float32[:],
             float32[:],
             int32,
@@ -85,7 +85,7 @@ def get_noise_32(noise_array,
     for i in range(len(noise_array)):
         if sigmas[i] != 0.0:
             noise_array[i] = xoroshiro128p_normal_float32(RNG, idx) * sigmas[i]
-            
+
 
 def round_sf(num, sf):
     if num == 0.0:
@@ -95,3 +95,8 @@ def round_sf(num, sf):
 
 def round_list_sf(list, sf):
     return [round_sf(num, sf) for num in list]
+
+def get_readonly_view(self, array):
+    view = array.view()
+    view.flags.writeable = False
+    return view

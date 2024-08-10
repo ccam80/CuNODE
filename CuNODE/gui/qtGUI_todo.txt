@@ -17,6 +17,7 @@ then, on setting a fixed value:
 
 **Sim controller**
 implement init & noise sweeps.
+lock solve button if no sys loaded
 
 **Plotter**
 start with Grid3D - generate a structured mesh from data

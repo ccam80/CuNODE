@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1718</width>
-    <height>853</height>
+    <width>1726</width>
+    <height>872</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -90,15 +90,15 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="plotController_page">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>626</height>
+            <width>547</width>
+            <height>643</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -140,8 +140,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>626</height>
+            <width>547</width>
+            <height>643</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -220,7 +220,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1718</width>
+     <width>1726</width>
      <height>22</height>
     </rect>
    </property>
@@ -277,7 +277,7 @@
    <header>gui/resources/widgets/plot_controller_widget.h</header>
    <container>1</container>
    <slots>
-    <signal>update_plot()</signal>
+    <signal>updatePlot()</signal>
     <slot>set_current_params_from_plotter(QString,QString)</slot>
    </slots>
   </customwidget>
@@ -286,6 +286,9 @@
    <extends>QFrame</extends>
    <header>gui/resources/widgets/sim_controller_widget.h</header>
    <container>1</container>
+   <slots>
+    <signal>solve_request()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -322,15 +325,45 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>simController</sender>
+   <signal>solve_request()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_solve_request()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1606</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1721</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotController</sender>
+   <signal>updatePlot()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1391</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1717</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>update_plot()</slot>
-  <slot>update_z_var()</slot>
   <slot>update_x_slice()</slot>
   <slot>update_y_slice()</slot>
   <slot>update_z_slice()</slot>
   <slot>update_x_var()</slot>
-  <slot>update_y_var()</slot>
   <slot>animate_3D()</slot>
   <slot>set_current_fft_freq()</slot>
   <slot>set_singlePlot_style()</slot>
@@ -347,12 +380,10 @@
   <slot>set_fs()</slot>
   <slot>set_warmup()</slot>
   <slot>set_dt()</slot>
-  <slot>set_y0()</slot>
   <slot>save_results()</slot>
   <slot>solve_ODE()</slot>
-  <slot>select_param1()</slot>
-  <slot>select_param2()</slot>
   <slot>load_system_from_filedialog()</slot>
   <slot>set_precision()</slot>
+  <slot>on_solve_request()</slot>
  </slots>
 </ui>

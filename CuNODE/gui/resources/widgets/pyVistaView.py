@@ -57,7 +57,7 @@ class pyVistaView(QWidget):
     def plot_phase3d(self, x, y, z):
         points = np.column_stack((x, y, z))
         line = self.polyline_from_points(points)
-        line["scalars"] = np.arange(polyline.n_points) # This is for shading i think
+        line["scalars"] = np.arange(line.n_points) # This is for shading i think
 
         tube = line.tube(radius=0.1)
         tube.plot()

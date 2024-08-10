@@ -5,53 +5,67 @@ Created on Mon Jul 29 14:08:37 2024
 @author: cca79
 """
 import numpy as np
+from _utils import get_readonly_view
+
 
 class modelController():
     """Helper class that takes a set of requested variables, slices, and scales,
     sorts them and fetches the data to arrange a request that makes sense to the
     plotter. """
 
-    def __init__(self):
+    def __init__(self, messaging_service):
         pass
-        #What state does this thing need?
-        self.plotter_request = {'axes': '3d',
-                                'type': 'surface',
-                                'dataformat': 'mesh',
-                                'xdata': np.zeros(1),
-                                'ydata': np.zeros(1),
-                                'zdata': np.zeros(1),
-                                'xlabel': '',
-                                'ylabel': '',
-                                'zlabel': '',
-                                'xscale': '',
-                                'yscale': '',
-                                'zscale': ''}
-
-        self.plotController_return = {'xbounds': [0, 100],
-                                      'ybounds': [0,100],
-                                      'zbounds': [0, 100],}
-
-        self.state_bounds = {'time': [0,1000],
-                             'psd_freq': [0,1000],
-                             'fft_freq': [0,1000]}
+        self.system = None
+        self.solver = None
 
         self.solutions = np.zeros((1,1,1))
-        self.psd = np.zeros(1,1)
-        self.fft_phase = np.zeros(1,1)
+        self.psd = np.zeros(1)
+        self.fft_phase = np.zeros(1)
+        self.messenger = None
+
+    def register_messaging_service(self, messaging_service):
+        """Connect a message passing service to communicate between widgets
+
+        Args:
+            messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
+        self.messenger = messaging_service
 
     def load_solver(self, solver_class, precision=np.float64):
         self.solver = solver_class(precision = precision)
 
-    def load_system(self, system_class, precision=np.float64):
-        self.system = system_class(precision = precision)
+    def load_system(self, system):
+        self.system = system
         self.solver.build_kernel(self.system)
 
-    def run_solver(self, request, constants):
-        #self.system.system_constants =
-        #self.system.y0
-        self.solutions = self.solver.run() # get params in here else she won't go... will she?
-        self.psd, self.f_psd = self.solver.get_psd()
-        self.phase, self.f_phase = self.solver.get_fft_phase()
+    def update_system_parameters(self, params_dict):
+        self.system.update_constants(params_dict)
+
+    def run_solver(self, system, request, sweeps,
+                   noise_seed=1, blocksize_x=64):
+
+        y0 = request['y0']
+        duration = request['duration']
+        output_fs = request['fs']
+        step_size = request['dt']
+        warmup = request['warmup']
+        grid_labels = sweeps['vars']
+        grid_values = sweeps['values']
+
+        self.solutions = self.solver.run(system,
+                                         y0,
+                                         duration,
+                                         step_size,
+                                         output_fs,
+                                         grid_labels,
+                                         grid_values,
+                                         noise_seed,
+                                         blocksize_x,
+                                         warmup)
+
+        self.psd, _ = self.solver.get_psd(self.solutions, output_fs)
+        self.phase, _ = self.solver.get_fft_phase(self.solutions, output_fs)
+        # self.t = np.linspace(0,  duration -  1/output_fs, int( duration * output_fs))
+
 
     def trim_data(self, data, slice_ends):
         lower_bound = slice_ends[0]
@@ -59,24 +73,38 @@ class modelController():
         return data[data >= lower_bound and data <= upper_bound]
 
 
-    def interpret(self, request):
-        if request['plot_type'] == 'grid3d':
-            self.plot_grid3d(request)
-        elif request['plot_type'] == 'time3d':
-            self.plot_time3d(request)
-        elif request['plot_type'] == 'spec3d':
-            self.plot_spec3d(request)
-        elif request['plot_type'] == 'singlestate':
-            if request['singleplotstyle'] == 'Spectrogram':
-                self.plot_spec2d(request)
-            elif request['singleplotstyle'] == 'Time-domain':
-                self.plot_time2d(request)
-            elif request['singleplotstyle'] == '2D Phase Diagram':
-                self.plot_phase2d(request)
-            elif request['singleplotstyle'] == '3D Phase Diagram':
-                self.plot_phase3d(request)
+    def get_data(self, data_type, state,
+                 grid_indices=None,
+                 freq_indices=None,
+                 time_indices=None):
+        """Return a 1D vector of results - sliced either by optional grid,
+        time, or frequency indices. If no indices are given, or incorrect ones
+        for the data type, the data will be reshaped to a very long vector, silently."""
 
-    def plot_grid3d(self, request):
-        self.plotter_request['axes'] = '3d'
-        self.plotter_request['type'] = 'surface'
-        self.plotter_request['dataformat'] = 'vector'
+        # See if the data type is a state label, and get that state if so. If the
+        #data type is not in the dict, carry on to find it in the non-system-defined
+        # types.
+        try:
+            state = self.system.state_labels[data_type]
+            data = self.solutions[state, grid_indices, time_indices]
+        except:
+
+            if data_type == 'psd':
+                data = self.psd[state, grid_indices, freq_indices]
+            elif data_type == 'phase':
+                data = self.phase[state, grid_indices, freq_indices]
+            elif data_type == 'amplitude':
+                data = self.solutions[state, grid_indices, time_indices]
+
+            elif data_type == 'rms':
+                grid_length = self.solutions.shape[1]
+                data = np.zeros(grid_length)
+                for i in range(grid_length):
+                    solution_vector = self.solutions[state,i,:]
+                    data[i] = np.sqrt(np.mean(solution_vector**2))
+                data = data[grid_indices, freq_indices]
+
+        data = data.reshape(-1,1)
+        data.flags.writeable = False
+
+        return data

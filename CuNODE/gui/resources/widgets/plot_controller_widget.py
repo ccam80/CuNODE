@@ -40,6 +40,13 @@ class plot_controller_widget(QFrame, Ui_plotController):
             'z_scale': 'Linear',
         }
 
+        self.independent_variables = {"t": np.zeros(1, dtype=self.precision),
+                                       "psd_freq": np.zeros(1, dtype=self.precision),
+                                       "fft_freq": np.zeros(1, dtype=self.precision),
+                                       "param1": np.zeros(1, dtype=self.precision),
+                                       "param2": np.zeros(1, dtype=self.precision),
+                                       "sweep_labels": ["",""]}
+
         self.setupUi(self)
         self.populate_toolbutton_menus()
         self.state_labels = {'': 0}
@@ -49,7 +56,38 @@ class plot_controller_widget(QFrame, Ui_plotController):
         self.param1_values = np.zeros(1)
         self.param2_values = np.zeros(1)
 
+        self.xboxes = [self.paramAxisTime3D_options,
+                       self.paramAxisSpec3d_options,
+                       self.xAxisGridPlotOptions,
+                       self.xAxisSinglePlotOptions]
 
+        self.yboxes = [self.paramAxisTime3D_options,
+                       self.paramAxisSpec3d_options,
+                       self.xAxisGridPlotOptions,
+                       self.xAxisSinglePlotOptions]
+
+        self.zboxes = [self.paramAxisTime3D_options,
+                       self.paramAxisSpec3d_options,
+                       self.xAxisGridPlotOptions,
+                       self.xAxisSinglePlotOptions]
+        self.messenger = None
+
+    def register_messaging_service(self, messaging_service):
+        """Connect a message passing service to communicate between widgets.
+        Subscribe all setter functions that don't generate their own data or get
+        it from the user interface.
+
+        Args:
+            messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
+
+        messaging_service.subscribe("t", self.update_t)
+        messaging_service.subscribe("psd_freq", self.update_psd_freq)
+        messaging_service.subscribe("fft_freq", self.update_fft_freq)
+        messaging_service.subscribe("param1_values", self.update_param1_values)
+        messaging_service.subscribe("param2_values", self.update_param2_values)
+        messaging_service.subscribe("param_labels", self.update_param_labels)
+
+        self.messenger = messaging_service
 
 
 
@@ -95,13 +133,39 @@ class plot_controller_widget(QFrame, Ui_plotController):
 
     @Slot(str)
     def update_xVar(self, variable):
-        logging.debug("X Variable updated")
-        self.plot_state['x_var'] = variable
+        #Provide independent variable data if available
+        if variable == 'Parameter 1':
+            data = self.independent_variables['param1']
+        elif variable == 'Parameter 2':
+            data = self.independent_variables['param2']
+        else:
+            #send state labels to GUI to reqest model data
+            data = variable
+
+        #Update slice bounds to match new data
+        if type(data) is not str:
+            self.update_boxes_min_max(self.xboxes, data)
+
+        self.plot_state['x_data'] = data
+        self.plot_state['x_label'] = variable
 
     @Slot(str)
     def update_yVar(self, variable):
-        logging.debug("Y Variable updated")
-        self.plot_state['y_var'] = variable
+        if variable == 'Time':
+            data = self.independent_variables['t']
+        elif variable == 'Frequency':
+            if self.plot_state['z_var'] == 'PSD':
+                data = self.independent_variables['psd_freq']
+            else:
+                data = self.independent_variables['fft_freq']
+        else:
+            data = variable
+        #Update slice bounds to match new data
+        if type(data) is not str:
+            self.update_boxes_min_max(self.yboxes, data)
+
+        self.plot_state['y_data'] = data
+        self.plot_state['y_label'] = variable
 
     @Slot(str)
     def update_zVar(self, variable):
@@ -123,7 +187,6 @@ class plot_controller_widget(QFrame, Ui_plotController):
         self.param1ValSelect_dd.setCurrentIndex(param1index)
         self.param2ValSelect_dd.setCurrentIndex(param2index)
         logging.debug(f"params selected: {self.param1_values[param1index], self.param2_values[param2index]}")
-
 
     @Slot(int)
     def set_slice_frequency(self, index):
@@ -188,26 +251,44 @@ class plot_controller_widget(QFrame, Ui_plotController):
             box.setCurrentIndex(state_index)
         logging.debug("Plot state set to {state_index}")
 
-    def populate_swept_parameter_values(self, param1_values, param2_values):
+    def populate_swept_parameter_values(self):
         self.param1ValSelect_dd.clear()
         self.param2ValSelect_dd.clear()
-        self.param1ValSelect_dd.addItems(param1_values)
-        self.param2ValSelect_dd.addItems(param2_values)
+        self.param1ValSelect_dd.addItems(self.independent_variables['param1'].astype(str))
+        self.param2ValSelect_dd.addItems(self.independent_variables['param2'].astype(str))
         self.param1ValSelect_dd.setCurrentIndex(0)
         self.param2ValSelect_dd.setCurrentIndex(0)
-        self.sim_state['param1_values'] = param1_values
-        self.sim_state['param2_values'] = param2_values
+
 
     def update_fixed_sliders(self, param):
         if param == 'param1':
-            sliderlength = len(self.sim_s) - 1
+            sliderlength = len(self.param1_values) - 1
         elif param == 'param2':
-            sliderlength = len(self.sim_s) - 1
+            sliderlength = len(self.param2_values) - 1
         self.fixedParamSpec_slider.setMaximum(sliderlength)
         self.fixedParamTime_slider.setMaximum(sliderlength)
 
     def update_frequency_slider(self, frequencies):
         self.frequency_slider.setMaximum(len(frequencies) - 1)
+
+    def update_boxes_min_max(self, boxes, data):
+        _min = np.amin(data)
+        _max = np.amax(data)
+
+        for box in boxes:
+            box.variableMin = _min
+            box.variableMax = _max
+            box.edit_from(str(_min))
+            box.edit_to(str(_max))
+
+    def update_box_min_max(self, box, data):
+        _min = np.amin(data)
+        _max = np.amax(data)
+
+        box.variableMin = _min
+        box.variableMax = _max
+        box.edit_from(str(_min))
+        box.edit_to(str(_max))
 
     def load_state_labels(self, state_labels):
 
@@ -230,37 +311,37 @@ class plot_controller_widget(QFrame, Ui_plotController):
         for from_to_widget in time_and_state_boxes:
             from_to_widget.varDdItems = time_and_state.keys()
 
-    def load_solution_values(self, param1_values,
-                             param2_values,
-                             frequency_bins):
-        """
-        Updates sliders and dropdowns with frequency bins and parameter values.
+    # def load_solution_values(self, param1_values,
+    #                          param2_values,
+    #                          frequency_bins):
+    #     """
+    #     Updates sliders and dropdowns with frequency bins and parameter values.
 
-        Args:
-            param1_values (list or array): Values for parameter 1.
-            param2_values (list or array): Values for parameter 2.
-            frequency_bins (list or array): Values for frequency bins.
-        """
-        self.param1_values = param1_values
-        self.param2_values = param2_values
-        self.frequency_bins = frequency_bins
+    #     Args:
+    #         param1_values (list or array): Values for parameter 1.
+    #         param2_values (list or array): Values for parameter 2.
+    #         frequency_bins (list or array): Values for frequency bins.
+    #     """
+    #     self.param1_values = param1_values
+    #     self.param2_values = param2_values
+    #     self.frequency_bins = frequency_bins
 
-        n_param1 = len(self.param1_values)
-        n_param2 = len(self.param2_values)
-        n_freqs = len(self.frequency_bins)
+    #     n_param1 = len(self.param1_values)
+    #     n_param2 = len(self.param2_values)
+    #     n_freqs = len(self.frequency_bins)
 
-        # Update the frequency slider to have as many positions as len(frequency_bins)
-        self.frequency_slider.setRange(0, n_freqs - 1)
+    #     # Update the frequency slider to have as many positions as len(frequency_bins)
+    #     self.frequency_slider.setRange(0, n_freqs - 1)
 
-        # Update the fixedParamSpec_slider and fixedParamTime_slider based on the value of x_var
-        if self.x_var == 'Parameter 1':
-            self.fixedParamSpec_slider.setRange(0, n_param2 - 1)
-            self.fixedParamTime_slider.setRange(0, n_param2 - 1)
-        else:
-            self.fixedParamSpec_slider.setRange(0, n_param1 - 1)
-            self.fixedParamTime_slider.setRange(0, n_param1 - 1)
+    #     # Update the fixedParamSpec_slider and fixedParamTime_slider based on the value of x_var
+    #     if self.x_var == 'Parameter 1':
+    #         self.fixedParamSpec_slider.setRange(0, n_param2 - 1)
+    #         self.fixedParamTime_slider.setRange(0, n_param2 - 1)
+    #     else:
+    #         self.fixedParamSpec_slider.setRange(0, n_param1 - 1)
+    #         self.fixedParamTime_slider.setRange(0, n_param1 - 1)
 
-        self.fill_paramVal_lists(param1_values, param2_values)
+    #     self.fill_paramVal_lists(param1_values, param2_values)
 
     def populate_toolbutton_menus(self):
         """
@@ -312,3 +393,6 @@ class plot_controller_widget(QFrame, Ui_plotController):
         combo_boxes = tab.findChildren(QComboBox)
         for combo_box in combo_boxes:
             combo_box.currentTextChanged.emit(combo_box.currentText())
+
+    def set_independent_variables(self, variables_dict):
+        self.independent_variables = variables_dict

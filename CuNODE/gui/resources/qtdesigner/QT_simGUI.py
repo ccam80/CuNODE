@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1718, 853)
+        MainWindow.resize(1726, 872)
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
         self.actionLoad_System_File = QAction(MainWindow)
@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
         self.controlToolBox.setFont(font)
         self.plotController_page = QWidget()
         self.plotController_page.setObjectName(u"plotController_page")
-        self.plotController_page.setGeometry(QRect(0, 0, 545, 626))
+        self.plotController_page.setGeometry(QRect(0, 0, 547, 643))
         sizePolicy.setHeightForWidth(self.plotController_page.sizePolicy().hasHeightForWidth())
         self.plotController_page.setSizePolicy(sizePolicy)
         self.verticalLayout_3 = QVBoxLayout(self.plotController_page)
@@ -110,7 +110,7 @@ class Ui_MainWindow(object):
         self.controlToolBox.addItem(self.plotController_page, u"Plot Settings")
         self.simController_page = QWidget()
         self.simController_page.setObjectName(u"simController_page")
-        self.simController_page.setGeometry(QRect(0, 0, 545, 626))
+        self.simController_page.setGeometry(QRect(0, 0, 547, 643))
         sizePolicy.setHeightForWidth(self.simController_page.sizePolicy().hasHeightForWidth())
         self.simController_page.setSizePolicy(sizePolicy)
         self.verticalLayout = QVBoxLayout(self.simController_page)
@@ -161,7 +161,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1718, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1726, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuPrecision = QMenu(self.menuFile)
@@ -182,8 +182,10 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.save_button.clicked.connect(MainWindow.save_results)
         self.actionLoad_System_File.triggered.connect(MainWindow.load_system_from_filedialog)
+        self.simController.solve_request.connect(MainWindow.on_solve_request)
+        self.plotController.updatePlot.connect(MainWindow.update_plot)
 
-        self.controlToolBox.setCurrentIndex(1)
+        self.controlToolBox.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

@@ -7,9 +7,11 @@ Created on Thu Jul 25 20:02:51 2024
 
 from qtpy.QtWidgets import QFrame, QGridLayout, QLabel, QLineEdit, QGroupBox, QWidget, QSizePolicy, QSpacerItem
 from qtpy.QtCore import Slot, Signal
+from _utils import get_readonly_view
 from numpy import zeros
 from gui.resources.widgets.qtdesigner.sim_controller import Ui_simController
 import logging
+import numpy as np
 
 class sim_controller_widget(QFrame, Ui_simController):
 
@@ -18,6 +20,7 @@ class sim_controller_widget(QFrame, Ui_simController):
     def __init__(self, parent=None):
         super(sim_controller_widget, self).__init__(parent)
         self.setupUi(self)
+        self.messenger = None
 
         self.sim_state = {
             'dt': 0.0,
@@ -38,11 +41,20 @@ class sim_controller_widget(QFrame, Ui_simController):
             'noise_sigmas': zeros(1)
         }
 
+        self.fft_params = {'psd_nperseg': 256,
+                           'psd_segments': 5,
+                           'psd_window': 'hann',
+                           'fft_window': 'hann'}
         self.system_params_local = {}
-        # self.param_data = {'param1_var': '',
-        #                    'param2_var': '',
-        #                    'param1_vals': zeros(1),
-        #                    'param2_vals': zeros(1)}
+        self.get_tab_values(self.SimulationSettings_tab)
+
+
+    def register_messaging_service(self, messaging_service):
+        """Connect a message passing service to communicate between widgets
+
+        Args:
+            messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
+        self.messenger = messaging_service
 
     @Slot(str)
     def update_p1_from(self, _from):
@@ -56,7 +68,7 @@ class sim_controller_widget(QFrame, Ui_simController):
 
     @Slot(str)
     def update_p1_n(self, n):
-        self.sim_state['param1_num_values'] = float(n)
+        self.sim_state['param1_num_values'] = int(n)
         logging.debug(f"P1 n updated: {n}")
 
     @Slot(str)
@@ -81,7 +93,7 @@ class sim_controller_widget(QFrame, Ui_simController):
 
     @Slot(str)
     def update_p2_n(self, n):
-        self.sim_state['param2_num_values'] = float(n)
+        self.sim_state['param2_num_values'] = int(n)
         logging.debug(f"P2 n updated: {n}")
 
     @Slot(str)
@@ -93,17 +105,6 @@ class sim_controller_widget(QFrame, Ui_simController):
     def update_p2_var(self, var):
         self.sim_state["param2_var"] = var
         logging.debug(f"P2 var updated: {var}")
-
-    def get_swept_parameters(self, param):
-        if param == 'param1':
-            bounds = self.sim_state['param1_sweep_bounds']
-            n = self.sim_state['param1_num_values']
-            scale = self.sim_state['param1_sweep_scale']
-        elif param == 'param2':
-            bounds = self.sim_state['param2_sweep_bounds']
-            n = self.sim_state['param2_num_values']
-            scale = self.sim_state['param2_sweep_scale']
-        return bounds, n, scale
 
     @Slot(str)
     def update_duration(self, duration):
@@ -227,7 +228,37 @@ class sim_controller_widget(QFrame, Ui_simController):
         except ValueError:
             pass
 
+    def get_tab_values(self, tab):
+        """
+        Triggers the textChanged signal for all entry boxes on
+        on the specified tab.
+
+        Args:
+            tab (QWidget): The tab on which to trigger signals.
+        """
+        # Trigger textChanged for all QLineEdit and its subclasses
+        line_edits = tab.findChildren(QLineEdit)
+        for line_edit in line_edits:
+            line_edit.textChanged.emit(line_edit.text())
+
+    def get_sysparams(self):
+        return self.system_params_local.copy()
+
+    def get_sim_state(self):
+        return self.sim_state.copy()
+
+    def update_independent_variables(self):
+        self.update_parameter_sweeps()
+        self.update_sweep_labels()
+        self.update_psd_vector()
+        self.update_time_vector()
+        self.update_fft_vector()
+
+
     def solve(self):
+        self.update_parameter_sweeps()
+        self.update_sweep_labels()
+        self.update_freq_vectors()
         # for key, item in self.sim_state.items():
         #     print(key + ": " + str(item))
         # print("")
@@ -235,3 +266,73 @@ class sim_controller_widget(QFrame, Ui_simController):
         #     print(key + ": " + str(item))
         # print("")
         self.solve_request.emit()
+
+    def get_swept_parameters(self, param):
+        bounds = self.sim_state[param + "_sweep_bounds"]
+        n = self.sim_state[param + "_num_values"]
+        numpyspace_args = (bounds[0], bounds[1], n)
+        scale = self.sim_state[param + "param1_sweep_scale"]
+
+        return scale, numpyspace_args
+
+    def generate_sweep(self, param):
+        scale, space_args = self.get_swept_parameters(param)
+
+        if scale == 'Linear':
+            sweep = np.linspace(*space_args, dtype=self.precision)
+        elif scale == 'Logarithmic':
+            try:
+                sweep = np.logspace(np.log10(*space_args, dtype=self.precision))
+            except:
+                logging.warning(f"Bounds: {space_args} unable to create a log space")
+                self.displayerror("The requested logarithmic sweep contains un-loggable values, change bounds or try a linear sweep.")
+        return sweep
+
+    def update_time_vector(self):
+        duration = self.sim_state['duration']
+        fs = self.sim_state['fs']
+        warmup = self.sim_state['warmup']
+
+        self.t = np.linspace(warmup, warmup + duration, int(fs*duration))
+
+    def get_time_vector(self):
+        return get_readonly_view(self.t)
+
+    def update_freq_vectors(self):
+        spectr_fs = self.sim_state['fs'] * 2 * np.pi # this is a hangove of the nondimensionalising of Seigan's model, and should be removed once we get to a working version
+
+        t_axis_length = len(self.t)
+        nperseg = int(t_axis_length / 4) # These are a copy from generic solver, incorporate them into a settings dict modifiable through the gui
+        noverlap = int(nperseg/2)
+        nfft = nperseg*2
+        max_f = spectr_fs / 2
+
+
+        self.psd_freq = np.linspace(0, max_f, nperseg)
+        self.fft_freq = np.linspace(0, max_f, t_axis_length)
+
+    def get_psd_freq_vector(self):
+        return get_readonly_view(self.psd_freq)
+
+    def get_fft_freq_vector(self):
+        return get_readonly_view(self.fft_freq)
+
+
+    def update_parameter_sweeps(self):
+        self.param1_values = self.generate_sweep('param1')
+        self.param2_values = self.generate_sweep('param2')
+
+
+
+    def get_parameter_sweeps(self):
+        p1view = get_readonly_view(self.param1_values)
+        p2view = get_readonly_view(self.param2_values)
+        return p1view, p2view
+
+    def update_sweep_labels(self):
+        p1_var = self.sim_state['param1_var']
+        p2_var = self.sim_state['param2_var']
+        self.sweep_labels = [p1_var, p2_var]
+
+    def get_sweep_labels(self):
+        return self.sweep_labels.copy()

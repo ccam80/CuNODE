@@ -12,7 +12,7 @@ environ["QT_API"] = "pyside6"
 from os.path import splitext, basename
 import logging
 from _utils import round_sf
-from solvers import eulermaruyama
+from solvers.eulermaruyama import Solver
 from gui.modelController import modelController
 import numpy as np
 from importlib.util import spec_from_file_location, module_from_spec
@@ -25,6 +25,14 @@ from gui.resources.qtdesigner.QT_simGUI import Ui_MainWindow
 
 
 class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
+    variable_label_keys = {'PSD at selected frequency': 'psd',
+                           'PSD magnitude': 'psd',
+                           'FFT phase at selected frequency': 'phase',
+                           'FFT phase': 'phase',
+                           'RMS amplitude': 'rms',
+                           'Signal amplitude': 'ampl'
+                           }
+
     def __init__(self):
         super(ODE_Explorer_Controller, self).__init__()
         self.init_logging()
@@ -42,7 +50,8 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.display_sig_figs = 4
 
         self.model = modelController()
-        self.model.loadController(eulermaruyama)
+        self.model.load_solver(Solver)
+
 
     def set_starting_state(self):
         self.ui.controlToolBox.setCurrentIndex(1)
@@ -55,7 +64,7 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
 
         # Configure the logger
         logging.basicConfig(
-            filename = f"log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+            filename = f"logs/log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
             level=logging.DEBUG,
             format='%(asctime)s - %(levelname)s - %(funcName)s - %(message)s',
             datefmt='%m/%d/%Y %I:%M:%S %p'
@@ -115,12 +124,12 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         """ Start a new solver instance, and load a provided ODE system into it.
         Populate the system paramaters box, the inits and noise sigmas fields,
         fill the param select lists, load default sweep if present. """
-        #TODO: Load model controller instead.
-        self.solver = eulermaruyama.Solver(self.precision)
-        self.solver.load_system(system)
-        self.ui.simController.load_system(self.solver.system.constants_dict, self.solver.system.noise_sigmas)
-        self.ui.plotController.load_state_labels(self.solver.system.state_labels)
-        # self.fill_paramSelect_lists()
+        self.model.load_system(system)
+        self.ui.simController.load_system(self.model.system.constants_dict, self.model.system.noise_sigmas)
+        self.ui.plotController.load_state_labels(self.model.system.state_labels)
+
+    def load_solver(self, solver):
+        self.model.load_solver(solver, precision=self.precision)
 
     def reload_system(self):
         """ Assumes we have already located the ODE_system file, and are just
@@ -138,28 +147,25 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
     # def update_selected_params(self):
     #     p1 = self.plot_state['param1_val']
     #     p2 = self.plot_state['param2_val']
-    #     self.solver.param_index = self.solver.get_param_index((p1, p2))
-    #     self.single_state = self.solver.solved_ODE.output_array[:, self.solver.param_index, :]
-    def generate_sweep(self, bounds, scale, n):
-        if scale == 'Linear':
-            sweep = np.linspace(bounds[0], bounds[1], n, dtype=self.precision)
-        elif scale == 'Logarithmic':
-            try:
-                sweep = np.logspace(np.log10(bounds[0], bounds[1], n, dtype=self.precision))
-            except:
-                logging.warning(f"Bounds: {bounds} unable to create a log space")
-                self.displayerror("The requested logarithmic sweep contains un-loggable values, change bounds or try a linear sweep.")
+    #     self.model.param_index = self.model.get_param_index((p1, p2))
+    #     self.single_state = self.model.solved_ODE.output_array[:, self.model.param_index, :]
 
-    def prepare_parameter_sweeps(self):
-        p1_bounds, p1_n, p1_scale = self.ui.simController.get_swept_parameters('param1')
-        p2_bounds, p2_n, p2_scale = self.ui.simController.get_swept_parameters('param2')
-        param1_values = self.generate_sweep(p1_bounds, p1_n, p1_scale)
-        param2_values = self.generate_sweep(p1_bounds, p1_n, p1_scale)
 
-        self.param1_values = param1_values
-        self.param2_values = param2_values
-        self.generate_grid_list_and_map(param1_values, param2_values)
+    def fetch_independent_variables(self):
+        p1view, p2view = self.ui.simController.get_parameter_sweeps()
 
+        independent_variables = {"t": self.ui.simController.get_time_vector(),
+                                "psd_freq": self.ui.simController.get_psd_freq_vector(),
+                                "fft_freq": self.ui.simController.get_fft_freq_vector(),
+                                "param1": p1view,
+                                "param2": p2view,
+                                "sweep_labels": self.ui.simController.get_sweep_labels()}
+
+        return independent_variables
+
+    def pass_independent_variables_to_plotter(self):
+        variables = self.fetch_independent_variables()
+        self.ui.plotController.set_independent_variables(variables)
 
     def generate_grid_list_and_map(self, param1_sweep, param2_sweep):
         """Generate 1D list of all requested parameter combinations.
@@ -169,7 +175,7 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         """
         self.param_index_map = {}
         grid_list = [(p1, p2) for p1 in param1_sweep for p2 in param2_sweep]
-        for idx, (p1, p2) in enumerate(self.grid_list):
+        for idx, (p1, p2) in enumerate(grid_list):
             p1_round = self.precision(round_sf(p1, self.display_sig_figs))
             p2_round = self.precision(round_sf(p2, self.display_sig_figs))
             self.param_index_map[(p1_round, p2_round)] = idx
@@ -181,22 +187,47 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
 
     def on_solve_complete(self):
         self.update_plotController_sweeps()
+        self.pass_independent_variables_to_plotter()
+
+    def on_solve_request(self):
+        p1view, p2view = self.ui.simController.get_parameter_sweeps()
+        self.generate_grid_list_and_map(p1view, p2view)
+
+        params = self.ui.simController.get_sysparams()
+        self.model.update_system_parameters(params)
+
+        self.solve_ODE()
 
     def solve_ODE(self):
-        self.prepare_parameter_sweeps()
-        # Update solver with simulation parameters
-        self.solver.duration = self.sim_state['duration']
-        self.solver.fs = self.sim_state['fs']
-        self.solver.step_size = self.sim_state['dt']
-        self.solver.warmup_time = self.sim_state['warmup']
-        self.t = np.linspace(0,  self.duration -  1/self.fs, int( self.duration * self.fs))
 
+        sweeps = {'values': self.grid_list,
+                  'vars': self.sweep_labels}
+        sim_state = self.ui.simController.get_sim_state()
+        self.model.run_solver(self.model.system,
+                              sim_state, sweeps)
+        self.on_solve_complete()
+
+    def fetch_data(self, variable, state, bounds):
+        """where you're up to:
+            model.fetch_data takes a data type (psd, phase, amplitude, rms), a
+            state index, and either None, int, or a list of int indices for
+            extracting desired freqs, times, grid values. This should work for
+            time-domain and state-space variables (if the data type variable is
+           in the state labels dict, it reutrns that "state" for the grid indices chosen.
+           As all the grid-level mapping is 1d in the solver implementation, all outputs are 1d).
+
+            Next step is to filter by variable name in the drop-downs. These are named shittily.
+            This should probably be done inside the plot controller, and then it can send a datatype/indices combo.
+            Note: the plot controller is naiive to grid indices, these will need to be passed as param values then
+            mapped to list indieces in GUI."""
+
+        pass
 
     def update_plot(self):
         pass
 
     def closeEvent(self, event):
-        self.Plotwidget.closeEvent(event)
+        self.ui.Plotwidget.closeEvent(event)
         self.close()
         print("Goodbye.")
 
