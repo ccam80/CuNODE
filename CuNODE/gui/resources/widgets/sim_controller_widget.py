@@ -17,10 +17,10 @@ class sim_controller_widget(QFrame, Ui_simController):
 
     solve_request = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, messaging_service=None):
         super(sim_controller_widget, self).__init__(parent)
         self.setupUi(self)
-        self.messenger = None
+        self.register_messaging_service(messaging_service)
 
         self.sim_state = {
             'dt': 0.0,
@@ -55,6 +55,9 @@ class sim_controller_widget(QFrame, Ui_simController):
         Args:
             messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
         self.messenger = messaging_service
+
+    def publish(self, topic, label):
+        self.messenger.publish(topic, label)
 
     @Slot(str)
     def update_p1_from(self, _from):
@@ -294,9 +297,10 @@ class sim_controller_widget(QFrame, Ui_simController):
         warmup = self.sim_state['warmup']
 
         self.t = np.linspace(warmup, warmup + duration, int(fs*duration))
+        self.publish("t",get_readonly_view(self.t))
 
-    def get_time_vector(self):
-        return get_readonly_view(self.t)
+    # def get_time_vector(self):
+    #     return get_readonly_view(self.t)
 
     def update_freq_vectors(self):
         spectr_fs = self.sim_state['fs'] * 2 * np.pi # this is a hangove of the nondimensionalising of Seigan's model, and should be removed once we get to a working version
@@ -311,28 +315,34 @@ class sim_controller_widget(QFrame, Ui_simController):
         self.psd_freq = np.linspace(0, max_f, nperseg)
         self.fft_freq = np.linspace(0, max_f, t_axis_length)
 
-    def get_psd_freq_vector(self):
-        return get_readonly_view(self.psd_freq)
+        self.publish("fft_freq", get_readonly_view(self.fft_freq))
+        self.publish("psd_freq", get_readonly_view(self.psd_freq))
 
-    def get_fft_freq_vector(self):
-        return get_readonly_view(self.fft_freq)
+    # def get_psd_freq_vector(self):
+    #     return get_readonly_view(self.psd_freq)
+
+    # def get_fft_freq_vector(self):
+    #     return get_readonly_view(self.fft_freq)
 
 
     def update_parameter_sweeps(self):
         self.param1_values = self.generate_sweep('param1')
         self.param2_values = self.generate_sweep('param2')
+        self.publish("param1_values", get_readonly_view(self.param1_values))
+        self.publish("param2_values", get_readonly_view(self.param2_values))
 
 
 
-    def get_parameter_sweeps(self):
-        p1view = get_readonly_view(self.param1_values)
-        p2view = get_readonly_view(self.param2_values)
-        return p1view, p2view
+    # def get_parameter_sweeps(self):
+    #     p1view = get_readonly_view(self.param1_values)
+    #     p2view = get_readonly_view(self.param2_values)
+    #     return p1view, p2view
 
     def update_sweep_labels(self):
         p1_var = self.sim_state['param1_var']
         p2_var = self.sim_state['param2_var']
         self.sweep_labels = [p1_var, p2_var]
+        self.publish('param_labels', self.sweep_labels)
 
-    def get_sweep_labels(self):
-        return self.sweep_labels.copy()
+    # def get_sweep_labels(self):
+    #     return self.sweep_labels.copy()

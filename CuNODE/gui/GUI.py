@@ -16,7 +16,7 @@ from solvers.eulermaruyama import Solver
 from gui.modelController import modelController
 import numpy as np
 from importlib.util import spec_from_file_location, module_from_spec
-
+from pubsub import pubsub
 from datetime import datetime
 from qtpy.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QGridLayout, QWidget, QFileDialog, QGroupBox, QErrorMessage
 from qtpy.QtGui import QAction, QActionGroup
@@ -38,6 +38,13 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         self.init_logging()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        #Set up message-passing between widgets
+        self.messenger = pubsub()
+        self.ui.simController.register_messaging_service(self.messenger)
+        self.ui.plotController.register_messaging_service(self.messenger)
+        self.ui.modelController.register_messaging_service(self.messenger)
+
         self.set_starting_state()
         self.precision = np.float64
         self.init_precision_action_group()
@@ -149,23 +156,6 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
     #     p2 = self.plot_state['param2_val']
     #     self.model.param_index = self.model.get_param_index((p1, p2))
     #     self.single_state = self.model.solved_ODE.output_array[:, self.model.param_index, :]
-
-
-    def fetch_independent_variables(self):
-        p1view, p2view = self.ui.simController.get_parameter_sweeps()
-
-        independent_variables = {"t": self.ui.simController.get_time_vector(),
-                                "psd_freq": self.ui.simController.get_psd_freq_vector(),
-                                "fft_freq": self.ui.simController.get_fft_freq_vector(),
-                                "param1": p1view,
-                                "param2": p2view,
-                                "sweep_labels": self.ui.simController.get_sweep_labels()}
-
-        return independent_variables
-
-    def pass_independent_variables_to_plotter(self):
-        variables = self.fetch_independent_variables()
-        self.ui.plotController.set_independent_variables(variables)
 
     def generate_grid_list_and_map(self, param1_sweep, param2_sweep):
         """Generate 1D list of all requested parameter combinations.

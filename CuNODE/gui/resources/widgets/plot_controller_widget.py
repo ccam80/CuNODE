@@ -90,6 +90,24 @@ class plot_controller_widget(QFrame, Ui_plotController):
         self.messenger = messaging_service
 
 
+    #************************ PubSub sibscriber callbacks ********************#
+    def update_t(self, t):
+        self.t = t
+
+    def update_psd_freq(self, f):
+        self.psd_freq = f
+
+    def update_fft_freq(self, f):
+        self.fft_freq = float()
+
+    def update_param1_values(self, p1):
+        self.param1_values = p1
+
+    def update_param2_values(self, p2):
+        self.param2_values = p2
+
+    def update_param_labels(self, labels):
+        self.param_labels = labels
 
     @Slot(int)
     def plotMode_select(self, index):
@@ -135,9 +153,9 @@ class plot_controller_widget(QFrame, Ui_plotController):
     def update_xVar(self, variable):
         #Provide independent variable data if available
         if variable == 'Parameter 1':
-            data = self.independent_variables['param1']
+            data = self.param1_values
         elif variable == 'Parameter 2':
-            data = self.independent_variables['param2']
+            data = self.param2_values
         else:
             #send state labels to GUI to reqest model data
             data = variable
@@ -152,12 +170,12 @@ class plot_controller_widget(QFrame, Ui_plotController):
     @Slot(str)
     def update_yVar(self, variable):
         if variable == 'Time':
-            data = self.independent_variables['t']
+            data = self.t
         elif variable == 'Frequency':
             if self.plot_state['z_var'] == 'PSD':
-                data = self.independent_variables['psd_freq']
+                data = self.psd_freq
             else:
-                data = self.independent_variables['fft_freq']
+                data = self.fft_freq
         else:
             data = variable
         #Update slice bounds to match new data
@@ -254,8 +272,8 @@ class plot_controller_widget(QFrame, Ui_plotController):
     def populate_swept_parameter_values(self):
         self.param1ValSelect_dd.clear()
         self.param2ValSelect_dd.clear()
-        self.param1ValSelect_dd.addItems(self.independent_variables['param1'].astype(str))
-        self.param2ValSelect_dd.addItems(self.independent_variables['param2'].astype(str))
+        self.param1ValSelect_dd.addItems(self.param1.astype(str))
+        self.param2ValSelect_dd.addItems(self.param2.astype(str))
         self.param1ValSelect_dd.setCurrentIndex(0)
         self.param2ValSelect_dd.setCurrentIndex(0)
 
@@ -394,5 +412,5 @@ class plot_controller_widget(QFrame, Ui_plotController):
         for combo_box in combo_boxes:
             combo_box.currentTextChanged.emit(combo_box.currentText())
 
-    def set_independent_variables(self, variables_dict):
-        self.independent_variables = variables_dict
+    # def set_independent_variables(self, variables_dict):
+    #     self.independent_variables = variables_dict
