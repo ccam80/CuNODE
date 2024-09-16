@@ -69,7 +69,7 @@
       <property name="lineWidth">
        <number>1</number>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="9,1">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="9">
        <property name="spacing">
         <number>1</number>
        </property>
@@ -98,7 +98,7 @@
             <x>0</x>
             <y>0</y>
             <width>547</width>
-            <height>643</height>
+            <height>725</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -141,7 +141,7 @@
             <x>0</x>
             <y>0</y>
             <width>547</width>
-            <height>643</height>
+            <height>725</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -172,42 +172,6 @@
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="saveOrSolve_f">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1">
-          <item>
-           <widget class="QPushButton" name="save_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>1</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
@@ -293,22 +257,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>save_button</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>save_results()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1688</x>
-     <y>811</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1591</x>
-     <y>852</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionLoad_System_File</sender>
    <signal>triggered()</signal>

@@ -1,4 +1,4 @@
-import threading
+from threading import RLock, Thread
 import queue
 from collections import defaultdict
 from multiprocessing import Queue
@@ -23,7 +23,7 @@ class PubSub:
 
     def __init__(self):
         self.subscribers = defaultdict(list)
-        self.lock = threading.Lock()
+        self.lock = RLock()
 
     def subscribe(self, topic, callback, concurrency=None):
         """
@@ -105,6 +105,10 @@ class PubSub:
             topic (str): The type of event being published.
             data (any): The data associated with the event, which will be passed
                         to each subscriber's callback function or put onto their queue.
+            nested (bool): Set to True if you're publishing inside a callback. The lock
+            was added with the best of intentions to protect the subscribers dict, but
+            means that the lock is still held by the first-publishing function if there's
+            a nested call.'
 
         Raises:
             PubSubError: If there are no subscribers for the event type.
@@ -130,7 +134,7 @@ class PubSub:
                 self.close_daemons(topic)
 
 
-class listener_daemon(threading.Thread):
+class listener_daemon(Thread):
     """
     Listener daemon to poll a queue and run a callback when data is available..
 

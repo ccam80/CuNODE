@@ -96,7 +96,7 @@ def round_sf(num, sf):
 def round_list_sf(list, sf):
     return [round_sf(num, sf) for num in list]
 
-def get_readonly_view(self, array):
+def get_readonly_view(array):
     view = array.view()
     view.flags.writeable = False
     return view

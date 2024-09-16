@@ -11,12 +11,12 @@ environ["QT_API"] = "pyside6"
 
 from os.path import splitext, basename
 import logging
-from _utils import round_sf
+from _utils import round_sf, round_list_sf
 from solvers.eulermaruyama import Solver
 from gui.modelController import modelController
 import numpy as np
 from importlib.util import spec_from_file_location, module_from_spec
-from pubsub import pubsub
+from pubsub import PubSub
 from datetime import datetime
 from qtpy.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QGridLayout, QWidget, QFileDialog, QGroupBox, QErrorMessage
 from qtpy.QtGui import QAction, QActionGroup
@@ -24,7 +24,7 @@ from qtpy import QtCore
 from gui.resources.qtdesigner.QT_simGUI import Ui_MainWindow
 
 
-class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
+class ODE_GUI(QMainWindow, Ui_MainWindow):
     variable_label_keys = {'PSD at selected frequency': 'psd',
                            'PSD magnitude': 'psd',
                            'FFT phase at selected frequency': 'phase',
@@ -34,16 +34,17 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
                            }
 
     def __init__(self):
-        super(ODE_Explorer_Controller, self).__init__()
+        super().__init__()
         self.init_logging()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
         #Set up message-passing between widgets
-        self.messenger = pubsub()
+        self.messenger = PubSub()
+        self.subscribe_to_messages()
         self.ui.simController.register_messaging_service(self.messenger)
         self.ui.plotController.register_messaging_service(self.messenger)
-        self.ui.modelController.register_messaging_service(self.messenger)
+        self.ui.Plotwidget.register_messaging_service(self.messenger)
 
         self.set_starting_state()
         self.precision = np.float64
@@ -54,16 +55,43 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
 
         self.param_index_map = {}
         self.grid_list = np.zeros(1, dtype=self.precision)
-        self.display_sig_figs = 4
-
+        self.display_sig_figs = 4 # Add to settings pane somewhere
+        self.ui.plotController.update_display_sigfigs(self.display_sig_figs)
+        self.external_variables = {'param1_values': np.zeros(1, dtype=self.precision),
+                                   'param2_values': np.zeros(1, dtype=self.precision),
+                                   'param_labels': ["",""]}
+        self.param_index_map = {}
         self.model = modelController()
+        self.model.register_messaging_service(self.messenger)
         self.model.load_solver(Solver)
 
+        #AUTOLOAD SYSTEM FOR DEBUG
+        system = self.get_system_from_file(r"\\file\Usersc$\cca79\Home\My Documents\Work\MEMS\sims\CUDA_system\CuNODE\systems\thermal_cantilever_ax_b.py")
+        self.load_system(system)
 
     def set_starting_state(self):
         self.ui.controlToolBox.setCurrentIndex(1)
+        self.ui.plotController.plotSettingsTabs.setCurrentIndex(1)
         self.ui.plotController.plotSettingsTabs.setCurrentIndex(0)
         self.ui.simController.simSettingsTabs.setCurrentIndex(0)
+        self.ui.plotController.update_animation_step(1)
+
+    def subscribe_to_messages(self):
+        self.messenger.subscribe("param1_values", self.update_param1_view)
+        self.messenger.subscribe("param2_values", self.update_param2_view)
+        self.messenger.subscribe("param_labels", self.update_param_labels)
+
+    def publish(self, topic, data):
+        self.messenger.publish(topic, data)
+
+    def update_param1_view(self, p1):
+        self.external_variables["param1_values"] = p1
+
+    def update_param2_view(self, p2):
+        self.external_variables["param2_values"] = p2
+
+    def update_param_labels(self, labels):
+        self.external_variables["param_labels"] = labels
 
     def init_logging(self):
         # Create logs directory if it doesn't exist
@@ -99,6 +127,7 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
                 self.precision = np.float64
             elif action.text() == '32-bit':
                 self.precision = np.float32
+            self.publish('precision', self.precision)
             print(f"Precision set to {self.precision}")
 
     def load_system_from_filedialog(self):
@@ -150,67 +179,47 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
         pass
 
 
-
-    # def update_selected_params(self):
-    #     p1 = self.plot_state['param1_val']
-    #     p2 = self.plot_state['param2_val']
-    #     self.model.param_index = self.model.get_param_index((p1, p2))
-    #     self.single_state = self.model.solved_ODE.output_array[:, self.model.param_index, :]
-
-    def generate_grid_list_and_map(self, param1_sweep, param2_sweep):
+    def generate_grid_list_and_map(self):
         """Generate 1D list of all requested parameter combinations.
         Save a rounded version of each index into a dict for easy lookup
         to match with a dataset request from the plotter.
 
         """
+        p1view = self.external_variables["param1_values"]
+        p2view = self.external_variables["param2_values"]
+        #Round them to avoid any gremlins caused by mismatched precision/rounding when checking for equality
+        p1_rounded = self.precision(round_list_sf(p1view, self.display_sig_figs))
+        p2_rounded = self.precision(round_list_sf(p2view, self.display_sig_figs))
         self.param_index_map = {}
-        grid_list = [(p1, p2) for p1 in param1_sweep for p2 in param2_sweep]
-        for idx, (p1, p2) in enumerate(grid_list):
-            p1_round = self.precision(round_sf(p1, self.display_sig_figs))
-            p2_round = self.precision(round_sf(p2, self.display_sig_figs))
-            self.param_index_map[(p1_round, p2_round)] = idx
-        self.grid_list = grid_list
+        self.grid_list = [(p1, p2) for p1 in p1_rounded for p2 in p2_rounded]
+        self.param_index_map = {tup: idx for idx, tup in enumerate(self.grid_list)}
+        self.publish("param_index_map", self.param_index_map)
 
-    def update_plotController_sweeps(self):
-        self.ui.plotController.populate_swept_parameter_values(self.param1_values, self.param2_values)
-        self.ui.plotController.update_fixed_sliders('param2')
-
-    def on_solve_complete(self):
-        self.update_plotController_sweeps()
-        self.pass_independent_variables_to_plotter()
 
     def on_solve_request(self):
-        p1view, p2view = self.ui.simController.get_parameter_sweeps()
-        self.generate_grid_list_and_map(p1view, p2view)
+        self.generate_grid_list_and_map()
 
+        #replace with pubsub
         params = self.ui.simController.get_sysparams()
+
         self.model.update_system_parameters(params)
 
         self.solve_ODE()
 
     def solve_ODE(self):
 
-        sweeps = {'values': self.grid_list,
-                  'vars': self.sweep_labels}
+        #pubsubise this part
         sim_state = self.ui.simController.get_sim_state()
+
+        sweeps = {'values': self.grid_list,
+                  'vars': self.external_variables['param_labels']}
         self.model.run_solver(self.model.system,
                               sim_state, sweeps)
         self.on_solve_complete()
 
-    def fetch_data(self, variable, state, bounds):
-        """where you're up to:
-            model.fetch_data takes a data type (psd, phase, amplitude, rms), a
-            state index, and either None, int, or a list of int indices for
-            extracting desired freqs, times, grid values. This should work for
-            time-domain and state-space variables (if the data type variable is
-           in the state labels dict, it reutrns that "state" for the grid indices chosen.
-           As all the grid-level mapping is 1d in the solver implementation, all outputs are 1d).
-
-            Next step is to filter by variable name in the drop-downs. These are named shittily.
-            This should probably be done inside the plot controller, and then it can send a datatype/indices combo.
-            Note: the plot controller is naiive to grid indices, these will need to be passed as param values then
-            mapped to list indieces in GUI."""
-
+    def on_solve_complete(self):
+        # self.update_plotController_sweeps()
+        # self.pass_independent_variables_to_plotter()
         pass
 
     def update_plot(self):
@@ -242,6 +251,6 @@ class ODE_Explorer_Controller(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ODE_Explorer_Controller()
+    window = ODE_GUI()
     window.show()
     sys.exit(app.exec())

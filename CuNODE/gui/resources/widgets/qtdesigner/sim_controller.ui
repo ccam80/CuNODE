@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
-    <height>634</height>
+    <width>463</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,7 +51,7 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="SimulationSettings_tab" native="true">
+        <widget class="QWidget" name="SimulationSettings_tab">
          <attribute name="title">
           <string>Simulation Settings</string>
          </attribute>
@@ -111,10 +111,10 @@
                  <double>10.000000000000000</double>
                 </property>
                 <property name="fromEntryDefault" stdset="0">
-                 <double>0.000000000000000</double>
+                 <double>-5.000000000000000</double>
                 </property>
                 <property name="toEntryDefault" stdset="0">
-                 <double>1.000000000000000</double>
+                 <double>5.000000000000000</double>
                 </property>
                 <property name="nEntryMinValue" stdset="0">
                  <double>0.000000000000000</double>
@@ -161,10 +161,10 @@
                  <double>10.000000000000000</double>
                 </property>
                 <property name="fromEntryDefault" stdset="0">
-                 <double>0.000000000000000</double>
+                 <double>-2.000000000000000</double>
                 </property>
                 <property name="toEntryDefault" stdset="0">
-                 <double>1.000000000000000</double>
+                 <double>2.000000000000000</double>
                 </property>
                 <property name="nEntryMinValue" stdset="0">
                  <double>0.000000000000000</double>
@@ -367,7 +367,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>100</string>
+                    <string>1000</string>
                    </property>
                    <property name="minValue" stdset="0">
                     <double>0.000000000000000</double>
@@ -394,7 +394,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>1000</string>
+                    <string>100</string>
                    </property>
                    <property name="minValue" stdset="0">
                     <double>0.000000000000000</double>
@@ -514,7 +514,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="SystemParameters_tab" native="true">
+        <widget class="QWidget" name="SystemParameters_tab">
          <attribute name="title">
           <string>System Parameters</string>
          </attribute>
@@ -601,6 +601,15 @@
    <header>gui/resources/widgets/floatLineEdit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>duration_e</tabstop>
+  <tabstop>warmup_e</tabstop>
+  <tabstop>fs_e</tabstop>
+  <tabstop>stepsize_e</tabstop>
+  <tabstop>init0_e</tabstop>
+  <tabstop>simSettingsTabs</tabstop>
+  <tabstop>solve_button</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -630,8 +639,8 @@
      <y>103</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>54</y>
+     <x>462</x>
+     <y>55</y>
     </hint>
    </hints>
   </connection>
@@ -646,8 +655,8 @@
      <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>89</y>
+     <x>462</x>
+     <y>90</y>
     </hint>
    </hints>
   </connection>
@@ -662,8 +671,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>123</y>
+     <x>462</x>
+     <y>124</y>
     </hint>
    </hints>
   </connection>
@@ -678,8 +687,8 @@
      <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>140</y>
+     <x>462</x>
+     <y>141</y>
     </hint>
    </hints>
   </connection>
@@ -694,8 +703,8 @@
      <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>106</y>
+     <x>462</x>
+     <y>107</y>
     </hint>
    </hints>
   </connection>
@@ -710,8 +719,8 @@
      <y>187</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>164</y>
+     <x>462</x>
+     <y>165</y>
     </hint>
    </hints>
   </connection>
@@ -726,8 +735,8 @@
      <y>200</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>183</y>
+     <x>462</x>
+     <y>184</y>
     </hint>
    </hints>
   </connection>
@@ -742,8 +751,8 @@
      <y>204</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>207</y>
+     <x>462</x>
+     <y>208</y>
     </hint>
    </hints>
   </connection>
@@ -758,8 +767,8 @@
      <y>220</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>220</y>
+     <x>462</x>
+     <y>221</y>
     </hint>
    </hints>
   </connection>
@@ -774,24 +783,8 @@
      <y>191</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>198</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>duration_e</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>simController</receiver>
-   <slot>update_duration(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>322</x>
-     <y>264</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>466</x>
-     <y>278</y>
+     <x>462</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -806,8 +799,8 @@
      <y>302</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>296</y>
+     <x>462</x>
+     <y>297</y>
     </hint>
    </hints>
   </connection>
@@ -822,8 +815,8 @@
      <y>325</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>326</y>
+     <x>462</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>
@@ -838,8 +831,24 @@
      <y>357</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>357</y>
+     <x>462</x>
+     <y>358</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>duration_e</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>simController</receiver>
+   <slot>update_duration(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>322</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>279</y>
     </hint>
    </hints>
   </connection>

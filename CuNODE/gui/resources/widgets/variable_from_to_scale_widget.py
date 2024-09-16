@@ -58,14 +58,19 @@ class variable_from_to_scale_widget(QFrame, Ui_variable_from_to_scale):
 
     @Slot(str)
     def edit_from(self, text):
-        self.from_entry.setPlainText(text)
+        self.from_entry.setText(text)
         pass
 
     @Slot(str)
     def edit_to(self, text):
-        self.to_entry.setPlainText(text)
+        self.to_entry.setText(text)
         pass
 
+    def update_range(self, _min, _max):
+        self.setVariableMax(_min)
+        self.setVariableMax(_max)
+        self.edit_from(str(_min))
+        self.edit_to(str(_max))
 
     #*************************************************************************
     # This section is setters/getters for floatLineEdit properties, allowing

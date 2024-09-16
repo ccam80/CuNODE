@@ -194,6 +194,11 @@ class Ui_variable_from_to_n_scale(object):
 
         self.horizontalLayout.addWidget(self.variable_from_to_frame)
 
+        QWidget.setTabOrder(self.Var_dd, self.from_entry)
+        QWidget.setTabOrder(self.from_entry, self.to_entry)
+        QWidget.setTabOrder(self.to_entry, self.n_entry)
+        QWidget.setTabOrder(self.n_entry, self.lin_button)
+        QWidget.setTabOrder(self.lin_button, self.log_button)
 
         self.retranslateUi(variable_from_to_n_scale)
         self.Var_dd.currentTextChanged.connect(variable_from_to_n_scale.on_var_change)

@@ -80,6 +80,11 @@ class variable_from_to_n_scale_widget(QFrame, Ui_variable_from_to_n_scale):
         self.n_entry.setText(text)
         pass
 
+    def update_range(self, _min, _max):
+        self.setVariableMax(_min)
+        self.setVariableMax(_max)
+        self.edit_from(str(_min))
+        self.edit_to(str(_max))
 
     #*************************************************************************
     # This section is setters/getters for floatLineEdit properties, allowing

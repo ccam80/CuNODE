@@ -1,0 +1,68 @@
+08/21/2024 03:21:03 PM - DEBUG - init_logging - Logfile initialised
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Parameter 1
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Parameter 2
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: PSD
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Parameter 1
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Time
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Amplitude
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Parameter 1
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: Frequency
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: PSD
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_from_change - From changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_n_change - To changed to: 100
+08/21/2024 03:21:04 PM - DEBUG - on_from_change - From changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - on_n_change - To changed to: 100
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - on_var_change - Variable changed to: 
+08/21/2024 03:21:04 PM - DEBUG - update_p2_to - P2 to updated: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - update_p2_n - P2 n updated: 100
+08/21/2024 03:21:04 PM - DEBUG - on_n_change - To changed to: 100
+08/21/2024 03:21:04 PM - DEBUG - update_p2_from - P2 from updated: 0
+08/21/2024 03:21:04 PM - DEBUG - on_from_change - From changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - update_p1_to - P1 to updated: 1
+08/21/2024 03:21:04 PM - DEBUG - on_to_change - To changed to: 1
+08/21/2024 03:21:04 PM - DEBUG - update_p1_n - P1 n updated: 100
+08/21/2024 03:21:04 PM - DEBUG - on_n_change - To changed to: 100
+08/21/2024 03:21:04 PM - DEBUG - update_p1_from - P1 from updated: 0
+08/21/2024 03:21:04 PM - DEBUG - on_from_change - From changed to: 0
+08/21/2024 03:21:04 PM - DEBUG - update_dt - Dt updated: {dt}
+08/21/2024 03:21:04 PM - DEBUG - update_fs - Fs updated: {fs}
+08/21/2024 03:21:04 PM - DEBUG - update_warmup - Warmup updated: {warmup}
+08/21/2024 03:21:04 PM - DEBUG - update_duration - Duration updated: {duration}
+08/21/2024 03:21:04 PM - INFO - __init__ - ODE_Explorer_Controller initialized

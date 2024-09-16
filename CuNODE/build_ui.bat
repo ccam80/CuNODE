@@ -1,5 +1,5 @@
 @echo off
-call C:\venvs\py39\Scripts\activate.bat
+call C:\venvs\cunode\Scripts\activate.bat
 
 REM Check if a directory argument is provided
 if "%~1"=="" (
@@ -12,4 +12,3 @@ if "%~1"=="" (
 
 REM Run the Python script with the specified directory
 python build_ui.py "%DIRECTORY%"
-

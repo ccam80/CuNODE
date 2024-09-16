@@ -5,6 +5,7 @@ Created on Mon Jul 29 14:08:37 2024
 @author: cca79
 """
 import numpy as np
+from pubsub import PubSub
 from _utils import get_readonly_view
 
 
@@ -13,7 +14,7 @@ class modelController():
     sorts them and fetches the data to arrange a request that makes sense to the
     plotter. """
 
-    def __init__(self, messaging_service):
+    def __init__(self, messaging_service=None):
         pass
         self.system = None
         self.solver = None
@@ -21,14 +22,27 @@ class modelController():
         self.solutions = np.zeros((1,1,1))
         self.psd = np.zeros(1)
         self.fft_phase = np.zeros(1)
-        self.messenger = None
+        if messaging_service:
+            self.register_messaging_service(messaging_service)
+        else:
+            self.messenger = None
 
     def register_messaging_service(self, messaging_service):
         """Connect a message passing service to communicate between widgets
 
         Args:
             messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
+
+        messaging_service.subscribe("precision", self.update_precision)
+        messaging_service.subscribe("model_request", self.serve_data)
+
         self.messenger = messaging_service
+
+    def publish(self, topic, data):
+        self.messenger.publish(topic, data)
+
+    def update_precision(self, precision):
+        self.precision = precision
 
     def load_solver(self, solver_class, precision=np.float64):
         self.solver = solver_class(precision = precision)
@@ -72,39 +86,32 @@ class modelController():
         upper_bound = slice_ends[1]
         return data[data >= lower_bound and data <= upper_bound]
 
+    def rms(self, data, axis=-1):
+        return np.sqrt(np.mean(np.square(data), axis=axis))
 
-    def get_data(self, data_type, state,
-                 grid_indices=None,
-                 freq_indices=None,
-                 time_indices=None):
+    def serve_data(self, request):
         """Return a 1D vector of results - sliced either by optional grid,
         time, or frequency indices. If no indices are given, or incorrect ones
         for the data type, the data will be reshaped to a very long vector, silently."""
 
-        # See if the data type is a state label, and get that state if so. If the
-        #data type is not in the dict, carry on to find it in the non-system-defined
-        # types.
+        variable = request['variable']
+        states = request['state_indices']
+        param_indices = request['param_indices']
+        time_or_freq_indices = request['time_or_freq_indices']
+        aggregation = request['aggregation']
+
+        if variable == 'Amplitude':
+            selected_data = self.solutions
+        elif variable == 'PSD':
+            selected_data = self.psd
+        elif variable == 'FFT Phase':
+            selected_data = self.phase
+        selected_data = get_readonly_view(selected_data)
         try:
-            state = self.system.state_labels[data_type]
-            data = self.solutions[state, grid_indices, time_indices]
+            selected_data = np.squeeze(selected_data[states, param_indices, time_or_freq_indices])
         except:
+            pass
+        if aggregation == 'RMS':
+            selected_data = self.rms(selected_data)
 
-            if data_type == 'psd':
-                data = self.psd[state, grid_indices, freq_indices]
-            elif data_type == 'phase':
-                data = self.phase[state, grid_indices, freq_indices]
-            elif data_type == 'amplitude':
-                data = self.solutions[state, grid_indices, time_indices]
-
-            elif data_type == 'rms':
-                grid_length = self.solutions.shape[1]
-                data = np.zeros(grid_length)
-                for i in range(grid_length):
-                    solution_vector = self.solutions[state,i,:]
-                    data[i] = np.sqrt(np.mean(solution_vector**2))
-                data = data[grid_indices, freq_indices]
-
-        data = data.reshape(-1,1)
-        data.flags.writeable = False
-
-        return data
+        self.publish("requested_data", selected_data)

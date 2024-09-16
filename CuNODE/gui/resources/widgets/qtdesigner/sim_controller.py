@@ -27,7 +27,7 @@ class Ui_simController(object):
     def setupUi(self, simController):
         if not simController.objectName():
             simController.setObjectName(u"simController")
-        simController.resize(467, 634)
+        simController.resize(463, 623)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
@@ -88,8 +88,8 @@ class Ui_simController(object):
         self.param1Sweep_options.setProperty("variableMax", 10000000.000000000000000)
         self.param1Sweep_options.setProperty("variableMin", -10000000.000000000000000)
         self.param1Sweep_options.setProperty("variableDecimals", 10.000000000000000)
-        self.param1Sweep_options.setProperty("fromEntryDefault", 0.000000000000000)
-        self.param1Sweep_options.setProperty("toEntryDefault", 1.000000000000000)
+        self.param1Sweep_options.setProperty("fromEntryDefault", -5.000000000000000)
+        self.param1Sweep_options.setProperty("toEntryDefault", 5.000000000000000)
         self.param1Sweep_options.setProperty("nEntryMinValue", 0.000000000000000)
         self.param1Sweep_options.setProperty("nEntryMaxValue", 10000000.000000000000000)
         self.param1Sweep_options.setProperty("nEntryDefault", 100.000000000000000)
@@ -107,8 +107,8 @@ class Ui_simController(object):
         self.param2Sweep_options.setProperty("variableMax", 10000000.000000000000000)
         self.param2Sweep_options.setProperty("variableMin", -10000000.000000000000000)
         self.param2Sweep_options.setProperty("variableDecimals", 10.000000000000000)
-        self.param2Sweep_options.setProperty("fromEntryDefault", 0.000000000000000)
-        self.param2Sweep_options.setProperty("toEntryDefault", 1.000000000000000)
+        self.param2Sweep_options.setProperty("fromEntryDefault", -2.000000000000000)
+        self.param2Sweep_options.setProperty("toEntryDefault", 2.000000000000000)
         self.param2Sweep_options.setProperty("nEntryMinValue", 0.000000000000000)
         self.param2Sweep_options.setProperty("nEntryMaxValue", 1000000.000000000000000)
         self.param2Sweep_options.setProperty("nEntryDefault", 100.000000000000000)
@@ -307,6 +307,12 @@ class Ui_simController(object):
 
         self.verticalLayout_2.addWidget(self.frame)
 
+        QWidget.setTabOrder(self.duration_e, self.warmup_e)
+        QWidget.setTabOrder(self.warmup_e, self.fs_e)
+        QWidget.setTabOrder(self.fs_e, self.stepsize_e)
+        QWidget.setTabOrder(self.stepsize_e, self.init0_e)
+        QWidget.setTabOrder(self.init0_e, self.simSettingsTabs)
+        QWidget.setTabOrder(self.simSettingsTabs, self.solve_button)
 
         self.retranslateUi(simController)
         self.solve_button.released.connect(simController.solve)
@@ -320,10 +326,10 @@ class Ui_simController(object):
         self.param2Sweep_options.scale_changed.connect(simController.update_p2_scale)
         self.param2Sweep_options.to_changed.connect(simController.update_p2_to)
         self.param2Sweep_options.variable_changed.connect(simController.update_p2_var)
-        self.duration_e.textChanged.connect(simController.update_duration)
         self.warmup_e.textChanged.connect(simController.update_warmup)
         self.fs_e.textChanged.connect(simController.update_fs)
         self.stepsize_e.textChanged.connect(simController.update_dt)
+        self.duration_e.textChanged.connect(simController.update_duration)
 
         self.simSettingsTabs.setCurrentIndex(0)
 
@@ -355,8 +361,8 @@ class Ui_simController(object):
         self.stepsize_l.setText(QCoreApplication.translate("simController", u"Step Size", None))
         self.stepsize_e.setText(QCoreApplication.translate("simController", u"0.001", None))
         self.fs_e.setText(QCoreApplication.translate("simController", u"1", None))
-        self.warmup_e.setText(QCoreApplication.translate("simController", u"100", None))
-        self.duration_e.setText(QCoreApplication.translate("simController", u"1000", None))
+        self.warmup_e.setText(QCoreApplication.translate("simController", u"1000", None))
+        self.duration_e.setText(QCoreApplication.translate("simController", u"100", None))
         self.inits_box.setTitle(QCoreApplication.translate("simController", u"y0", None))
         self.init_0.setText(QCoreApplication.translate("simController", u"0", None))
         self.init0_e.setText(QCoreApplication.translate("simController", u"0.001", None))

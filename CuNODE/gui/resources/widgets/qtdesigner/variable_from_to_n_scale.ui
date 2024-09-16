@@ -337,6 +337,14 @@
    <header>gui/resources/widgets/floatLineEdit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>Var_dd</tabstop>
+  <tabstop>from_entry</tabstop>
+  <tabstop>to_entry</tabstop>
+  <tabstop>n_entry</tabstop>
+  <tabstop>lin_button</tabstop>
+  <tabstop>log_button</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

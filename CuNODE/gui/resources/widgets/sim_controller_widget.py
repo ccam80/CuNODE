@@ -8,6 +8,7 @@ Created on Thu Jul 25 20:02:51 2024
 from qtpy.QtWidgets import QFrame, QGridLayout, QLabel, QLineEdit, QGroupBox, QWidget, QSizePolicy, QSpacerItem
 from qtpy.QtCore import Slot, Signal
 from _utils import get_readonly_view
+from pubsub import PubSub
 from numpy import zeros
 from gui.resources.widgets.qtdesigner.sim_controller import Ui_simController
 import logging
@@ -17,10 +18,19 @@ class sim_controller_widget(QFrame, Ui_simController):
 
     solve_request = Signal()
 
-    def __init__(self, parent=None, messaging_service=None):
+    def __init__(self,
+                 parent=None,
+                 messaging_service=None,
+                 precision=np.float64):
+
         super(sim_controller_widget, self).__init__(parent)
         self.setupUi(self)
-        self.register_messaging_service(messaging_service)
+
+        self.precision = precision
+        if messaging_service:
+            self.register_messaging_service(messaging_service)
+        else:
+            self.messenger = None
 
         self.sim_state = {
             'dt': 0.0,
@@ -54,7 +64,12 @@ class sim_controller_widget(QFrame, Ui_simController):
 
         Args:
             messaging_service(class): A class with publish, subscribe, unsubscribe methods"""
+        messaging_service.subscribe("precision", self.update_precision)
+
         self.messenger = messaging_service
+
+    def update_precision(self, precision):
+        self.precision = precision
 
     def publish(self, topic, label):
         self.messenger.publish(topic, label)
@@ -253,28 +268,24 @@ class sim_controller_widget(QFrame, Ui_simController):
     def update_independent_variables(self):
         self.update_parameter_sweeps()
         self.update_sweep_labels()
-        self.update_psd_vector()
         self.update_time_vector()
-        self.update_fft_vector()
+        self.update_freq_vectors()
 
 
     def solve(self):
-        self.update_parameter_sweeps()
-        self.update_sweep_labels()
-        self.update_freq_vectors()
-        # for key, item in self.sim_state.items():
-        #     print(key + ": " + str(item))
-        # print("")
-        # for key, item in self.local_sysparams_dict.items():
-        #     print(key + ": " + str(item))
-        # print("")
+        #TODO: protect against pushing the solve button without a system loaded.
+        #Do this by deactivating buttons, but also add a pubsubbed error that the
+        #top GUI makes an errorbox for.
+
+        self.update_independent_variables()
+
         self.solve_request.emit()
 
     def get_swept_parameters(self, param):
         bounds = self.sim_state[param + "_sweep_bounds"]
         n = self.sim_state[param + "_num_values"]
         numpyspace_args = (bounds[0], bounds[1], n)
-        scale = self.sim_state[param + "param1_sweep_scale"]
+        scale = self.sim_state[param + "_sweep_scale"]
 
         return scale, numpyspace_args
 
@@ -313,7 +324,7 @@ class sim_controller_widget(QFrame, Ui_simController):
 
 
         self.psd_freq = np.linspace(0, max_f, nperseg)
-        self.fft_freq = np.linspace(0, max_f, t_axis_length)
+        self.fft_freq = np.linspace(0, max_f, int(t_axis_length/2))
 
         self.publish("fft_freq", get_readonly_view(self.fft_freq))
         self.publish("psd_freq", get_readonly_view(self.psd_freq))

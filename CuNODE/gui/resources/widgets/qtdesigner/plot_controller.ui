@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>504</height>
+    <width>427</width>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,7 +42,7 @@
       <enum>Qt::FocusPolicy::NoFocus</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -128,6 +128,9 @@
            <verstretch>1</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -152,7 +155,6 @@
          <property name="varDdItems" stdset="0">
           <stringlist>
            <string>Parameter 1</string>
-           <string>Parameter 2</string>
           </stringlist>
          </property>
         </widget>
@@ -186,6 +188,9 @@
            <verstretch>1</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -209,7 +214,6 @@
          </property>
          <property name="varDdItems" stdset="0">
           <stringlist>
-           <string>Parameter 1</string>
            <string>Parameter 2</string>
           </stringlist>
          </property>
@@ -238,6 +242,9 @@
            <verstretch>1</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -261,9 +268,9 @@
          </property>
          <property name="varDdItems" stdset="0">
           <stringlist>
-           <string>PSD at selected frequency</string>
-           <string>FFT phase at selected frequency</string>
-           <string>RMS amplitude</string>
+           <string>PSD</string>
+           <string>FFT Phase</string>
+           <string>Amplitude</string>
           </stringlist>
          </property>
         </widget>
@@ -283,13 +290,7 @@
          <property name="frameShadow">
           <enum>QFrame::Shadow::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="topMargin">
-           <number>1</number>
-          </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QLabel" name="frequency_l">
             <property name="font">
@@ -316,6 +317,14 @@
           </item>
           <item>
            <widget class="QLCDNumber" name="currentFrequency_l">
+            <property name="font">
+             <font>
+              <pointsize>16</pointsize>
+              <bold>true</bold>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
@@ -324,6 +333,25 @@
             </property>
             <property name="value" stdset="0">
              <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="freqAnimateGrid3d_b">
+            <property name="text">
+             <string>Animate</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::ArrowType::NoArrow</enum>
             </property>
            </widget>
           </item>
@@ -454,7 +482,7 @@
         </widget>
        </item>
        <item>
-        <widget class="variable_from_to_scale_widget" name="progressionVarTime_options">
+        <widget class="variable_from_to_scale_widget" name="paramAxisTime3D_options">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>1</horstretch>
@@ -466,6 +494,9 @@
            <width>0</width>
            <height>10</height>
           </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
          </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -531,6 +562,9 @@
            <height>10</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -588,6 +622,9 @@
            <height>10</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -604,14 +641,14 @@
           <double>10.000000000000000</double>
          </property>
          <property name="fromEntryDefault" stdset="0">
-          <double>0.000000000000000</double>
+          <double>-5.000000000000000</double>
          </property>
          <property name="toEntryDefault" stdset="0">
-          <double>1.000000000000000</double>
+          <double>5.000000000000000</double>
          </property>
          <property name="varDdItems" stdset="0">
           <stringlist>
-           <string>Signal Amplitude</string>
+           <string>Amplitude</string>
           </stringlist>
          </property>
         </widget>
@@ -810,6 +847,9 @@
            <height>10</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -868,6 +908,9 @@
            <width>0</width>
            <height>10</height>
           </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
          </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -932,6 +975,9 @@
            <height>10</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::TabFocus</enum>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -955,7 +1001,7 @@
          </property>
          <property name="varDdItems" stdset="0">
           <stringlist>
-           <string>PSD Magnitude</string>
+           <string>PSD</string>
            <string>FFT Phase</string>
           </stringlist>
          </property>
@@ -976,13 +1022,7 @@
          <property name="frameShadow">
           <enum>QFrame::Shadow::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <property name="topMargin">
-           <number>1</number>
-          </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,0,1">
           <item>
            <widget class="QLabel" name="fixedParamSpec_l">
             <property name="font">
@@ -993,7 +1033,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Fixed Parameter</string>
+             <string>Free Parameter</string>
             </property>
            </widget>
           </item>
@@ -1005,12 +1045,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="fixedParamSpec_display">
-            <property name="smallDecimalPoint">
-             <bool>true</bool>
-            </property>
-            <property name="digitCount">
-             <number>6</number>
+           <widget class="floatLineEdit" name="fixedParamSpec_entry">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
            </widget>
           </item>
@@ -1522,6 +1562,11 @@
     <slot>clear_variable_list()</slot>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>floatLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>gui/resources/widgets/floatLineEdit.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -1564,8 +1609,8 @@
    <slot>update_ySlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>281</y>
+     <x>63</x>
+     <y>263</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -1581,7 +1626,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>404</x>
-     <y>481</y>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1612,8 +1657,8 @@
    <slot>update_zSlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>269</x>
-     <y>393</y>
+     <x>280</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1644,8 +1689,8 @@
    <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>122</y>
+     <x>394</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
      <x>236</x>
@@ -1660,8 +1705,8 @@
    <slot>on_updatePlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>392</x>
-     <y>481</y>
+     <x>403</x>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1676,8 +1721,8 @@
    <slot>update_zSlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>48</x>
-     <y>381</y>
+     <x>59</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -1692,8 +1737,8 @@
    <slot>select_single_param2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>307</x>
-     <y>331</y>
+     <x>306</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1708,8 +1753,8 @@
    <slot>update_yScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>281</y>
+     <x>99</x>
+     <y>263</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -1766,7 +1811,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>progressionVarTime_options</sender>
+   <sender>paramAxisTime3D_options</sender>
    <signal>from_changed(QString,int)</signal>
    <receiver>plotController</receiver>
    <slot>update_xSlice(QString,int)</slot>
@@ -1782,7 +1827,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>progressionVarTime_options</sender>
+   <sender>paramAxisTime3D_options</sender>
    <signal>to_changed(QString,int)</signal>
    <receiver>plotController</receiver>
    <slot>update_xSlice(QString,int)</slot>
@@ -1805,7 +1850,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>404</x>
-     <y>393</y>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1820,8 +1865,8 @@
    <slot>update_yScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
-     <y>289</y>
+     <x>404</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1836,8 +1881,8 @@
    <slot>update_zVar(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>321</x>
-     <y>393</y>
+     <x>332</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1847,13 +1892,13 @@
   </connection>
   <connection>
    <sender>fixedParamSpec_slider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>plotController</receiver>
    <slot>set_fixedParam(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>233</x>
-     <y>425</y>
+     <x>219</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1884,8 +1929,8 @@
    <slot>on_updatePlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>385</x>
-     <y>481</y>
+     <x>396</x>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1933,7 +1978,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>404</x>
-     <y>393</y>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -1949,7 +1994,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>394</x>
-     <y>428</y>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2012,8 +2057,8 @@
    <slot>animate_param2_singleSet()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>331</y>
+     <x>394</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2028,8 +2073,8 @@
    <slot>update_ySlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>307</x>
-     <y>289</y>
+     <x>318</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2060,8 +2105,8 @@
    <slot>set_fixedParam(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>233</x>
-     <y>425</y>
+     <x>232</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2077,7 +2122,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>394</x>
-     <y>428</y>
+     <y>417</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2092,8 +2137,8 @@
    <slot>update_xSlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>183</y>
+     <x>394</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2108,8 +2153,8 @@
    <slot>update_zScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>378</x>
-     <y>393</y>
+     <x>389</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2124,8 +2169,8 @@
    <slot>set_slice_frequency(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>324</x>
-     <y>416</y>
+     <x>232</x>
+     <y>391</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -2156,8 +2201,8 @@
    <slot>update_zSlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>393</y>
+     <x>228</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2188,8 +2233,8 @@
    <slot>update_ySlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>289</y>
+     <x>288</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2198,10 +2243,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>progressionVarTime_options</sender>
+   <sender>paramAxisTime3D_options</sender>
    <signal>scale_changed(QString)</signal>
    <receiver>plotController</receiver>
-   <slot>update_yScale(QString)</slot>
+   <slot>update_xVar(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>398</x>
@@ -2268,8 +2313,8 @@
    <slot>on_updatePlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>481</y>
+     <x>95</x>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2310,7 +2355,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>progressionVarTime_options</sender>
+   <sender>paramAxisTime3D_options</sender>
    <signal>variable_changed(QString)</signal>
    <receiver>plotController</receiver>
    <slot>update_xVar(QString)</slot>
@@ -2348,8 +2393,8 @@
    <slot>update_zScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>381</y>
+     <x>116</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2412,8 +2457,8 @@
    <slot>update_zVar(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>147</x>
-     <y>381</y>
+     <x>158</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2476,8 +2521,8 @@
    <slot>update_xScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>183</y>
+     <x>394</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2492,8 +2537,8 @@
    <slot>update_zSlice(QString,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>381</y>
+     <x>95</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -2524,8 +2569,8 @@
    <slot>update_yVar(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>281</y>
+     <x>184</x>
+     <y>263</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -2588,8 +2633,8 @@
    <slot>update_zScale(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>299</x>
-     <y>393</y>
+     <x>310</x>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2604,8 +2649,8 @@
    <slot>animate_param1_singleSet()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>299</y>
+     <x>394</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -2716,12 +2761,60 @@
    <slot>set_slice_frequency(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>253</x>
-     <y>398</y>
+     <x>232</x>
+     <y>391</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>
      <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqAnimateGrid3d_b</sender>
+   <signal>released()</signal>
+   <receiver>plotController</receiver>
+   <slot>animate_fixedparam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>424</x>
+     <y>377</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamTime_slider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>set_fixedParam(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>467</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedParamSpec_slider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>plotController</receiver>
+   <slot>set_fixedParam(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>542</x>
+     <y>455</y>
     </hint>
    </hints>
   </connection>
