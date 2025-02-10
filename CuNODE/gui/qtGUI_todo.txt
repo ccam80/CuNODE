@@ -6,20 +6,32 @@ launch solver in thread
 **Plotter**
 set labels in a separate function that can be reused
 get picker data back to plot control frame for single set slicing
-Rework single staate entirely
+Rework single state entirely
+- individual settings for 2d phase, 3d phase,
 consider removing z slice option - it's just zoom
-rework spec and grid to match time3d formate, ready for animation
-add pausable/stoppable animation class - make slider live
 widget-ise the slider and animate bar for setting/getting entry box values
+animation pause button and logic - change text to pause, halt slider, change text to resume, revert at end
 
 **View**
 scale grid
 log scale
 control bar
 picker
-animation step through slider
+
 
 **Toplevel**
-Start by passing sim params to system for solving, and passing plot state to plotter.
 Autopopulate a menu with available solvers. Fancy solvers might require a modification of paramaeters in the guis. Figure out how to get em all in one place - perhaps classes in a soverkernels module.
 - Get heirarchy of deactivating/activating controls by state sorted to stop users ordering illegal stuff
+
+*Gui Roadmap:*
+**Core Development**
+Create and fold in animate slider widgets to allow multiple options
+z-coords
+create plot objects for 2d phase, 3d phase, spectrogram, time-domain
+return picked data and display point
+log error checking
+
+**Nice to have**
+Button disabling sequences
+Solver launch in thread
+Menu boxes for freq analysis settings, solvers.

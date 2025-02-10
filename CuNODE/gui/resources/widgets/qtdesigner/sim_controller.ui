@@ -581,6 +581,11 @@
  <layoutdefault spacing="1" margin="9"/>
  <customwidgets>
   <customwidget>
+   <class>floatLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>gui/resources/widgets/floatLineEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>variable_from_to_n_scale_widget</class>
    <extends>QFrame</extends>
    <header>gui/resources/widgets/variable_from_to_n_scale_widget.h</header>
@@ -594,11 +599,6 @@
     <slot>edit_from(QString)</slot>
     <slot>edit_to(QString)</slot>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>floatLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>gui/resources/widgets/floatLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

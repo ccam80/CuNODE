@@ -20,14 +20,14 @@ from qtpy.QtWidgets import (QApplication, QHBoxLayout, QLabel, QSizePolicy,
 
 from gui.resources.widgets.floatLineEdit import floatLineEdit
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(400, 63)
-        self.horizontalLayout = QHBoxLayout(Form)
+class Ui_slider_entry_animate(object):
+    def setupUi(self, slider_entry_animate):
+        if not slider_entry_animate.objectName():
+            slider_entry_animate.setObjectName(u"slider_entry_animate")
+        slider_entry_animate.resize(400, 63)
+        self.horizontalLayout = QHBoxLayout(slider_entry_animate)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.label = QLabel(Form)
+        self.label = QLabel(slider_entry_animate)
         self.label.setObjectName(u"label")
         font = QFont()
         font.setPointSize(12)
@@ -37,13 +37,13 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.slider = QSlider(Form)
+        self.slider = QSlider(slider_entry_animate)
         self.slider.setObjectName(u"slider")
         self.slider.setOrientation(Qt.Orientation.Horizontal)
 
         self.horizontalLayout.addWidget(self.slider)
 
-        self.entry = floatLineEdit(Form)
+        self.entry = floatLineEdit(slider_entry_animate)
         self.entry.setObjectName(u"entry")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(1)
@@ -53,7 +53,7 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.entry)
 
-        self.animate_button = QToolButton(Form)
+        self.animate_button = QToolButton(slider_entry_animate)
         self.animate_button.setObjectName(u"animate_button")
         self.animate_button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.animate_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
@@ -67,18 +67,18 @@ class Ui_Form(object):
         self.horizontalLayout.setStretch(2, 1)
         self.horizontalLayout.setStretch(3, 2)
 
-        self.retranslateUi(Form)
-        self.slider.valueChanged.connect(Form.slider_change)
-        self.slider.sliderMoved.connect(Form.speed_change)
-        self.entry.textChanged.connect(Form.entry_updated)
-        self.animate_button.released.connect(Form.animate_button_press)
+        self.retranslateUi(slider_entry_animate)
+        self.slider.valueChanged.connect(slider_entry_animate.slider_change)
+        self.slider.sliderMoved.connect(slider_entry_animate.speed_change)
+        self.entry.textChanged.connect(slider_entry_animate.entry_updated)
+        self.animate_button.released.connect(slider_entry_animate.animate_button_press)
 
-        QMetaObject.connectSlotsByName(Form)
+        QMetaObject.connectSlotsByName(slider_entry_animate)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"Free Parameter", None))
-        self.animate_button.setText(QCoreApplication.translate("Form", u"Animate", None))
+    def retranslateUi(self, slider_entry_animate):
+        slider_entry_animate.setWindowTitle(QCoreApplication.translate("slider_entry_animate", u"Form", None))
+        self.label.setText(QCoreApplication.translate("slider_entry_animate", u"Free Parameter", None))
+        self.animate_button.setText(QCoreApplication.translate("slider_entry_animate", u"Animate", None))
     # retranslateUi
 

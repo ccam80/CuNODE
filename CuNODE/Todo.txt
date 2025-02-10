@@ -1,7 +1,8 @@
 CuNODE next steps for mems rig
 
 GUI:
-Whole GUI remake is underway, refactored with it's own todo list in gui/
+Complete "Core development" part of roadmap
+
 
 ODE solver:
 Template solver class that contains algorithm kernel to be passed to a builder function - test whether we can cuda compile a passed function reference
@@ -13,7 +14,11 @@ implement "chunking" as implemented on fft system to allow larger solves
 Control equation options
 rk4
 adjustable step size algo
-Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
+- Grid with different control schemes - can't pass a function to kernel so need to figure out how to crack this one
 figure out instruction parallelisation for high-state systems.
-Start system from "scratch" - no awkward coding portion before the GUI starts. (will tie into a general refactor)
 -Add initial condition sweep logic
+- add gitignore
+
+*System Roadmap*
+Complete remaining GUI core development pieces
+Add initial condition sweeps to simulation logic

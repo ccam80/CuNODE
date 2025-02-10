@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>slider_entry_animate</class>
+ <widget class="QWidget" name="slider_entry_animate">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -78,7 +78,7 @@
   <connection>
    <sender>slider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>Form</receiver>
+   <receiver>slider_entry_animate</receiver>
    <slot>slider_change(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -94,7 +94,7 @@
   <connection>
    <sender>slider</sender>
    <signal>sliderMoved(int)</signal>
-   <receiver>Form</receiver>
+   <receiver>slider_entry_animate</receiver>
    <slot>speed_change(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -110,7 +110,7 @@
   <connection>
    <sender>entry</sender>
    <signal>textChanged(QString)</signal>
-   <receiver>Form</receiver>
+   <receiver>slider_entry_animate</receiver>
    <slot>entry_updated(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -126,7 +126,7 @@
   <connection>
    <sender>animate_button</sender>
    <signal>released()</signal>
-   <receiver>Form</receiver>
+   <receiver>slider_entry_animate</receiver>
    <slot>animate_button_press()</slot>
    <hints>
     <hint type="sourcelabel">

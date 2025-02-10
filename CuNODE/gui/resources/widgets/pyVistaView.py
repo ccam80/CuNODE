@@ -58,6 +58,10 @@ class pyVistaView(QWidget):
         super().resizeEvent(event)
         self.pv_widget.resize(self.size())
 
+    def pick_point(self):
+        pass
+
+
     def update_plot(self, plot_data):
         data = plot_data['data']
         scales = plot_data['scales']
@@ -68,7 +72,7 @@ class pyVistaView(QWidget):
         axis_ranges = {}
 
         self.pv_widget.clear()
-
+        # self.pv_widget.enable_point_picking(callback=self.pick_point, left_clicking=True)
         for axis in ['x', 'y', 'z']:
             axis_ranges[axis] = [np.min(data[axis]), np.max(data[axis])]
             if scales[axis] == 'Logarithmic':
@@ -134,7 +138,7 @@ class pyVistaView(QWidget):
 
             num_frames = len(data['z'])
             #Dynamically set duration from speed setting
-            self.animation = Animation(max_steps=num_frames, interval=100, callback=step_animation)
+            self.animation = Animation(max_steps=num_frames, interval=33, callback=step_animation)
 
     def pause_animation(self):
         if self.animation:
